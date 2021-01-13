@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".Welcome.WelcomeActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/welcome_bac"
+        android:background="@drawable/bg_splash"
+        android:orientation="horizontal" />
+
+    <com.xuexiang.xui.widget.button.roundbutton.RoundButton
+        style="@style/RoundButton.Auto"
+        android:id="@+id/wel_close_button"
+        app:rb_radius="10dp"
+        app:rb_borderColor="@color/white"
+        android:layout_marginTop="@dimen/dp_20"
+        android:textSize="@dimen/sp_12"
+        android:text="关闭"
+        android:alpha="0.7"
+        android:textColor="@color/white"
+        android:background="#52423f"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="@dimen/dp_20"
+        android:layout_marginVertical="@dimen/dp_35"/>
+</RelativeLayout>
