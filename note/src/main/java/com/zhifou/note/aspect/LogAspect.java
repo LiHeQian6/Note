@@ -1,30 +1,32 @@
 package com.zhifou.note.aspect;
 
-import org.apache.log4j.Logger;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.annotation.Pointcut;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
+
 import javax.servlet.http.HttpServletRequest;
 import java.util.Arrays;
 
 /**
- * User: li
+ * @author : li
  * Date: 2020/4/10
  * Time: 18:09
  */
 @Aspect
 @Component
 public class LogAspect {
-    private final Logger logger = Logger.getLogger(getClass());
+    private final Logger logger = LoggerFactory.getLogger(getClass());
 
     ThreadLocal<Long> startTime = new ThreadLocal<>();
 
-    @Pointcut("execution(public * com.zhifou.*.controller.*.*(..))")
+    @Pointcut("execution(public * com.zhifou.note.*.controller.*.*(..))")
     public void Log(){}
 
     @Before("Log()")

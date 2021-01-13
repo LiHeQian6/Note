@@ -6,7 +6,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 /**
- * @Author : li
+ * @author : li
  * @Date: 2021-01-05 15:05
  */
 @Api("登录")
@@ -19,15 +19,9 @@ public class UserController {
         return "login";
     }
 
-    @ApiOperation("跳转到首页")
-    @RequestMapping("/toIndex")
-    public String index(){
-        return "redirect:/";
-    }
-
     @ApiOperation("首页")
     @RequestMapping("/")
-    public String toIndex(){
+    public String index(){
         return "index";
     }
 }
