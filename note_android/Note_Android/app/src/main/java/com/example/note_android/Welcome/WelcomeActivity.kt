@@ -7,6 +7,7 @@ import android.view.View
 import android.view.animation.AlphaAnimation
 import androidx.appcompat.app.AppCompatActivity
 import com.example.note_android.Annotation.Page
+import com.example.note_android.login.LoginActivity
 import com.example.note_android.MainActivity
 import com.example.note_android.R
 import com.xuexiang.xui.XUI
@@ -54,7 +55,7 @@ class WelcomeActivity : AppCompatActivity() {
         override fun onPostExecute(result: Int?) {
             super.onPostExecute(result)
             var go = Intent()
-            go.setClass(this@WelcomeActivity, MainActivity::class.java)
+            go.setClass(this@WelcomeActivity, LoginActivity::class.java)
             this@WelcomeActivity.startActivity(go)
             this@WelcomeActivity.finish()
         }
