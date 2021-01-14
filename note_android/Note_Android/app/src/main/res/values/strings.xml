@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Note_Android</string>
+    <string name="IP">Note_Android</string>
+    <string name="LoginTip">Note_Android</string>
 </resources>
