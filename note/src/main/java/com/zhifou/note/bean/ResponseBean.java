@@ -11,5 +11,6 @@ import java.io.Serializable;
 @Data
 public class ResponseBean  implements Serializable {
     private Status status;
+    private String message;
     private Object data;
 }
