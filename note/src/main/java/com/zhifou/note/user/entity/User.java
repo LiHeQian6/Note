@@ -53,24 +53,47 @@ public class User extends org.springframework.security.core.userdetails.User {
         inverseJoinColumns = @JoinColumn(
                 name = "role_id"))
     private List<Role> roles;
+    @Transient
+    private Collection<? extends GrantedAuthority> authorities;
 
     private User() {
-        super("admin","admin",new ArrayList<>());
+        super("admin1","admin",new ArrayList<>());
     }
 
-    public User(String username, String password, Collection<? extends GrantedAuthority> authorities) {
-        super(username, password, authorities);
+    public User(String username, String password, List<Role> roles, Collection<? extends GrantedAuthority> authorities) {
+        super(username, password,authorities);
         this.username = username;
         this.password = password;
-//        this.roles=  TODO 修改role和privilege去掉中文，添加映射
+        this.roles= roles;
+        this.authorities=authorities;
     }
 
     @Override
     public Collection<GrantedAuthority> getAuthorities() {
-        List<GrantedAuthority> authorities= new ArrayList<>();
+        List<GrantedAuthority> authorities = new ArrayList<>();
         for (Role role : roles) {
-            authorities.add(new SimpleGrantedAuthority(role.getName()));
+            authorities.add(new SimpleGrantedAuthority(role.getAuthority()));
         }
         return authorities;
+    }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "id=" + id +
+                ", username='" + username + '\'' +
+                ", password='" + "[PROTECTED]" + '\'' +
+                ", introduction='" + introduction + '\'' +
+                ", nick_name='" + nick_name + '\'' +
+                ", photo='" + photo + '\'' +
+                ", createTime=" + createTime +
+                ", lastReadTime=" + lastReadTime +
+                ", accountNonExpired=" + accountNonExpired +
+                ", accountNonLocked=" + accountNonLocked +
+                ", credentialsNonExpired=" + credentialsNonExpired +
+                ", enabled=" + enabled +
+                ", roles=" + roles +
+                ", authorities=" + authorities +
+                '}';
     }
 }
