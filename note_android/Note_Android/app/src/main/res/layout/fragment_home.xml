@@ -7,34 +7,63 @@
 
     </data>
 
-    <RelativeLayout
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:background="@color/orange"
+        android:orientation="vertical"
+        android:fitsSystemWindows="true">
 
-        <com.xuexiang.xui.widget.button.roundbutton.RoundButton
-            android:id="@+id/test_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            style="@style/RoundButton.Blue"
-            app:rb_isRadiusAdjustBounds="true"
-            app:rb_backgroundColor="@color/orange"
-            android:text="登录页">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/dp_50"
+            android:gravity="center"
+            android:background="@color/orange">
 
-        </com.xuexiang.xui.widget.button.roundbutton.RoundButton>
-<!--        <TextView-->
-<!--            android:id="@+id/text_home"-->
-<!--            android:layout_centerInParent="true"-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:layout_marginStart="8dp"-->
-<!--            android:layout_marginTop="8dp"-->
-<!--            android:layout_marginEnd="8dp"-->
-<!--            android:textAlignment="center"-->
-<!--            android:textSize="20sp"-->
-<!--            app:layout_constraintBottom_toBottomOf="parent"-->
-<!--            app:layout_constraintEnd_toEndOf="parent"-->
-<!--            app:layout_constraintStart_toStartOf="parent"-->
-<!--            app:layout_constraintTop_toTopOf="parent" />-->
-    </RelativeLayout>
+            <LinearLayout
+                android:layout_width="@dimen/dp_280"
+                android:layout_height="@dimen/dp_30"
+                android:background="@drawable/custom_editext">
+
+                <ImageView
+                    android:layout_width="@dimen/dp_18"
+                    android:layout_height="@dimen/dp_18"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginLeft="@dimen/dp_8"
+                    android:src="@drawable/icon_sousuo"/>
+
+                <EditText
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/dp_30"
+                    android:background="@drawable/custom_editext"
+                    android:hint="搜索"
+                    android:textSize="@dimen/sp_14"/>
+
+            </LinearLayout>
+
+            <ImageView
+                android:layout_width="@dimen/dp_25"
+                android:layout_height="@dimen/dp_25"
+                android:layout_marginLeft="@dimen/dp_8"
+                android:src="@drawable/icon_saoma"/>
+        </LinearLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/white">
+
+            <com.xuexiang.xui.widget.button.roundbutton.RoundButton
+                android:id="@+id/test_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                style="@style/RoundButton.Blue"
+                app:rb_isRadiusAdjustBounds="true"
+                app:rb_backgroundColor="@color/orange"
+                android:text="登录页">
+
+            </com.xuexiang.xui.widget.button.roundbutton.RoundButton>
+        </RelativeLayout>
+    </LinearLayout>
 </layout>

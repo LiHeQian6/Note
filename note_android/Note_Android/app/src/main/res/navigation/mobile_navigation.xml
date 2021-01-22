@@ -11,12 +11,12 @@
         tools:layout="@layout/fragment_home" />
 
     <fragment
-        android:id="@+id/navigation_dashboard"
-        android:name="com.example.note_android.fragment.dashboard.DashboardFragment"
-        tools:layout="@layout/fragment_dashboard" />
+        android:id="@+id/navigation_follow"
+        android:name="com.example.note_android.fragment.follow.FollowFragment"
+        tools:layout="@layout/fragment_follow" />
 
     <fragment
-        android:id="@+id/navigation_notifications"
-        android:name="com.example.note_android.fragment.notifications.NotificationsFragment"
-        tools:layout="@layout/fragment_notifications" />
+        android:id="@+id/navigation_persion"
+        android:name="com.example.note_android.fragment.person.PersonFragment"
+        tools:layout="@layout/fragment_person" />
 </navigation>

@@ -11,9 +11,12 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.example.note_android.R
+import com.example.note_android.annotation.Page
 import com.example.note_android.login.LoginActivity
+import com.xuexiang.xui.utils.StatusBarUtils
 import kotlinx.android.synthetic.main.fragment_home.view.*
 
+@Page(name = "主页")
 class HomeFragment : Fragment() {
 
     private lateinit var homeViewModel: HomeViewModel
@@ -25,6 +28,7 @@ class HomeFragment : Fragment() {
     ): View? {
         homeViewModel =
             ViewModelProvider(this).get(HomeViewModel::class.java)
+        StatusBarUtils.initStatusBarStyle(requireActivity(),true,resources.getColor(R.color.orange))
         val root = inflater.inflate(R.layout.fragment_home, container, false)
 //        val textView: TextView = root.findViewById(R.id.text_home)
 //        homeViewModel.text.observe(viewLifecycleOwner, Observer {
