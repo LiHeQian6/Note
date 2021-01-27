@@ -30,7 +30,7 @@
                     android:layout_height="@dimen/dp_18"
                     android:layout_gravity="center_vertical"
                     android:layout_marginLeft="@dimen/dp_8"
-                    android:src="@drawable/icon_sousuo"/>
+                    android:src="@mipmap/icon_sousuo"/>
 
                 <EditText
                     android:layout_width="match_parent"
@@ -42,10 +42,11 @@
             </LinearLayout>
 
             <ImageView
+                android:id="@+id/saoma"
                 android:layout_width="@dimen/dp_25"
                 android:layout_height="@dimen/dp_25"
                 android:layout_marginLeft="@dimen/dp_8"
-                android:src="@drawable/icon_saoma"/>
+                android:src="@mipmap/icon_saoma"/>
         </LinearLayout>
 
         <RelativeLayout
@@ -64,6 +65,16 @@
                 android:text="登录页">
 
             </com.xuexiang.xui.widget.button.roundbutton.RoundButton>
+
+            <ImageView
+                android:id="@+id/add_button"
+                android:layout_width="@dimen/dp_50"
+                android:layout_height="@dimen/dp_50"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentRight="true"
+                android:layout_marginBottom="@dimen/dp_60"
+                android:layout_marginRight="@dimen/dp_20"
+                android:src="@mipmap/add"/>
         </RelativeLayout>
     </LinearLayout>
 </layout>

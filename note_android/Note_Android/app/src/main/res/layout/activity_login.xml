@@ -22,7 +22,7 @@
             android:layout_width="@dimen/dp_150"
             android:layout_height="@dimen/dp_150"
             android:layout_centerHorizontal="true"
-            android:background="@drawable/login_logo" />
+            android:background="@mipmap/login_logo" />
 
         <LinearLayout
             android:id="@+id/account_edit"
@@ -158,7 +158,7 @@
             <ImageView
                 android:layout_width="@dimen/dp_30"
                 android:layout_height="@dimen/dp_30"
-                android:background="@drawable/qq_icon" />
+                android:background="@mipmap/qq_icon" />
 
         </LinearLayout>
     </RelativeLayout>

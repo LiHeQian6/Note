@@ -6,12 +6,11 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.example.note_android.R
 import com.example.note_android.annotation.Page
+import com.example.note_android.edit.EditActivity
 import com.example.note_android.login.LoginActivity
 import com.xuexiang.xui.utils.StatusBarUtils
 import kotlinx.android.synthetic.main.fragment_home.view.*
@@ -39,6 +38,11 @@ class HomeFragment : Fragment() {
             var goLogin = Intent()
             goLogin.setClass(requireContext(),LoginActivity::class.java)
             startActivity(goLogin)
+        }
+        root.add_button.setOnClickListener { v: View? ->
+            var to_edit = Intent()
+            to_edit.setClass(requireContext(),EditActivity::class.java)
+            startActivity(to_edit)
         }
         return root
     }

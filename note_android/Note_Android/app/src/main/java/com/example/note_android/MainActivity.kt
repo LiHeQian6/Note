@@ -16,32 +16,14 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         val navView: BottomNavigationView = findViewById(R.id.nav_view)
 
-//        navView.setOnNavigationItemSelectedListener(
-//            object : BottomNavigationView.OnNavigationItemSelectedListener {
-//                override fun onNavigationItemSelected(item: MenuItem): Boolean {
-//                    when(item.itemId){
-//                        R.id.navigation_home -> {
-//                            return true
-//                        }
-//                        R.id.navigation_dashboard -> {
-//                            return true
-//                        }
-//                        R.id.navigation_notifications -> {
-//                            return true
-//                        }
-//                    }
-//                    return false
-//                }
-//            })
         val navController = findNavController(R.id.nav_host_fragment)
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
-        val appBarConfiguration = AppBarConfiguration(
-            setOf(
-                R.id.navigation_home, R.id.navigation_follow, R.id.navigation_persion
-            )
-        )
-        var a = supportActionBar
+//        val appBarConfiguration = AppBarConfiguration(
+//            setOf(
+//                R.id.navigation_home, R.id.navigation_follow, R.id.navigation_persion
+//            )
+//        )
 //        setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
     }
