@@ -1,4 +1,4 @@
-package com.example.note_android.Annotation;
+package com.example.note_android.annotation;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

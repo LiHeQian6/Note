@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+    </data>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/orange"
+        android:orientation="vertical"
+        android:fitsSystemWindows="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/dp_50"
+            android:gravity="center"
+            android:background="@color/orange">
+
+            <LinearLayout
+                android:layout_width="@dimen/dp_280"
+                android:layout_height="@dimen/dp_30"
+                android:background="@drawable/custom_editext">
+
+                <ImageView
+                    android:layout_width="@dimen/dp_18"
+                    android:layout_height="@dimen/dp_18"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginLeft="@dimen/dp_8"
+                    android:src="@mipmap/icon_sousuo"/>
+
+                <EditText
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/dp_30"
+                    android:background="@drawable/custom_editext"
+                    android:hint="搜索"
+                    android:textSize="@dimen/sp_14"/>
+
+            </LinearLayout>
+
+            <ImageView
+                android:id="@+id/saoma"
+                android:layout_width="@dimen/dp_25"
+                android:layout_height="@dimen/dp_25"
+                android:layout_marginLeft="@dimen/dp_8"
+                android:src="@mipmap/icon_saoma"/>
+        </LinearLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/white">
+
+            <com.xuexiang.xui.widget.button.roundbutton.RoundButton
+                android:id="@+id/test_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                style="@style/RoundButton.Blue"
+                app:rb_isRadiusAdjustBounds="true"
+                app:rb_backgroundColor="@color/orange"
+                android:text="登录页">
+
+            </com.xuexiang.xui.widget.button.roundbutton.RoundButton>
+
+            <ImageView
+                android:id="@+id/add_button"
+                android:layout_width="@dimen/dp_50"
+                android:layout_height="@dimen/dp_50"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentRight="true"
+                android:layout_marginBottom="@dimen/dp_60"
+                android:layout_marginRight="@dimen/dp_20"
+                android:src="@mipmap/add"/>
+        </RelativeLayout>
+    </LinearLayout>
+</layout>

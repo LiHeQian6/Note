@@ -1,18 +1,30 @@
 package com.example.note_android
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import com.example.note_android.Annotation.Page
-import com.xuexiang.xui.XUI
-import com.xuexiang.xui.utils.StatusBarUtils
+import android.view.MenuItem
+import com.google.android.material.bottomnavigation.BottomNavigationView
+import androidx.appcompat.app.AppCompatActivity
+import androidx.navigation.findNavController
+import androidx.navigation.ui.AppBarConfiguration
+import androidx.navigation.ui.setupActionBarWithNavController
+import androidx.navigation.ui.setupWithNavController
 
-@Page(name = "主界面")
 class MainActivity : AppCompatActivity() {
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        XUI.init(application)
-        XUI.debug(true)
-        StatusBarUtils.translucent(window)
+        val navView: BottomNavigationView = findViewById(R.id.nav_view)
+
+        val navController = findNavController(R.id.nav_host_fragment)
+        // Passing each menu ID as a set of Ids because each
+        // menu should be considered as top level destinations.
+//        val appBarConfiguration = AppBarConfiguration(
+//            setOf(
+//                R.id.navigation_home, R.id.navigation_follow, R.id.navigation_persion
+//            )
+//        )
+//        setupActionBarWithNavController(navController, appBarConfiguration)
+        navView.setupWithNavController(navController)
     }
 }
