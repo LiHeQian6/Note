@@ -19,7 +19,7 @@ class SoftKeyBoardListener() {
             val r = Rect()
             rootView!!.getWindowVisibleDisplayFrame(r)
             val visibleHeight: Int = r.height()
-            println("" + visibleHeight)
+//            println("" + visibleHeight)
             if (rootViewVisibleHeight == 0) {
                 rootViewVisibleHeight = visibleHeight
                 return@OnGlobalLayoutListener

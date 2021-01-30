@@ -11,7 +11,7 @@
         android:layout_height="@dimen/dp_200"
         android:id="@+id/welcome_bac"
         android:layout_centerInParent="true"
-        android:background="@mipmap/welcome_img"
+        android:background="@drawable/welcome_img"
         android:orientation="horizontal" />
 
     <com.xuexiang.xui.widget.button.roundbutton.RoundButton

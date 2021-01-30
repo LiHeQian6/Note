@@ -16,11 +16,50 @@
         <Toolbar
             android:id="@+id/tool_bar"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/dp_60"
-            android:fitsSystemWindows="true"
-            app:navigationIcon="@mipmap/me"
+            android:layout_height="@dimen/dp_70"
             android:theme="@style/ToolbarTheme"
-            android:background="@color/orange">
+            android:background="@color/orange"
+            android:fitsSystemWindows="true">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true">
+
+                    <TextView
+                        android:id="@+id/title_text"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerHorizontal="true"
+                        android:text="编写笔记"
+                        android:textSize="@dimen/sp_14"
+                        android:textColor="@color/white"/>
+
+                    <TextView
+                        android:id="@+id/subtitle_text"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerHorizontal="true"
+                        android:layout_marginTop="@dimen/dp_2"
+                        android:text="已保存"
+                        android:textSize="@dimen/sp_9"
+                        android:layout_below="@+id/title_text"
+                        android:textColor="@color/white"/>
+
+                </RelativeLayout>
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:text="发布"
+                    android:textSize="@dimen/sp_15"
+                    android:textColor="@color/white"/>
+            </RelativeLayout>
         </Toolbar>
 
         <jp.wasabeef.richeditor.RichEditor
@@ -28,6 +67,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginHorizontal="@dimen/dp_20"
+            android:layout_marginTop="@dimen/dp_10"
             android:layout_below="@+id/tool_bar">
         </jp.wasabeef.richeditor.RichEditor>
 
@@ -50,14 +90,14 @@
                     android:layout_width="@dimen/dp_30"
                     android:layout_height="@dimen/dp_30"
                     android:layout_marginHorizontal="@dimen/dp_2"
-                    android:src="@mipmap/bold"/>
+                    android:src="@drawable/ico_bold"/>
 
                 <ImageView
                     android:id="@+id/text_lean"
                     android:layout_width="@dimen/dp_30"
                     android:layout_height="@dimen/dp_30"
                     android:layout_marginHorizontal="@dimen/dp_2"
-                    android:src="@mipmap/lean"/>
+                    android:src="@drawable/ico_lean"/>
             </LinearLayout>
 
 <!--            <ImageView-->

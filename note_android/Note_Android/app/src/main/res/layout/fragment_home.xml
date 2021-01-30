@@ -30,7 +30,7 @@
                     android:layout_height="@dimen/dp_18"
                     android:layout_gravity="center_vertical"
                     android:layout_marginLeft="@dimen/dp_8"
-                    android:src="@mipmap/icon_sousuo"/>
+                    android:src="@drawable/ico_sousuo"/>
 
                 <EditText
                     android:layout_width="match_parent"
@@ -46,7 +46,7 @@
                 android:layout_width="@dimen/dp_25"
                 android:layout_height="@dimen/dp_25"
                 android:layout_marginLeft="@dimen/dp_8"
-                android:src="@mipmap/icon_saoma"/>
+                android:src="@drawable/ico_saoma"/>
         </LinearLayout>
 
         <RelativeLayout
@@ -74,7 +74,7 @@
                 android:layout_alignParentRight="true"
                 android:layout_marginBottom="@dimen/dp_60"
                 android:layout_marginRight="@dimen/dp_20"
-                android:src="@mipmap/add"/>
+                android:src="@drawable/ico_add"/>
         </RelativeLayout>
     </LinearLayout>
 </layout>

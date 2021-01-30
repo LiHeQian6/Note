@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <FrameLayout
+        android:id="@+id/fl_zxing_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dp_50">
+
+        <ImageView
+            android:id="@+id/iv_back"
+            android:layout_width="@dimen/dp_25"
+            android:layout_height="@dimen/dp_25"
+            android:layout_marginLeft="@dimen/dp_10"
+            android:layout_gravity="center_vertical"
+            android:src="@drawable/ico_return" />
+
+        <TextView
+            android:id="@+id/tv_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="二维码扫描"
+            android:textColor="@color/xui_config_color_white"
+            android:textSize="@dimen/sp_18" />
+
+        <ImageView
+            android:id="@+id/iv_photo"
+            android:layout_width="@dimen/dp_25"
+            android:layout_height="@dimen/dp_25"
+            android:layout_marginRight="@dimen/sp_10"
+            android:layout_gravity="center_vertical|end"
+            android:src="@drawable/ico_photo" />
+
+    </FrameLayout>
+
+    <ImageView
+        android:id="@+id/iv_flash_light"
+        android:layout_width="@dimen/dp_40"
+        android:layout_height="@dimen/dp_50"
+        android:layout_gravity="center_horizontal|bottom"
+        android:layout_marginBottom="@dimen/dp_150"
+        android:src="@drawable/ico_flashlight_off" />
+
+</FrameLayout>
