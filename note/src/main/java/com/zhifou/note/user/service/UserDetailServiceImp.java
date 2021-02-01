@@ -1,7 +1,6 @@
 package com.zhifou.note.user.service;
 
 import com.zhifou.note.user.entity.User;
-import com.zhifou.note.user.repository.RoleRepository;
 import com.zhifou.note.user.repository.UserRepository;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -20,9 +19,6 @@ public class UserDetailServiceImp implements UserDetailsService {
     @Resource
     private UserRepository userRepository;
 
-    @Resource
-    private RoleRepository roleRepository;
-
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 
@@ -30,6 +26,6 @@ public class UserDetailServiceImp implements UserDetailsService {
         if (user == null) {
             throw new UsernameNotFoundException("用户名不存在！");
         }
-        return new User(user.getUsername(), user.getPassword(),user.getAuthorities());
+        return new User(user.getUsername(), user.getPassword(),user.getRoles(),user.getAuthorities());
     }
 }

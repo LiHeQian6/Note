@@ -1,21 +1,24 @@
 package com.zhifou.note.user.entity;
 
-import lombok.Data;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.Getter;
+import lombok.Setter;
+import org.springframework.security.core.GrantedAuthority;
 
 import javax.persistence.*;
 import java.util.Collection;
 
 @Entity(name = "role")
-@Data
-public class Role {
+@Getter
+@Setter
+public class Role implements GrantedAuthority {
     @Id
     @Column(name = "role_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     @Column(name = "name")
     private String name;
-    @Column(name = "name_zh")
-    private String name_zh;
+    @JsonIgnore
     @ManyToMany(mappedBy = "roles",targetEntity = User.class)
     private Collection<org.springframework.security.core.userdetails.User> users;
     @ManyToMany
@@ -30,8 +33,21 @@ public class Role {
     public Role() {
     }
 
-    public Role(String name, String name_zh) {
+    public Role(String name) {
         this.name = name;
-        this.name_zh = name_zh;
+    }
+
+    @Override
+    public String toString() {
+        return "Role{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", privileges=" + privileges +
+                '}';
+    }
+
+    @Override
+    public String getAuthority() {
+        return name;
     }
 }

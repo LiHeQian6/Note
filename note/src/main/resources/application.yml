@@ -6,3 +6,7 @@ spring:
   mvc:
     static-path-pattern: /static/**
     throw-exception-if-no-handler-found: true #出现错误时，直接抛出异常
+  redis:
+    database: 11
+    username: root
+    password:

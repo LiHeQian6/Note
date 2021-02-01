@@ -1,6 +1,8 @@
 package com.zhifou.note.user.entity;
 
-import lombok.Data;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.Getter;
+import lombok.Setter;
 
 import javax.persistence.*;
 import java.util.Collection;
@@ -10,7 +12,8 @@ import java.util.Collection;
  * @Date: 2021-01-14 14:18
  */
 @Entity(name = "privilege")
-@Data
+@Getter
+@Setter
 public class Privilege {
 
     @Id
@@ -19,16 +22,22 @@ public class Privilege {
     private Integer id;
     @Column(name = "name")
     private String name;
-    @Column(name = "name_zh")
-    private String name_zh;
 
+    @JsonIgnore
     @ManyToMany(mappedBy = "privileges",targetEntity = Role.class)
     private Collection<Role> roles;
 
     public Privilege(){};
 
-    public Privilege(String name, String name_zh) {
+    public Privilege(String name) {
         this.name = name;
-        this.name_zh = name_zh;
+    }
+
+    @Override
+    public String toString() {
+        return "Privilege{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                '}';
     }
 }
