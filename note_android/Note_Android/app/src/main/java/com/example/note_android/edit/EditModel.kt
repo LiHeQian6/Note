@@ -1,4 +1,4 @@
-package com.example.note_android.edit.model
+package com.example.note_android.edit
 
 class EditModel {
 

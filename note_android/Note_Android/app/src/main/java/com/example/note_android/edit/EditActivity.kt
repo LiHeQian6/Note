@@ -1,21 +1,13 @@
 package com.example.note_android.edit
 
-import android.graphics.Typeface
 import android.os.Bundle
-import android.util.Log
-import android.view.Gravity
 import android.view.View
-import android.widget.LinearLayout
-import android.widget.TextView
-import android.widget.Toolbar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import com.example.note_android.R
 import com.example.note_android.annotation.Page
 import com.example.note_android.databinding.ActivityEditBinding
-import com.example.note_android.edit.model.EditListener
 import com.example.note_android.edit.util.SoftKeyBoardListener
-import com.example.note_android.edit.viewmodel.EditViewModel
 import com.xuexiang.xui.utils.StatusBarUtils
 import kotlinx.android.synthetic.main.activity_edit.*
 

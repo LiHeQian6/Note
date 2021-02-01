@@ -1,4 +1,4 @@
-package com.example.note_android.edit.model
+package com.example.note_android.edit
 
 import android.view.View
 import com.example.note_android.R

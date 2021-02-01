@@ -1,4 +1,4 @@
-package com.example.note_android.edit.viewmodel
+package com.example.note_android.edit
 
 import androidx.lifecycle.ViewModel
 

@@ -36,7 +36,6 @@ class HomeFragment : Fragment() {
 //            textView.text = it
 //        })
         root.test_button.setOnClickListener { v: View? ->
-            Log.i("测试","点击了按钮")
             var goLogin = Intent()
             goLogin.setClass(requireContext(),LoginActivity::class.java)
             startActivity(goLogin)

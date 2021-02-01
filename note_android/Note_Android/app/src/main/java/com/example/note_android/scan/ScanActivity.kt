@@ -15,6 +15,7 @@ import kotlinx.android.synthetic.main.activity_scan.*
 
 class ScanActivity : CaptureActivity(),View.OnClickListener {
 
+    private val IMAGE_REQUEST_CODE = 500
     private var ifFlashOn = false
 
     /**
@@ -87,7 +88,7 @@ class ScanActivity : CaptureActivity(),View.OnClickListener {
                 val intent = Intent(Intent.ACTION_GET_CONTENT)
                 intent.addCategory(Intent.CATEGORY_OPENABLE)
                 intent.type = "image/*"
-                startActivityForResult(intent, 123)
+                startActivityForResult(intent, IMAGE_REQUEST_CODE)
             }
             R.id.iv_flash_light -> {
                 if(ifFlashOn) {
@@ -102,7 +103,7 @@ class ScanActivity : CaptureActivity(),View.OnClickListener {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == 123) {
+        if (requestCode == IMAGE_REQUEST_CODE) {
             if (data != null) {
                 var uri = data.getData();
                 var cr = getContentResolver();
