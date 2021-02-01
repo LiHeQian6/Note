@@ -3,12 +3,15 @@ package com.example.note_android.scan
 import android.app.Activity
 import android.content.Intent
 import android.graphics.Bitmap
+import android.provider.MediaStore
 import android.view.View
 import com.example.note_android.R
 import com.xuexiang.xqrcode.XQRCode
 import com.xuexiang.xqrcode.ui.CaptureActivity
+import com.xuexiang.xqrcode.util.QRCodeAnalyzeUtils
 import com.xuexiang.xui.widget.dialog.materialdialog.MaterialDialog
 import kotlinx.android.synthetic.main.activity_scan.*
+
 
 class ScanActivity : CaptureActivity(),View.OnClickListener {
 
@@ -71,7 +74,7 @@ class ScanActivity : CaptureActivity(),View.OnClickListener {
     }
 
     override fun handleAnalyzeSuccess(bitmap: Bitmap?, result: String?) {
-        MaterialDialog.Builder(this).content(result.toString()).show()
+         MaterialDialog.Builder(this).content(result.toString()).show()
     }
 
     override fun onClick(v: View?) {
@@ -81,6 +84,10 @@ class ScanActivity : CaptureActivity(),View.OnClickListener {
             }
             R.id.iv_photo -> {
                 //TODO 打开图库
+                val intent = Intent(Intent.ACTION_GET_CONTENT)
+                intent.addCategory(Intent.CATEGORY_OPENABLE)
+                intent.type = "image/*"
+                startActivityForResult(intent, 123)
             }
             R.id.iv_flash_light -> {
                 if(ifFlashOn) {
@@ -89,6 +96,33 @@ class ScanActivity : CaptureActivity(),View.OnClickListener {
                     iv_flash_light.setImageDrawable(resources.getDrawable(R.drawable.ico_flashlight_on))
                 ifFlashOn = !ifFlashOn
                 XQRCode.switchFlashLight(ifFlashOn)
+            }
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == 123) {
+            if (data != null) {
+                var uri = data.getData();
+                var cr = getContentResolver();
+                try {
+                    var mBitmap = MediaStore.Images.Media.getBitmap(cr, uri);//显得到bitmap图片
+                    XQRCode.analyzeQRCode(mBitmap, object : QRCodeAnalyzeUtils.AnalyzeCallback {
+                        override fun onAnalyzeSuccess(bitmap: Bitmap?, result: String?) {
+                            MaterialDialog.Builder(this@ScanActivity).content(result.toString()).show()
+                        }
+
+                        override fun onAnalyzeFailed() {
+                            MaterialDialog.Builder(this@ScanActivity).content("扫码失败").show()
+                        }
+                    })
+                    if (mBitmap != null) {
+                        mBitmap.recycle();
+                    }
+                } catch (e: Exception) {
+                    e.printStackTrace();
+                }
             }
         }
     }
