@@ -20,7 +20,7 @@ import com.xuexiang.xui.utils.StatusBarUtils
 import kotlinx.android.synthetic.main.activity_edit.*
 
 @Page(name = "编辑页面")
-class EditActivity : AppCompatActivity() {
+class EditActivity : AppCompatActivity(),View.OnClickListener {
     var editBinding: ActivityEditBinding? = null
     var viewModel: EditViewModel? = null
 
@@ -29,12 +29,20 @@ class EditActivity : AppCompatActivity() {
         editBinding = DataBindingUtil.setContentView(this,R.layout.activity_edit)
         StatusBarUtils.initStatusBarStyle(this,true,resources.getColor(R.color.orange))
 
-        richEditor.setPlaceholder("从这里开始你的内容")
-        EditListener(richEditor)
-
-        text_bold.setOnClickListener(EditListener(richEditor))
         initView()
+        initRichEditor()
+    }
 
+    private fun initRichEditor() {
+        richEditor.setPlaceholder("从这里开始你的内容...")
+        text_bold.setOnClickListener(this)
+        text_lean.setOnClickListener(this)
+        head_1.setOnClickListener(this)
+        head_2.setOnClickListener(this)
+        head_3.setOnClickListener(this)
+        head_4.setOnClickListener(this)
+        head_5.setOnClickListener(this)
+        head_6.setOnClickListener(this)
     }
 
     private fun initView() {
@@ -48,6 +56,35 @@ class EditActivity : AppCompatActivity() {
 //                Toast.makeText(this@EditActivity, "键盘隐藏 高度" + height, Toast.LENGTH_SHORT).show();
             }
         })
+    }
+
+    override fun onClick(v: View?) {
+        when(v?.id){
+            R.id.text_bold -> {
+                richEditor.setBold()
+            }
+            R.id.text_lean -> {
+                richEditor.setItalic()
+            }
+            R.id.head_1 -> {
+                richEditor.setHeading(1)
+            }
+            R.id.head_2 -> {
+                richEditor.setHeading(2)
+            }
+            R.id.head_3 -> {
+                richEditor.setHeading(3)
+            }
+            R.id.head_4 -> {
+                richEditor.setHeading(4)
+            }
+            R.id.head_5 -> {
+                richEditor.setHeading(5)
+            }
+            R.id.head_6 -> {
+                richEditor.setHeading(6)
+            }
+        }
     }
 
 }

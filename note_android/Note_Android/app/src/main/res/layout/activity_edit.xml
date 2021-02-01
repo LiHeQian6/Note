@@ -76,6 +76,7 @@
             android:layout_width="match_parent"
             android:layout_height="@dimen/dp_50"
             android:layout_alignParentBottom="true"
+            android:scrollbars="none"
             android:background="@color/gray">
 
             <LinearLayout
@@ -98,12 +99,50 @@
                     android:layout_height="@dimen/dp_30"
                     android:layout_marginHorizontal="@dimen/dp_2"
                     android:src="@drawable/ico_lean"/>
-            </LinearLayout>
 
-<!--            <ImageView-->
-<!--                android:layout_width="@dimen/dp_20"-->
-<!--                android:layout_height="@dimen/dp_20"-->
-<!--                android:src="@mipmap/bold"/>-->
+                <ImageView
+                    android:id="@+id/head_1"
+                    android:layout_width="@dimen/dp_32"
+                    android:layout_height="@dimen/dp_32"
+                    android:layout_marginHorizontal="@dimen/dp_2"
+                    android:src="@drawable/head_1"/>
+
+                <ImageView
+                    android:id="@+id/head_2"
+                    android:layout_width="@dimen/dp_32"
+                    android:layout_height="@dimen/dp_32"
+                    android:layout_marginHorizontal="@dimen/dp_2"
+                    android:src="@drawable/head_2"/>
+
+                <ImageView
+                    android:id="@+id/head_3"
+                    android:layout_width="@dimen/dp_32"
+                    android:layout_height="@dimen/dp_32"
+                    android:layout_marginHorizontal="@dimen/dp_2"
+                    android:src="@drawable/head_3"/>
+
+                <ImageView
+                    android:id="@+id/head_4"
+                    android:layout_width="@dimen/dp_32"
+                    android:layout_height="@dimen/dp_32"
+                    android:layout_marginHorizontal="@dimen/dp_2"
+                    android:src="@drawable/head_4"/>
+
+                <ImageView
+                    android:id="@+id/head_5"
+                    android:layout_width="@dimen/dp_32"
+                    android:layout_height="@dimen/dp_32"
+                    android:layout_marginHorizontal="@dimen/dp_2"
+                    android:src="@drawable/head_5"/>
+
+                <ImageView
+                    android:id="@+id/head_6"
+                    android:layout_width="@dimen/dp_32"
+                    android:layout_height="@dimen/dp_32"
+                    android:layout_marginHorizontal="@dimen/dp_2"
+                    android:src="@drawable/head_6"/>
+
+            </LinearLayout>
         </HorizontalScrollView>
     </RelativeLayout>
 </layout>

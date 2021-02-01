@@ -112,7 +112,6 @@ class ScanActivity : CaptureActivity(),View.OnClickListener {
                         override fun onAnalyzeSuccess(bitmap: Bitmap?, result: String?) {
                             MaterialDialog.Builder(this@ScanActivity).content(result.toString()).show()
                         }
-
                         override fun onAnalyzeFailed() {
                             MaterialDialog.Builder(this@ScanActivity).content("扫码失败").show()
                         }
