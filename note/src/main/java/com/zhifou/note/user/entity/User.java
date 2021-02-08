@@ -1,50 +1,38 @@
 package com.zhifou.note.user.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.zhifou.note.note.entity.Note;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 /**
  * @author : li
  * @Date: 2021-01-10 11:15
  */
-@Entity(name="user")
+@Entity
 @Getter
 @Setter
 public class User extends org.springframework.security.core.userdetails.User {
     @Id
-    @Column(name = "user_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-    @Column
     private String username;
-    @Column
     private String password;
-    @Column
     private String introduction="还没有任何介绍哦！";
-    @Column
-    private String nick_name="一只笔记君";
-    @Column
+    private String nickName="一只笔记君";
     private String photo;
-    @Column
     private Date createTime=new Date();
-    @Column
     private Date lastReadTime=new Date();
-    @Column
     private boolean accountNonExpired=true;
-    @Column
     private boolean accountNonLocked=true;
-    @Column
     private boolean credentialsNonExpired=true;
-    @Column
     private boolean enabled=true;
+    @JsonIgnore
     @ManyToMany
     @JoinTable(
         name = "users_roles",
@@ -53,10 +41,15 @@ public class User extends org.springframework.security.core.userdetails.User {
         inverseJoinColumns = @JoinColumn(
                 name = "role_id"))
     private List<Role> roles;
+    @JsonIgnore
+    @OneToMany(mappedBy = "user")
+    private Set<Note> notes;
+
+
     @Transient
     private Collection<? extends GrantedAuthority> authorities;
 
-    private User() {
+    public User() {
         super("admin1","admin",new ArrayList<>());
     }
 
@@ -84,7 +77,7 @@ public class User extends org.springframework.security.core.userdetails.User {
                 ", username='" + username + '\'' +
                 ", password='" + "[PROTECTED]" + '\'' +
                 ", introduction='" + introduction + '\'' +
-                ", nick_name='" + nick_name + '\'' +
+                ", nick_name='" + nickName + '\'' +
                 ", photo='" + photo + '\'' +
                 ", createTime=" + createTime +
                 ", lastReadTime=" + lastReadTime +

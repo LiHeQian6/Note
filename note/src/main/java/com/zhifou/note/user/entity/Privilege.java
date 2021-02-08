@@ -11,17 +11,16 @@ import java.util.Collection;
  * @author : li
  * @Date: 2021-01-14 14:18
  */
-@Entity(name = "privilege")
+@Entity
 @Getter
 @Setter
 public class Privilege {
 
     @Id
-    @Column(name = "privilege_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-    @Column(name = "name")
     private String name;
+    private int status;
 
     @JsonIgnore
     @ManyToMany(mappedBy = "privileges",targetEntity = Role.class)
