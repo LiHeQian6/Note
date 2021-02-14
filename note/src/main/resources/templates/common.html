@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="zh-cn" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>知否笔记后台管理系统</title>
+    <!-- Favicon icon -->
+    <link rel="icon" type="image/png" sizes="16x16" th:href="@{/static/assets/images/favicon.png}" />
+    <link rel="stylesheet" th:href="@{/static/assets/plugins/chartist/css/chartist.min.css}" />
+    <!-- Custom Stylesheet -->
+    <link th:href="@{/static/css/style.css}" rel="stylesheet" />
+    <script th:src="@{/static/js/modernizr-3.6.0.min.js}"></script>
+    <script th:src="@{https://cdn.staticfile.org/jquery/2.0.0/jquery.min.js}"></script>
+</head>
+<body class="v-light vertical-nav fix-header fix-sidebar">
+<div id="preloader" th:fragment="preloader">
+    <div class="loader">
+        <svg class="circular" viewbox="25 25 50 50">
+            <circle class="path" cx="50" cy="50" r="20" fill="none" stroke-width="3" stroke-miterlimit="10" />
+        </svg>
+    </div>
+</div>
+<div id="main-wrapper" th:fragment="header">
+    <!-- header -->
+    <div class="header">
+        <div class="nav-header">
+            <div class="brand-logo">
+                <a th:href="@{/index}"><b><img th:src="@{/static/assets/images/logo.png}" src=""  alt="logo"/> </b><span class="brand-title"><img th:src="@{/static/assets/images/logo-text.png}" src="../../assets/images/logo-text.png" alt="" /></span></a>
+            </div>
+            <div class="nav-control">
+                <div class="hamburger">
+                    <span class="line"></span>
+                    <span class="line"></span>
+                    <span class="line"></span>
+                </div>
+            </div>
+        </div>
+        <div class="header-right">
+            <ul>
+                <li class="icons"><a href="javascript:void(0)"><i class="mdi mdi-account f-s-20" aria-hidden="true"></i></a>
+                    <div class="drop-down dropdown-profile animated bounceInDown">
+                        <div class="dropdown-content-body">
+                            <ul>
+                                <li><a href=""><i class="mdi mdi-account"></i> <span>username</span></a> </li>
+                                <li><a href="/logout"><i class="icon-power"></i> <span>Logout</span></a> </li>
+                            </ul>
+                        </div>
+                    </div> </li>
+            </ul>
+        </div>
+    </div>
+</div>
+<!-- / header -->
+<!-- sidebar -->
+<div class="nk-sidebar" th:fragment="sidebar">
+    <div class="nk-nav-scroll">
+        <ul class="metismenu" id="menu">
+            <li><a th:href="@{/index}" href=""><i class=" mdi mdi-view-dashboard"></i> <span class="nav-text">系统总览</span></a> </li>
+            <li><a class="has-arrow" aria-expanded="false"><i class="mdi mdi-book-open-variant"></i> <span class="nav-text">笔记管理</span></a>
+                <ul aria-expanded="false">
+                    <li><a th:href="@{/note-management}">笔记管理</a> </li>
+                    <li><a th:href="@{/comment-management}">评论管理</a> </li>
+                    <li><a th:href="@{/tag-management}">标签管理</a> </li>
+                </ul> </li>
+            <li><a class="has-arrow" th:href="@{/user-management}" aria-expanded="false"><i class="mdi mdi-account"></i> <span class="nav-text">用户管理</span></a>
+                <ul aria-expanded="false">
+                    <li><a th:href="@{/user-management}">用户管理</a> </li>
+                </ul> </li>
+            <li><a class="has-arrow" th:href="@{/notification-management}" aria-expanded="false"><i class="mdi mdi-bell"></i> <span class="nav-text">通知管理</span></a>
+                <ul aria-expanded="false">
+                    <li><a th:href="@{/notification-management}">通知管理</a> </li>
+                    <!-- <li><a href="ui-alert.html">通知发布</a>
+                             </li> -->
+                </ul> </li>
+            <li><a class="has-arrow" aria-expanded="false"><i class="mdi mdi-certificate"></i><span class="nav-text"> 认证管理</span></a>
+                <ul aria-expanded="false">
+                    <li><a th:href="@{/user-identity-management}">用户认证</a> </li>
+                    <li><a th:href="@{/admin-identity-management}">管理员认证</a> </li>
+                </ul> </li>
+            <li><a class="has-arrow" aria-expanded="false"><i class="mdi mdi-desktop-mac"></i> <span class="nav-text">系统监控</span></a>
+                <ul aria-expanded="false">
+                    <li><a th:href="@{/system-log}">系统日志</a> </li>
+                    <li><a th:href="@{/druid/index.html}">sql监控</a> </li>
+                    <li><a th:href="@{/swagger-ui.html}">Swagger文档</a> </li>
+                </ul> </li>
+            <li><a th:href="@{/link-management}"><i class="mdi mdi-link-variant"></i> <span class="nav-text">友链管理</span></a> </li>
+        </ul>
+    </div>
+    <!-- #/ nk nav scroll -->
+</div>
+<!-- #/ sidebar -->
+<!-- content body -->
+<div class="content-body">
+    <!-- #/ container -->
+    <div class="container" th:fragment="breadcrumb(position)">
+        <div class="row page-titles">
+            <div class="col p-0">
+                <h4>欢迎, <span>username</span></h4>
+            </div>
+            <div class="col p-0">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="javascript:void(0)">首页</a> </li>
+                    <li class="breadcrumb-item active" th:text="${position}"></li>
+                </ol>
+            </div>
+        </div>
+    </div>
+    <!-- footer -->
+    <div class="footer" th:fragment="footer">
+        <div class="copyright">
+            <p>Copyright &copy; <a href="">zhifou</a> 2021, by <a href="" target="_blank">li</a></p>
+        </div>
+    </div>
+    <!-- #/ footer -->
+    <!-- Common JS -->
+    <script th:src="@{/static/assets/plugins/common/common.min.js}" src="../../assets/plugins/common/common.min.js"></script>
+    <!-- Custom script -->
+    <script th:src="@{/static/js/custom.min.js}" src="../js/custom.min.js"></script>
+    <script th:src="@{/static/assets/plugins/chartist/js/chartist.min.js}" src="../../assets/plugins/chartist/js/chartist.min.js"></script>
+    <script th:src="@{/static/assets/plugins/chartist/js/chartist-plugin-tooltip.min.js}" src="../../assets/plugins/chartist/js/chartist-plugin-tooltip.min.js"></script>
+
+</div>
+</body>
+</html>
