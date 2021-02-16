@@ -26,6 +26,7 @@ public class User extends org.springframework.security.core.userdetails.User {
     private String introduction="还没有任何介绍哦！";
     private String nickName="一只笔记君";
     private String photo;
+    private String certification;//实名认证，保存真实名字
     private Date createTime=new Date();
     private Date lastReadTime=new Date();
     private boolean accountNonExpired=true;
