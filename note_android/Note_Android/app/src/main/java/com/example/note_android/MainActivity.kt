@@ -2,6 +2,7 @@ package com.example.note_android
 
 import android.os.Bundle
 import android.view.MenuItem
+import android.view.View
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.findNavController
@@ -25,6 +26,10 @@ class MainActivity : AppCompatActivity() {
 //            )
 //        )
 //        setupActionBarWithNavController(navController, appBarConfiguration)
+        navView.findViewById<View>(R.id.navigation_home).setOnLongClickListener { true }
+        navView.findViewById<View>(R.id.navigation_follow).setOnLongClickListener { true }
+        navView.findViewById<View>(R.id.navigation_persion).setOnLongClickListener { true }
+        navView.setOnNavigationItemReselectedListener { true }
         navView.setupWithNavController(navController)
     }
 }

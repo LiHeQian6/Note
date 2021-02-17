@@ -10,9 +10,12 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.example.note_android.R
 import com.example.note_android.annotation.Page
+import com.example.note_android.login.LoginActivity
+import com.example.note_android.util.ActivityUtil
+import kotlinx.android.synthetic.main.fragment_person.view.*
 
 @Page(name = "个人信息页面")
-class PersonFragment : Fragment() {
+class PersonFragment : Fragment(),View.OnClickListener {
 
     private lateinit var personViewModel: PersonViewModel
 
@@ -24,10 +27,22 @@ class PersonFragment : Fragment() {
         personViewModel =
             ViewModelProvider(this).get(PersonViewModel::class.java)
         val root = inflater.inflate(R.layout.fragment_person, container, false)
-        val textView: TextView = root.findViewById(R.id.text_notifications)
-        personViewModel.text.observe(viewLifecycleOwner, Observer {
-            textView.text = it
-        })
+        initView(root)
         return root
     }
+
+    private fun initView(root: View) {
+        root.logout_button.setOnClickListener(this)
+    }
+
+
+    override fun onClick(v: View?) {
+        when(v?.id){
+            R.id.logout_button -> {
+                ActivityUtil.get()?.goActivityKill(requireContext(),LoginActivity::class.java)
+            }
+        }
+    }
+
+
 }

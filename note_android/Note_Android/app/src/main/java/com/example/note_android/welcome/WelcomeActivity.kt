@@ -10,6 +10,7 @@ import com.example.note_android.MainActivity
 import com.example.note_android.annotation.Page
 import com.example.note_android.login.LoginActivity
 import com.example.note_android.R
+import com.example.note_android.util.ActivityUtil
 import com.xuexiang.xui.XUI
 import kotlinx.android.synthetic.main.activity_welcome.*
 
@@ -29,10 +30,7 @@ class WelcomeActivity : AppCompatActivity() {
         a.execute()
 
         wel_close_button.setOnClickListener(View.OnClickListener {
-            val go = Intent()
-            go.setClass(applicationContext, MainActivity::class.java)
-            startActivity(go)
-            finish()
+            ActivityUtil.get()?.goActivityKill(this,LoginActivity::class.java)
             a.cancel(true)
         })
     }
@@ -53,10 +51,7 @@ class WelcomeActivity : AppCompatActivity() {
 
         override fun onPostExecute(result: Int?) {
             super.onPostExecute(result)
-            var go = Intent()
-            go.setClass(this@WelcomeActivity, MainActivity::class.java)
-            this@WelcomeActivity.startActivity(go)
-            this@WelcomeActivity.finish()
+            ActivityUtil.get()?.goActivityKill(this@WelcomeActivity,LoginActivity::class.java)
         }
     }
 }
