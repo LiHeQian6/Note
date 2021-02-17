@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>知否笔记后台管理系统</title>
+    <!-- Favicon icon -->
+    <link rel="icon" type="image/png" sizes="16x16" th:href="@{/static/assets/images/favicon.png}" />
+    <!-- Custom Stylesheet -->
+    <link th:href="@{/static/css/style.css}" rel="stylesheet" />
+    <script th:src="@{/static/js/modernizr-3.6.0.min.js}"></script>
+    <script th:src="@{https://cdn.staticfile.org/jquery/2.0.0/jquery.min.js}"></script>
+</head>
+<body class="v-light vertical-nav fix-header fix-sidebar">
+<div th:replace="common::preloader"></div>
+<div th:replace="common::header"></div>
+<!-- #/ header -->
+<!-- sidebar -->
+<div th:replace="common::sidebar"></div>
+<!-- #/ sidebar -->
+<!-- content body -->
+<div class="content-body">
+    <!-- #/ container -->
+    <div class="container">
+        <div th:replace="common::breadcrumb('swagger文档')"></div>
+        <div class="card" style="height: 80vh">
+            <div class="card-body">
+                <iframe th:frameborder="0" width="100%" scrolling="auto" height="100%" src="/swagger-ui.html"></iframe>
+            </div>
+        </div>
+    </div>
+    <!-- footer -->
+    <div th:replace="common::footer"></div>
+    <!-- #/ footer -->
+    <!-- Common JS -->
+    <script th:src="@{/static/assets/plugins/common/common.min.js}"></script>
+    <!-- Custom script -->
+    <script th:src="@{/static/js/custom.min.js}"></script>
+    <script type="text/javascript">
+
+    </script>
+</div>
+</body>
+</html>

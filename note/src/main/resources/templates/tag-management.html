@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 
 <head>
 	<meta charset="utf-8">
@@ -7,140 +7,32 @@
 	<meta name="viewport" content="width=device-width,initial-scale=1">
 	<title>知否笔记后台管理系统</title>
 	<!-- Favicon icon -->
-	<link rel="icon" type="image/png" sizes="16x16" href="../../assets/images/favicon.png">
-    <link href="../../assets/plugins/tables/css/datatable/dataTables.bootstrap4.min.css" rel="stylesheet" />
+	<link rel="icon" type="image/png" sizes="16x16" th:href="@{/static/assets/images/favicon.png}">
+    <link th:href="@{/static/assets/plugins/tables/css/datatable/dataTables.bootstrap4.min.css}" rel="stylesheet" />
 
 	<!-- Custom Stylesheet -->
-	<link href="../css/style.css" rel="stylesheet">
-	<script src="../js/modernizr-3.6.0.min.js"></script>
-	<script src="https://cdn.staticfile.org/jquery/2.0.0/jquery.min.js"></script>
+	<link th:href="@{/static/css/style.css}" rel="stylesheet">
+	<script th:src="@{/static/js/modernizr-3.6.0.min.js}"></script>
+	<script th:src="@{https://cdn.staticfile.org/jquery/2.0.0/jquery.min.js}"></script>
 </head>
 
 <body class="v-light vertical-nav fix-header fix-sidebar">
-	<div id="preloader">
-		<div class="loader">
-			<svg class="circular" viewBox="25 25 50 50">
-				<circle class="path" cx="50" cy="50" r="20" fill="none" stroke-width="3" stroke-miterlimit="10"/>
-			</svg>
-		</div>
-	</div>
-	<div id="main-wrapper">
-		<!-- header -->
-		<div class="header">
-			<div class="nav-header">
-				<div class="brand-logo"><a href="index.html"><b><img src="../../assets/images/logo.png" alt=""> </b><span
-					class="brand-title"><img src="../../assets/images/logo-text.png" alt=""></span></a>
-				</div>
-				<div class="nav-control">
-					<div class="hamburger"><span class="line"></span> <span class="line"></span> <span class="line"></span>
-					</div>
-				</div>
-			</div>
-			<div class="header-right">
-				<ul>
-					<li class="icons"><a href="javascript:void(0)"><i class="mdi mdi-account f-s-20" aria-hidden="true"></i></a>
-						<div class="drop-down dropdown-profile animated bounceInDown">
-							<div class="dropdown-content-body">
-								<ul>
-									<li><a href="#"><i class="mdi mdi-account"></i> <span>username</span></a>
-									</li>
-									<li><a href="/logout"><i class="icon-power"></i> <span>Logout</span></a>
-									</li>
-								</ul>
-							</div>
-						</div>
-					</li>
-				</ul>
-			</div>
-		</div>
-	</div>
+	<div th:replace="common::preloader"></div>
+	<div th:replace="common::header"></div>
 	<!-- #/ header -->
 	<!-- sidebar -->
-	<div class="nk-sidebar">
-		<div class="nk-nav-scroll">
-			<ul class="metismenu" id="menu">
-				<li><a href="index.html"><i class=" mdi mdi-view-dashboard"></i> <span class="nav-text">系统总览</span></a>
-				</li>
-
-				<li class="active"><a class="has-arrow" aria-expanded="true"><i class="mdi mdi-book-open-variant"></i> <span
-					class="nav-text">笔记管理</span></a>
-					<ul aria-expanded="true" class="collapse in">
-
-						<li><a href="note-management.html">笔记管理</a>
-						</li>
-						<li><a href="comment-management.html">评论管理</a>
-						</li>
-						<li><a href="tag-management.html">标签管理</a>
-						</li>
-					</li>
-				</ul>
-			</li>
-			<li><a class="has-arrow" href="#" aria-expanded="false"><i class="mdi mdi-account"></i> <span
-				class="nav-text">用户管理</span></a>
-				<ul aria-expanded="false">
-					<li><a href="email-inbox.html">用户管理</a>
-					</li>
-				</ul>
-			</li>
-		</li>
-
-		<li><a class="has-arrow" href="#" aria-expanded="false"><i class="mdi mdi-bell"></i> <span class="nav-text">通知管理</span></a>
-			<ul aria-expanded="false">
-				<li><a href="ui-accordion.html">通知管理</a>
-				</li>
-				<li><a href="ui-alert.html">通知发布</a>
-				</li>
-			</li>
-		</ul>
-	</li>
-	<li><a class="has-arrow" href="#" aria-expanded="false"><i class="mdi mdi-certificate"></i><span
-		class="nav-text"> 认证管理</span></a>
-		<ul aria-expanded="false">
-			<li><a href="form-basic.html">用户认证</a>
-			</li>
-			<li><a href="form-addons.html">管理员认证</a>
-			</li>
-		</ul>
-	</li>
-	<li><a class="has-arrow" href="#" aria-expanded="false"><i class="mdi mdi-desktop-mac"></i> <span
-		class="nav-text">系统监控</span></a>
-		<ul aria-expanded="false">
-			<li><a href="table-basic.html">系统日志</a>
-			</li>
-			<li><a href="table-layout.html">sql监控</a>
-			</li>
-			<li><a href="table-dt-basic.html">Swagger文档</a>
-			</li>
-		</ul>
-	</li>
-	<li><a href="map-datamap.html"><i class="mdi mdi-link-variant"></i> <span class="nav-text">友链管理</span></a>
-	</li>
-</ul>
-</div>
-<!-- #/ nk nav scroll -->
-</div>
+	<div th:replace="common::sidebar"></div>
 <!-- #/ sidebar -->
 <!-- content body -->
 <div class="content-body">
 	<!-- #/ container -->
 	<div class="container">
-		<div class="row page-titles">
-			<div class="col p-0">
-				<h4>欢迎, <span>Username</span></h4>
-			</div>
-			<div class="col p-0">
-				<ol class="breadcrumb">
-					<li class="breadcrumb-item"><a href="javascript:void(0)">首页</a>
-					</li>
-					<li class="breadcrumb-item active">笔记管理</li>
-				</ol>
-			</div>
-		</div>
+		<div th:replace="common::breadcrumb('标签管理')"></div>
 		    <div class="row"> 
 		     <div class="col-12"> 
 		      <div class="card"> 
 		       <div class="card-body"> 
-		        <h4 class="card-title">笔记列表</h4> 
+		        <h4 class="card-title">标签列表</h4>
 		        <div class="table-responsive"> 
 		         <div id="DataTables_Table_0_wrapper" class="dataTables_wrapper container-fluid dt-bootstrap4">
 		          <div class="row">
@@ -158,18 +50,14 @@
         </div>
 </div>
 		<!-- footer -->
-		<div class="footer">
-			<div class="copyright">
-				<p>Copyright &copy; <a href="#">zhifou</a> 2021, by <a href="#" target="_blank">li</a></p>
-			</div>
-		</div>
+		<div th:replace="common::footer"></div>
 		<!-- #/ footer -->
 		<!-- Common JS -->
-		<script src="../../assets/plugins/common/common.min.js"></script>
+		<script th:src="@{/static/assets/plugins/common/common.min.js}"></script>
 		<!-- Custom script -->
-		<script src="../js/custom.min.js"></script>
-		<script src="../../assets/plugins/tables/js/jquery.dataTables.min.js"></script> 
-   		<script src="../../assets/plugins/tables/js/datatable/dataTables.bootstrap4.min.js"></script> 
+		<script th:src="@{/static/js/custom.min.js}"></script>
+		<script th:src="@{/static/assets/plugins/tables/js/jquery.dataTables.min.js}"></script>
+   		<script th:src="@{/static/assets/plugins/tables/js/datatable/dataTables.bootstrap4.min.js}"></script>
 		<script type="text/javascript">
 			$(document).ready(function () {
               $('#DataTables_Table_0').dataTable( {

@@ -8,15 +8,13 @@ import org.springframework.security.core.GrantedAuthority;
 import javax.persistence.*;
 import java.util.Collection;
 
-@Entity(name = "role")
+@Entity
 @Getter
 @Setter
 public class Role implements GrantedAuthority {
     @Id
-    @Column(name = "role_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-    @Column(name = "name")
     private String name;
     @JsonIgnore
     @ManyToMany(mappedBy = "roles",targetEntity = User.class)
@@ -29,6 +27,7 @@ public class Role implements GrantedAuthority {
             inverseJoinColumns = @JoinColumn(
                     name = "privilege_id"))
     private Collection<Privilege> privileges;
+    private int status;
 
     public Role() {
     }

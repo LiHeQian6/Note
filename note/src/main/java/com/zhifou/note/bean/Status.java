@@ -30,8 +30,11 @@ public enum  Status {
     INTERNAL_SERVER_ERROR(500, "内部服务器错误"),
     SERVICE_UNAVAILABLE(503, "暂停服务"),
     /**
-    *  前后端分离时的状态码以及信息
-    * */
+     *  前后端分离时的状态码以及信息
+     *  #1000～1999 区间表示参数错误
+     *  #2000～2999 区间表示用户错误
+     *  #3000～3999 区间表示接口异常
+     **/
     CLIENT_SUCCESS(20000,"成功"),
     CLIENT_FAIL(20001,"失败"),
     CLIENT_USERNAME_PASSWORD(20002,"用户名或密码错误"),

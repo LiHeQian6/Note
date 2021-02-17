@@ -25,7 +25,7 @@ spring:
       testOnBorrow: false
       testOnReturn: false
       #配置监控统计拦截的filters，去掉后监控界面sql将无法统计,'wall'用于防火墙
-      filters: stat, wall, log4j, config
+      filters: stat, wall, config
       #######监控配置
       # WebStatFilter配置，说明请参考Druid Wiki，配置_配置WebStatFilter
       web-stat-filter:
@@ -45,7 +45,7 @@ spring:
         #  禁用HTML页面上的“Reset All”功能
         reset-enable: false
         login-username: admin #监控页面登录的用户名
-        login-password: li123456 #监控页面登录的密码
+        login-password: admin #监控页面登录的密码
         #IP白名单(没有配置或者为空，则允许所有访问)
         allow: 127.0.0.1
         #IP黑名单 (存在共同时，deny优先于allow)
@@ -61,11 +61,17 @@ spring:
     properties:
       hibernate:
         enable_lazy_load_no_trans: true
+  #  security:
+  #    user:
+  #      name: li
+  #      password: 123456
+  redis:
+    database: 11
+    port: 6379
+    host: localhost
 logging:
   level:
-    root: warn
-    com.li.project.blog: info
+    root: info
+    com.li.project.blog: debug
   file:
-    name: log/note-pro.log
-server:
-  port: 8081
+    name: log/note-dev.log

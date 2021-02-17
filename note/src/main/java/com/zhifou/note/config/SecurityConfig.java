@@ -25,6 +25,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .and().formLogin().loginPage("/login").loginProcessingUrl("/login").permitAll()
                 .and().logout().logoutUrl("/logout")
                 .and().csrf().disable();
+        http.headers().frameOptions().sameOrigin();
     }
 
     @Bean
