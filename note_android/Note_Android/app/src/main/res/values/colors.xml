@@ -10,4 +10,5 @@
     <color name="blue">#00A8E1</color>
     <color name="orange">#FF6700</color>
     <color name="gray">#e6e6e6</color>
+    <color name="notice_red">#FF0000</color>
 </resources>

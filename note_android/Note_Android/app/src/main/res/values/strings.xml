@@ -15,4 +15,8 @@
     <string name="title_home">首页</string>
     <string name="title_dashboard">关注</string>
     <string name="title_notifications">我的</string>
+    <array name="persion_option">
+        <item>编译器设置</item>
+        <item>系统设置</item>
+    </array>
 </resources>
