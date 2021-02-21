@@ -19,8 +19,7 @@ class WelcomeActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         XUI.init(application)
-        XUI.debug(true)
-        XUI.getInstance().initFontStyle("fonts/hwxk.ttf");
+        XUI.getInstance().initFontStyle("fonts/hwxk.ttf")
         setContentView(R.layout.activity_welcome)
         val ani = AlphaAnimation(0.2f,1.0f)
         ani.duration = 1000

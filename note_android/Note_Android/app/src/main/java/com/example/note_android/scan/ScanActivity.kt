@@ -6,13 +6,14 @@ import android.graphics.Bitmap
 import android.provider.MediaStore
 import android.view.View
 import com.example.note_android.R
+import com.example.note_android.annotation.Page
 import com.xuexiang.xqrcode.XQRCode
 import com.xuexiang.xqrcode.ui.CaptureActivity
 import com.xuexiang.xqrcode.util.QRCodeAnalyzeUtils
 import com.xuexiang.xui.widget.dialog.materialdialog.MaterialDialog
 import kotlinx.android.synthetic.main.activity_scan.*
 
-
+@Page(name = "二维码扫描")
 class ScanActivity : CaptureActivity(),View.OnClickListener {
 
     private val IMAGE_REQUEST_CODE = 500

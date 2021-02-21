@@ -11,4 +11,5 @@
     <color name="orange">#FF6700</color>
     <color name="gray">#e6e6e6</color>
     <color name="notice_red">#FF0000</color>
+    <color name="little_gray">#8a8a8a</color>
 </resources>

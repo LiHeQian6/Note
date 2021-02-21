@@ -1,7 +1,7 @@
 package com.example.note_android.util
 
-class RequestCodeUtil {
+class StateUtil {
     companion object{
-        const val LOGIN_REQUEST = 123
+        var EDITOR = SystemCodeUtil.MARKDOWN
     }
 }

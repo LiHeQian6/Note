@@ -1,6 +1,5 @@
 package com.example.note_android.login
 
-import android.app.Activity
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
@@ -8,12 +7,11 @@ import androidx.databinding.DataBindingUtil
 import com.example.note_android.MainActivity
 import com.example.note_android.login.bean.UserInfo
 import com.example.note_android.R
+import com.example.note_android.annotation.Page
 import com.example.note_android.databinding.ActivityLoginBinding
 import com.example.note_android.util.ActivityUtil
-import com.example.note_android.util.RequestCodeUtil
-import com.xuexiang.xui.utils.StatusBarUtils
-import kotlinx.android.synthetic.main.activity_login.*
 
+@Page(name = "登录页")
 class LoginActivity : AppCompatActivity(), View.OnClickListener {
     var loginBinding:ActivityLoginBinding? = null
     override fun onCreate(savedInstanceState: Bundle?) {
