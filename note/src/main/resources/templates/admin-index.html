@@ -30,7 +30,15 @@
      <div class="col-lg-3" style="text-align: center;">
       <div class="card">
        <div class="card-body">
-        <h4><i class="mdi mdi-eye-outline f-s-60 pull-left text-primary"></i>今日网站浏览量</h4>
+        <h4><i class="mdi mdi-eye-outline f-s-60 pull-left text-primary"></i>今日独立访问量</h4>
+        <h3 class="m-t-20" th:utext="${#request.getAttribute('uv')}"></h3>
+       </div>
+      </div>
+     </div>
+     <div class="col-lg-3" style="text-align: center;">
+      <div class="card">
+       <div class="card-body">
+        <h4><i class="mdi mdi-file-plus f-s-60 pull-left text-success"></i>今日笔记发布量</h4>
         <h3 class="m-t-20">666</h3>
        </div>
       </div>
@@ -38,7 +46,7 @@
      <div class="col-lg-3" style="text-align: center;">
       <div class="card">
        <div class="card-body">
-        <h4><i class="mdi mdi-file-plus f-s-60 pull-left text-success"></i>今日发布笔记数</h4>
+        <h4><i class="mdi mdi-book-open-variant f-s-60 pull-left text-secondary"></i>笔记发布总数量</h4>
         <h3 class="m-t-20">666</h3>
        </div>
       </div>
@@ -46,15 +54,7 @@
      <div class="col-lg-3" style="text-align: center;">
       <div class="card">
        <div class="card-body">
-        <h4><i class="mdi mdi-book-open-variant f-s-60 pull-left text-secondary"></i>笔记总数</h4>
-        <h3 class="m-t-20">666</h3>
-       </div>
-      </div>
-     </div>
-     <div class="col-lg-3" style="text-align: center;">
-      <div class="card">
-       <div class="card-body">
-        <h4><i class="mdi mdi-account f-s-60 pull-left text-danger"></i>用户总数</h4>
+        <h4><i class="mdi mdi-account f-s-60 pull-left text-danger"></i>网站用户总数量</h4>
         <h3 class="m-t-20">666</h3>
        </div>
       </div>
@@ -64,7 +64,7 @@
      <div class="col-lg-12">
       <div class="card">
        <div class="card-body">
-        <h4 class="card-title">七日访问趋势</h4>
+        <h4 class="card-title">七日活跃用户量</h4>
         <div id="line-smoothing" class="ct-chart ct-golden-section">
          <div class="chartist-tooltip" style="top: 274px; left: 54px;"></div>
         </div>

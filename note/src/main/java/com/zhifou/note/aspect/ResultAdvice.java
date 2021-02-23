@@ -11,6 +11,9 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
 
+import java.awt.image.BufferedImage;
+import java.io.File;
+
 /**
  * @author : li
  * @Date: 2021-02-06 22:26
@@ -29,10 +32,14 @@ public class ResultAdvice implements ResponseBodyAdvice<Object> {
         ResponseBean bean = new ResponseBean();
         if (body instanceof ResponseBean){
             return body;
-        }else {
+        }else if(body instanceof File){//返回文件时
+            return body;
+        }else if(body instanceof BufferedImage){//返回图片时
+            return body;
+        }else{
             bean.setData(body);
-            bean.setStatus(Status.CLIENT_SUCCESS);
-            bean.setMessage(Status.CLIENT_SUCCESS.getMessage());
+            bean.setStatus(Status.SUCCESS);
+            bean.setMessage(Status.SUCCESS.getMessage());
         }
         return bean;
     }
