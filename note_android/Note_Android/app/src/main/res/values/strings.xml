@@ -18,6 +18,7 @@
     <string name="tip_richText">富文本编辑器</string>
     <string name="tip_markdown">Markdown编辑器</string>
     <string name="no_autograph_tip">作者很懒，什么都没有留下</string>
+    <string name="APP_ID">101936988</string>
     <array name="persion_setting">
         <item>个人信息设置</item>
         <item>编辑器设置</item>

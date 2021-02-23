@@ -5,6 +5,14 @@ plugins {
 }
 
 android {
+    signingConfigs {
+        config {
+            storeFile file('C:\\APPKey\\zhifou_note.jks')
+            storePassword 'zhifou@001'
+            keyAlias 'key0'
+            keyPassword 'zhifou@001'
+        }
+    }
     compileSdkVersion 30
     buildToolsVersion "30.0.3"
 
@@ -60,4 +68,5 @@ dependencies {
     testImplementation 'junit:junit:4.+'
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
+    implementation 'com.tencent.tauth:qqopensdk:3.52.0'
 }
