@@ -72,6 +72,7 @@
                 android:gravity="center"
                 android:hint="请输入密码"
                 android:text="@{user.password}"
+                android:inputType="textPassword"
                 android:textColorHint="#bcbcbc"
                 android:textSize="@dimen/sp_15" />
 
@@ -156,10 +157,10 @@
             android:gravity="center">
 
             <ImageView
+                android:id="@+id/icon_qq_login"
                 android:layout_width="@dimen/dp_30"
                 android:layout_height="@dimen/dp_30"
                 android:background="@drawable/ico_qq" />
-
         </LinearLayout>
     </RelativeLayout>
 </layout>

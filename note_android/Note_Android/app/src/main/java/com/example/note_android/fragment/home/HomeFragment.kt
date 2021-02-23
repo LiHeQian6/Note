@@ -13,12 +13,13 @@ import com.example.note_android.annotation.Page
 import com.example.note_android.edit.EditActivity
 import com.example.note_android.login.LoginActivity
 import com.example.note_android.scan.ScanActivity
+import com.example.note_android.util.ActivityUtil
 import com.xuexiang.xui.utils.StatusBarUtils
 import kotlinx.android.synthetic.main.fragment_home.*
 import kotlinx.android.synthetic.main.fragment_home.view.*
 
 @Page(name = "主页")
-class HomeFragment : Fragment() {
+class HomeFragment : Fragment(),View.OnClickListener {
 
     private lateinit var homeViewModel: HomeViewModel
 
@@ -31,23 +32,25 @@ class HomeFragment : Fragment() {
             ViewModelProvider(this).get(HomeViewModel::class.java)
         StatusBarUtils.initStatusBarStyle(requireActivity(),true,resources.getColor(R.color.orange))
         val root = inflater.inflate(R.layout.fragment_home, container, false)
-//        val textView: TextView = root.findViewById(R.id.text_home)
-//        homeViewModel.text.observe(viewLifecycleOwner, Observer {
-//            textView.text = it
-//        })
-        root.test_button.setOnClickListener { v: View? ->
-            var goLogin = Intent()
-            goLogin.setClass(requireContext(),LoginActivity::class.java)
-            startActivity(goLogin)
-        }
-        root.add_button.setOnClickListener { v: View? ->
-            var to_edit = Intent()
-            to_edit.setClass(requireContext(),EditActivity::class.java)
-            startActivity(to_edit)
-        }
-        root.saoma.setOnClickListener { v: View? ->
-            ScanActivity.start(requireActivity(),1, R.style.XQRCodeTheme_Custom)
-        }
+        initListener(root)
         return root
     }
+
+    private fun initListener(view: View) {
+        view.add_button.setOnClickListener(this)
+        view.saoma.setOnClickListener(this)
+    }
+
+    override fun onClick(v: View?) {
+        when(v?.id){
+            R.id.add_button -> {
+                ActivityUtil.get()?.activity(requireContext(),EditActivity::class.java)
+            }
+            R.id.saoma -> {
+                ScanActivity.start(requireActivity(),1, R.style.XQRCodeTheme_Custom)
+            }
+        }
+    }
+
+
 }
