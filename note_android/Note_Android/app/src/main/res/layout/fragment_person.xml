@@ -67,6 +67,7 @@
                                 android:layout_below="@+id/user_name"
                                 android:layout_marginLeft="@dimen/dp_5"
                                 android:layout_toRightOf="@+id/person_image"
+                                android:layout_marginTop="@dimen/dp_5"
                                 android:text="@string/no_autograph_tip"
                                 android:textColor="@color/little_gray"
                                 android:textSize="@dimen/sp_12" />

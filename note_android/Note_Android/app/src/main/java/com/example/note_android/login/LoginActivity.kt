@@ -12,6 +12,7 @@ import com.example.note_android.databinding.ActivityLoginBinding
 import com.example.note_android.login.QQLogin.MyIUiListener
 import com.example.note_android.login.bean.UserInfo
 import com.example.note_android.util.ActivityUtil
+import com.example.note_android.util.StateUtil
 import com.tencent.tauth.Tencent
 
 
@@ -23,7 +24,7 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         loginBinding = DataBindingUtil.setContentView(this,R.layout.activity_login)
-        mTencent = Tencent.createInstance("101936988", this.getApplicationContext());
+        mTencent = Tencent.createInstance(resources.getString(R.string.APP_ID),applicationContext)
         initView()
         initListener()
     }
@@ -40,7 +41,7 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
 
     private fun QQLogin(){
         if (!mTencent!!.isSessionValid) {
-            mTencent!!.login(this, "all", MyIUiListener(this))
+            mTencent!!.login(this, "all", MyIUiListener(this, "login"))
         }
     }
 
@@ -50,7 +51,7 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
         data: Intent?
     ) {
         super.onActivityResult(requestCode, resultCode, data)
-        Tencent.onActivityResultData(requestCode,resultCode,data,MyIUiListener(this))
+        Tencent.onActivityResultData(requestCode,resultCode,data, MyIUiListener(this, "login"))
     }
 
     override fun onClick(v: View?) {
