@@ -20,7 +20,7 @@ public class GlobalExceptionHandler{
     @ExceptionHandler(Exception.class)
     public ResponseBean HandleException(Exception e){
         ResponseBean responseBean = new ResponseBean();
-        responseBean.setStatus(Status.CLIENT_FAIL);
+        responseBean.setStatus(Status.COMMON_FAIL);
         responseBean.setMessage(e.getMessage());
         return responseBean;
     }

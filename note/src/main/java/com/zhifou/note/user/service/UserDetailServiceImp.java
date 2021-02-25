@@ -2,6 +2,7 @@ package com.zhifou.note.user.service;
 
 import com.zhifou.note.user.entity.User;
 import com.zhifou.note.user.repository.UserRepository;
+import org.springframework.security.authentication.InternalAuthenticationServiceException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -24,7 +25,7 @@ public class UserDetailServiceImp implements UserDetailsService {
 
         User user = userRepository.findUserByUsername(username);
         if (user == null) {
-            throw new UsernameNotFoundException("用户名不存在！");
+            throw new InternalAuthenticationServiceException("用户名或密码错误！");
         }
         return new User(user.getUsername(), user.getPassword(),user.getRoles(),user.getAuthorities());
     }

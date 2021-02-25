@@ -53,7 +53,7 @@
                                         <button type="button" class="re-btn" onclick="window.location.href='/user/regist'">注册</button>
 -->                                    </div>
                                 </div>
-                                <form action="/login" method="post" style="text-align: center;margin-bottom: 10px">
+                                <form th:action="@{/admin/login}" method="post" style="text-align: center;margin-bottom: 10px">
                                     <div class="row">
                                         <div class="col-lg-12 no-pdd" style="padding-top: 15px">
                                             <div class="input-group mb-3">
@@ -80,15 +80,26 @@
                                                 <input type="password" class="form-control" id="password" name="password" placeholder="密 码">
                                             </div>
                                         </div>
-                                        <div class="col-lg-12 d-flex no-pdd flex-row">
-                                            <div class="col-lg-12 btn-forg-div pull-right">
-                                                <p th:if="${param.get('error')}" style="color: red" >用户名或密码错误</p>
+                                        <div class="col-lg-12 no-pdd" style="padding-top: 15px">
+                                            <div class="input-group mb-3">
+                                                <div class="input-group-prepend">
+                                                    <span class="input-group-text">
+                                                      <i class="fa fa-shield" style="width: 18px;" aria-hidden="true"></i>
+                                                    </span>
+                                                </div>
+                                                <input type="text" name="imageCode" class="form-control" id="imageCode" style="display: inline-block;" placeholder="验证码"/>
+                                                <img onclick="this.src=this.src+'?'+Math.random()" style="padding: 0 0 0 10px" src="/getImageCode" alt="验证码"/>
                                             </div>
                                         </div>
-                                        <div class="col-lg-12 no-pdd">
-                                            <div class="loginBtn-div">
-                                                <button type="submit" class="btn btn-primary loginBtn" value="submit">登 录</button>
-                                            </div>
+                                    </div>
+                                    <div class="col-lg-12 d-flex no-pdd flex-row">
+                                        <div class="col-lg-12 btn-forg-div pull-right">
+                                            <p th:text="${#request.getAttribute('error')}" style="color: red" ></p>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-12 no-pdd">
+                                        <div class="loginBtn-div">
+                                            <button type="submit" class="btn btn-primary loginBtn" value="submit">登 录</button>
                                         </div>
                                     </div>
                                 </form>
