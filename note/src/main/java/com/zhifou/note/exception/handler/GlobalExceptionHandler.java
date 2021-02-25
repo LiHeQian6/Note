@@ -2,6 +2,7 @@ package com.zhifou.note.exception.handler;
 
 import com.zhifou.note.bean.ResponseBean;
 import com.zhifou.note.bean.Status;
+import com.zhifou.note.exception.bean.TokenException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -15,6 +16,16 @@ import org.springframework.web.servlet.NoHandlerFoundException;
 @Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler{
+
+    @ResponseBody
+    @ExceptionHandler(TokenException.class)
+    public ResponseBean TokenException(TokenException e){
+        ResponseBean responseBean = new ResponseBean();
+        responseBean.setStatus(Status.TOKEN_EXPIRED);
+        responseBean.setMessage(e.getMessage());
+        return responseBean;
+    }
+
 
     @ResponseBody
     @ExceptionHandler(Exception.class)

@@ -6,6 +6,8 @@ import com.zhifou.note.util.RedisKeyUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -17,7 +19,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.awt.*;
 import java.io.IOException;
-import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -35,8 +36,7 @@ public class UserController {
     @ResponseBody
     @RequestMapping("/userInfo")
     public Object userInfo(){
-        Object user = redisTemplate.opsForValue().get("user");
-        Set<Object> ids = redisTemplate.opsForSet().members("ids");
+        Authentication user = SecurityContextHolder.getContext().getAuthentication();
         return user;
     }
 
