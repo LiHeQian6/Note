@@ -18,7 +18,22 @@
     <string name="tip_richText">富文本编辑器</string>
     <string name="tip_markdown">Markdown编辑器</string>
     <string name="no_autograph_tip">作者很懒，什么都没有留下</string>
+
+    <!--    登陆相关-->
+    <string name="Login_Type">Login_Type</string>
+    <string name="LoginWithQQ">QQ</string>
+
+    <!--    QQ登陆相关-->
     <string name="APP_ID">101936988</string>
+    <string name="Open_ID">Open_ID</string>
+    <string name="Access_Token">Access_Token</string>
+    <string name="Expires_In">Expires_In</string>
+
+    <!--    SQLite相关-->
+    <string name="QQLoginDbName">qq_login_info</string>
+    <string name="QQUserDbName">qq_user_info</string>
+
+    <!--    编辑器-->
     <array name="persion_setting">
         <item>个人信息设置</item>
         <item>编辑器设置</item>
