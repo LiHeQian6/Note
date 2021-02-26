@@ -12,12 +12,13 @@ import com.example.note_android.sql_lite.DataBaseHelper
 import com.example.note_android.sql_lite.QQLoginDbSchema
 import com.example.note_android.sql_lite.QQUserDbSchema
 import com.example.note_android.util.ActivityUtil
+import com.example.note_android.util.LoginEvent
 import com.example.note_android.util.Single
 import com.example.note_android.util.StateUtil
-import com.tencent.connect.UserInfo
 import com.tencent.tauth.IUiListener
 import com.tencent.tauth.UiError
 import com.xuexiang.xui.widget.toast.XToast
+import org.greenrobot.eventbus.EventBus
 
 
 class MyIUiListener(var context: Context,var option: String) : IUiListener {
@@ -50,16 +51,11 @@ class MyIUiListener(var context: Context,var option: String) : IUiListener {
             XToast.error(context,"登陆失败").show()
         }
         StateUtil.IF_LOGIN = true
-//        mTencent?.openId = StateUtil.LOGIN_INFO?.openid
-//        mTencent?.setAccessToken(StateUtil.LOGIN_INFO?.access_token,StateUtil.LOGIN_INFO?.expires_in)
-//        var user = UserInfo(context, mTencent?.qqToken)
-//        user.getUserInfo(MyIUiListener(context,"get_user_info"))
         ActivityUtil.get()?.goActivityKill(context, MainActivity::class.java)
     }
 
     private fun getUserInfo(p0: Any?){
         StateUtil.USER_INFO = Single.getGson()?.fromJson(p0.toString(),QQUserInfo::class.java)
-//        context.
         if(StateUtil.USER_INFO != null){
             insertUserData(context, StateUtil.USER_INFO!!)
         }else {
@@ -87,6 +83,7 @@ class MyIUiListener(var context: Context,var option: String) : IUiListener {
                 context.resources.getString(R.string.QQUserDbName),
                 null,
                 cv)
+        EventBus.getDefault().post(LoginEvent(qqUserInfo))
     }
 
     private fun insertLoginData(context: Context,qqLoginInfo: QQLoginInfo){

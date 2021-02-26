@@ -16,6 +16,11 @@
         tools:layout="@layout/fragment_follow" />
 
     <fragment
+        android:id="@+id/navigation_notice"
+        android:name="com.example.note_android.fragment.notice.NoticeFragment"
+        tools:layout="@layout/fragment_notice" />
+
+    <fragment
         android:id="@+id/navigation_persion"
         android:name="com.example.note_android.fragment.person.PersonFragment"
         tools:layout="@layout/fragment_person" />

@@ -12,7 +12,6 @@ import com.example.note_android.databinding.ActivityLoginBinding
 import com.example.note_android.login.QQLogin.MyIUiListener
 import com.example.note_android.login.bean.UserInfo
 import com.example.note_android.util.ActivityUtil
-import com.example.note_android.util.StateUtil
 import com.tencent.tauth.Tencent
 
 

@@ -8,12 +8,17 @@
 
     <item
         android:id="@+id/navigation_follow"
-        android:icon="@drawable/ico_favourite"
-        android:title="@string/title_dashboard" />
+        android:icon="@drawable/ico_follow"
+        android:title="@string/title_follow" />
+
+    <item
+        android:id="@+id/navigation_notice"
+        android:icon="@drawable/ico_notice"
+        android:title="@string/title_notice" />
 
     <item
         android:id="@+id/navigation_persion"
         android:icon="@drawable/ico_me"
-        android:title="@string/title_notifications" />
+        android:title="@string/title_person" />
 
 </menu>

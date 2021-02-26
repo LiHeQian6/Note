@@ -12,7 +12,6 @@ import com.example.note_android.R
 import com.example.note_android.login.QQLogin.MyIUiListener
 import com.example.note_android.sql_lite.DataBaseHelper
 import com.example.note_android.sql_lite.QQLoginDbSchema
-import com.example.note_android.sql_lite.QQUserDbSchema
 import com.example.note_android.util.ActivityUtil
 import com.example.note_android.util.Single
 import com.example.note_android.util.StateUtil
@@ -84,7 +83,7 @@ class WelcomeActivity : AppCompatActivity() {
             mTencent.openId = openId
             mTencent.setAccessToken(accessToken,expires_In)
             var user = UserInfo(this,mTencent.qqToken)
-            user.getUserInfo(MyIUiListener(this,"get_user_info"))
+            user.getUserInfo(MyIUiListener(this, "get_user_info"))
         }
     }
 

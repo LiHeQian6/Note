@@ -16,8 +16,10 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.Note_Android">
-        <activity android:name=".scan.ScanActivity"></activity>
+        android:theme="@style/Theme.Note_Android"
+        android:usesCleartextTraffic="true">
+        <activity android:name=".userinfo.NoticeActivity"></activity>
+        <activity android:name=".scan.ScanActivity" />
         <activity
             android:name=".edit.EditActivity"
             android:windowSoftInputMode="adjustPan" />
@@ -32,12 +34,14 @@
         </activity>
         <activity
             android:name="com.tencent.tauth.AuthActivity"
-            android:noHistory="true"
-            android:launchMode="singleTask" >
+            android:launchMode="singleTask"
+            android:noHistory="true">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
+
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
+
                 <data android:scheme="tencent101936988" />
             </intent-filter>
         </activity>
@@ -45,18 +49,18 @@
             android:name="com.tencent.connect.common.AssistActivity"
             android:configChanges="orientation|keyboardHidden"
             android:screenOrientation="behind"
-            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
-
-<!--        <provider-->
-<!--            android:name="androidx.core.content.FileProvider"-->
-<!--            android:authorities="com.example.note_android.fileprovider"-->
-<!--            android:exported="false"-->
-<!--            android:grantUriPermissions="true">-->
-<!--            <meta-data-->
-<!--                android:name="android.support.FILE_PROVIDER_PATHS"-->
-<!--                android:resource="@xml/file_paths"/>-->
-<!--        </provider>-->
-
-        <uses-library android:name="org.apache.http.legacy" android:required="false" />
+            android:theme="@android:style/Theme.Translucent.NoTitleBar" /> <!-- <provider -->
+        <!-- android:name="androidx.core.content.FileProvider" -->
+        <!-- android:authorities="com.example.note_android.fileprovider" -->
+        <!-- android:exported="false" -->
+        <!-- android:grantUriPermissions="true"> -->
+        <!-- <meta-data -->
+        <!-- android:name="android.support.FILE_PROVIDER_PATHS" -->
+        <!-- android:resource="@xml/file_paths"/> -->
+        <!-- </provider> -->
+        <uses-library
+            android:name="org.apache.http.legacy"
+            android:required="false" />
     </application>
+
 </manifest>
