@@ -32,6 +32,8 @@
 
     <!--    QQ登陆相关-->
     <string name="APP_ID">101936988</string>
+    <string name="QQLoginInfo">QQLoginInfo</string>
+    <string name="QQUserInfo">QQUserInfo</string>
     <string name="Open_ID">Open_ID</string>
     <string name="Access_Token">Access_Token</string>
     <string name="Expires_In">Expires_In</string>

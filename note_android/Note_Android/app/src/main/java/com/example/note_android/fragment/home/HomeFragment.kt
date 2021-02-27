@@ -1,6 +1,8 @@
 package com.example.note_android.fragment.home
 
+import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -36,6 +38,11 @@ class HomeFragment : Fragment(),View.OnClickListener {
     private fun initListener(view: View) {
         view.add_button.setOnClickListener(this)
         view.saoma.setOnClickListener(this)
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        Log.i("123","123")
     }
 
     override fun onClick(v: View?) {

@@ -1,7 +1,5 @@
 package com.example.note_android.fragment.person
 
-import android.content.Intent
-import android.database.sqlite.SQLiteDatabase
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -11,15 +9,11 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
-import com.bumptech.glide.load.resource.bitmap.RoundedCorners
-import com.bumptech.glide.request.RequestOptions
 import com.example.note_android.R
 import com.example.note_android.annotation.Page
 import com.example.note_android.login.LoginActivity
-import com.example.note_android.login.QQLogin.MyIUiListener
 import com.example.note_android.sql_lite.DataBaseHelper
 import com.example.note_android.util.*
-import com.tencent.connect.UserInfo
 import com.tencent.tauth.Tencent
 import com.xuexiang.xui.widget.dialog.materialdialog.MaterialDialog
 import com.xuexiang.xui.widget.dialog.materialdialog.simplelist.MaterialSimpleListAdapter
@@ -36,8 +30,6 @@ class PersonFragment : Fragment(),View.OnClickListener {
 
     private lateinit var personViewModel: PersonViewModel
     private lateinit var settingAdapter : SettingAdapter
-    private lateinit var dataBaseHelper: DataBaseHelper
-    private lateinit var sqLiteDatabase: SQLiteDatabase
     private lateinit var root: View
     private lateinit var mTencent:Tencent
 
@@ -69,6 +61,9 @@ class PersonFragment : Fragment(),View.OnClickListener {
                     .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
                     .dontAnimate()
                     .into(root.person_image)
+        }else{
+            root.user_name?.setText("立即登录")
+            root.logout_button.visibility = View.GONE
         }
     }
 
@@ -144,8 +139,6 @@ class PersonFragment : Fragment(),View.OnClickListener {
         val itemArray: Array<String> = resources.getStringArray(R.array.persion_setting)
         settingAdapter = SettingAdapter(itemArray,requireContext(),R.layout.setting_item)
         root.setting_list.adapter = settingAdapter
-        dataBaseHelper = DataBaseHelper(requireContext(),1)
-        sqLiteDatabase = dataBaseHelper.writableDatabase
 
         root.person_image.isCircle = true
     }
@@ -156,8 +149,6 @@ class PersonFragment : Fragment(),View.OnClickListener {
         var editor = Single.getShared(requireContext())?.edit()
         editor?.clear()
         editor?.apply()
-        sqLiteDatabase.execSQL("delete from ${resources.getString(R.string.QQLoginDbName)}")
-        sqLiteDatabase.execSQL("delete from ${resources.getString(R.string.QQUserDbName)}")
         root.user_name?.setText("立即登录")
         root.logout_button.visibility = View.GONE
         StateUtil.IF_LOGIN = false
