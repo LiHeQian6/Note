@@ -1,4 +1,4 @@
-package com.zhifou.note.user;
+package com.zhifou.note.user.filter;
 
 import com.zhifou.note.exception.bean.ValidateCodeException;
 import com.zhifou.note.util.RedisKeyUtil;

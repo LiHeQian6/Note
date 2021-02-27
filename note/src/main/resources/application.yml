@@ -6,3 +6,8 @@ spring:
   mvc:
     throw-exception-if-no-handler-found: true #出现错误时，直接抛出异常
     static-path-pattern: /static/**
+jwt:
+  tokenHeader: Authorization #JWT存储的请求头
+  secret: my-springsecurity-plus #JWT加解密使用的**
+  expiration: 604800 #JWT的超期限时间(60*60*24*7)
+  tokenHead: 'Bearer ' #JWT负载中拿到开头，空格别忘了

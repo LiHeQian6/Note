@@ -74,4 +74,4 @@ logging:
     root: info
     com.li.project.blog: debug
   file:
-    name: log/note-dev.log
+    name: log/note-pro.log
