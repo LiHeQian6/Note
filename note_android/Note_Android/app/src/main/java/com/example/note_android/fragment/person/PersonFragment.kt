@@ -1,7 +1,5 @@
 package com.example.note_android.fragment.person
 
-import android.content.Intent
-import android.database.sqlite.SQLiteDatabase
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -9,21 +7,22 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.example.note_android.R
 import com.example.note_android.annotation.Page
 import com.example.note_android.login.LoginActivity
 import com.example.note_android.sql_lite.DataBaseHelper
-import com.example.note_android.util.ActivityUtil
-import com.example.note_android.util.Single
-import com.example.note_android.util.StateUtil
-import com.example.note_android.util.SystemCodeUtil
-import com.tencent.connect.UserInfo
+import com.example.note_android.util.*
 import com.tencent.tauth.Tencent
 import com.xuexiang.xui.widget.dialog.materialdialog.MaterialDialog
 import com.xuexiang.xui.widget.dialog.materialdialog.simplelist.MaterialSimpleListAdapter
 import com.xuexiang.xui.widget.dialog.materialdialog.simplelist.MaterialSimpleListItem
 import com.xuexiang.xui.widget.toast.XToast
 import kotlinx.android.synthetic.main.fragment_person.view.*
+import org.greenrobot.eventbus.EventBus
+import org.greenrobot.eventbus.Subscribe
+import org.greenrobot.eventbus.ThreadMode
 import java.util.*
 
 @Page(name = "个人信息页面")
@@ -31,9 +30,8 @@ class PersonFragment : Fragment(),View.OnClickListener {
 
     private lateinit var personViewModel: PersonViewModel
     private lateinit var settingAdapter : SettingAdapter
-    private lateinit var dataBaseHelper: DataBaseHelper
-    private lateinit var sqLiteDatabase: SQLiteDatabase
     private lateinit var root: View
+    private lateinit var mTencent:Tencent
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -43,6 +41,8 @@ class PersonFragment : Fragment(),View.OnClickListener {
         personViewModel =
             ViewModelProvider(this).get(PersonViewModel::class.java)
         root = inflater.inflate(R.layout.fragment_person, container, false)
+        mTencent = Tencent.createInstance(resources.getString(R.string.APP_ID),requireContext())
+        EventBus.getDefault().register(this)
         initView()
         checkLogin()
         itemListener()
@@ -50,26 +50,46 @@ class PersonFragment : Fragment(),View.OnClickListener {
         return root
     }
 
+    override fun onResume() {
+        super.onResume()
+        if(StateUtil.IF_LOGIN) {
+            root.user_name?.setText(StateUtil.USER_INFO?.nickname)
+            root.logout_button.visibility = View.VISIBLE
+            Glide.with(requireContext()).load(StateUtil.USER_INFO?.figureurl_qq_2)
+                    .error(R.drawable.head_1)
+                    .placeholder(R.drawable.head_1)
+                    .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
+                    .dontAnimate()
+                    .into(root.person_image)
+        }else{
+            root.user_name?.setText("立即登录")
+            root.logout_button.visibility = View.GONE
+        }
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public fun setInfoEvent(loginEvent: LoginEvent){
+        root.user_name?.setText(loginEvent.userInfo?.nickname)
+        Glide.with(requireContext()).load(StateUtil.USER_INFO?.figureurl_qq_1)
+                .error(R.drawable.head_1)
+                .placeholder(R.drawable.head_1)
+                .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
+                .into(root.person_image)
+        EventBus.getDefault().unregister(this)
+    }
+
     private fun initListener() {
         root.logout_button.setOnClickListener(this)
         root.user_name.setOnClickListener(this)
     }
 
-    override fun onResume() {
-        super.onResume()
-        if(StateUtil.IF_LOGIN) {
-            root.user_name?.setText(StateUtil.USER_INFO?.nickname)
-            root.logout_button.setText("退 出 登 陆")
-        }
-    }
-
     private fun checkLogin() {
         if(!StateUtil.IF_LOGIN){
             root.user_name?.setText("立即登录")
-            root.logout_button.setText("请 登 陆")
+            root.logout_button.visibility = View.GONE
         }else{
             root.user_name?.setText(StateUtil.USER_INFO?.nickname)
-            root.logout_button.setText("退 出 登 陆")
+            root.logout_button.visibility = View.VISIBLE
         }
     }
 
@@ -119,29 +139,32 @@ class PersonFragment : Fragment(),View.OnClickListener {
         val itemArray: Array<String> = resources.getStringArray(R.array.persion_setting)
         settingAdapter = SettingAdapter(itemArray,requireContext(),R.layout.setting_item)
         root.setting_list.adapter = settingAdapter
+
+        root.person_image.isCircle = true
+    }
+
+    private fun logout(){
+        if(!StateUtil.IF_LOGIN)
+            return
+        var editor = Single.getShared(requireContext())?.edit()
+        editor?.clear()
+        editor?.apply()
+        root.user_name?.setText("立即登录")
+        root.logout_button.visibility = View.GONE
+        StateUtil.IF_LOGIN = false
+        mTencent.logout(requireContext())
     }
 
     override fun onClick(v: View?) {
         when(v?.id){
             R.id.logout_button -> {
-                if(!StateUtil.IF_LOGIN)
-                    return
-                var editor = Single.getShared(requireContext())?.edit()
-                editor?.clear()
-                editor?.commit()
-                dataBaseHelper = DataBaseHelper(requireContext(),1)
-                sqLiteDatabase = dataBaseHelper.writableDatabase
-                sqLiteDatabase.execSQL("delete from ${resources.getString(R.string.QQLoginDbName)}")
-                sqLiteDatabase.execSQL("delete from ${resources.getString(R.string.QQUserDbName)}")
-                root.user_name?.setText("立即登录")
-                root.logout_button.setText("请 登 录")
-                StateUtil.IF_LOGIN = false
+                logout()
             }
             R.id.user_name -> {
                 if(StateUtil.IF_LOGIN)
                     return
                 else
-                    ActivityUtil.get()?.activity(requireContext(),LoginActivity::class.java)
+                    ActivityUtil.get()?.goActivityResult(requireActivity(),LoginActivity::class.java,SystemCodeUtil.QQ_LOGIN_REQUEST)
             }
         }
     }

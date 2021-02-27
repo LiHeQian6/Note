@@ -3,6 +3,7 @@ package com.example.note_android.welcome
 import android.database.sqlite.SQLiteDatabase
 import android.os.AsyncTask
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.view.animation.AlphaAnimation
 import androidx.appcompat.app.AppCompatActivity
@@ -10,17 +11,21 @@ import com.example.note_android.MainActivity
 import com.example.note_android.annotation.Page
 import com.example.note_android.R
 import com.example.note_android.login.QQLogin.MyIUiListener
+import com.example.note_android.login.bean.QQLoginInfo
+import com.example.note_android.login.bean.QQUserInfo
 import com.example.note_android.sql_lite.DataBaseHelper
 import com.example.note_android.sql_lite.QQLoginDbSchema
-import com.example.note_android.sql_lite.QQUserDbSchema
 import com.example.note_android.util.ActivityUtil
 import com.example.note_android.util.Single
 import com.example.note_android.util.StateUtil
 import com.tencent.connect.UserInfo
+import com.tencent.tauth.IUiListener
 import com.tencent.tauth.Tencent
+import com.tencent.tauth.UiError
 import com.xuexiang.xui.XUI
 import com.xuexiang.xui.widget.toast.XToast
 import kotlinx.android.synthetic.main.activity_welcome.*
+import org.json.JSONObject
 
 @Page(name = "欢迎页")
 class WelcomeActivity : AppCompatActivity() {
@@ -62,30 +67,48 @@ class WelcomeActivity : AppCompatActivity() {
     private fun checkLogin() {
         var editor = Single.getShared(this)
         var loginType = editor?.getString(resources.getString(R.string.Login_Type),"")
-        if (loginType.equals("")) {
+        initInfo()
+        if (loginType.equals("") ||
+            StateUtil.LOGIN_INFO==null ||
+            StateUtil.USER_INFO == null) {
             StateUtil.IF_LOGIN = false
         }else{
             StateUtil.IF_LOGIN = true
             StateUtil.LOGIN_TYPE = loginType!!
-            var cursor = sqLiteDatabase.query(resources.getString(R.string.QQLoginDbName), null, null, null, null, null, null);
-            //遍历Cursor
-            lateinit var openId:String
-            lateinit var accessToken:String
-            lateinit var expires_In:String
-            if(cursor.moveToFirst()) {//判定是否有数据，如果有则移动到第一条数据
-                do {
-                    openId = cursor.getString(cursor.getColumnIndex(QQLoginDbSchema.OPENID))
-                    accessToken = cursor.getString(cursor.getColumnIndex(QQLoginDbSchema.ACCESS_TOKEN))
-                    expires_In = cursor.getString(cursor.getColumnIndex(QQLoginDbSchema.EXPIRES_IN))
-                } while (cursor.moveToNext())
-            }else{
-                XToast.error(this,"登录信息过期，请重新登陆").show()
-            }
-            mTencent.openId = openId
-            mTencent.setAccessToken(accessToken,expires_In)
-            var user = UserInfo(this,mTencent.qqToken)
-            user.getUserInfo(MyIUiListener(this,"get_user_info"))
+            mTencent.openId = StateUtil.LOGIN_INFO?.openid
+            mTencent.setAccessToken(StateUtil.LOGIN_INFO?.access_token,StateUtil.LOGIN_INFO?.expires_in)
+            mTencent.checkLogin(object : IUiListener {
+                override fun onComplete(p0: Any?) {
+                    p0 as JSONObject
+                    if (p0.optInt("ret", -1) == 0) {
+                        mTencent.loadSession(resources.getString(R.string.APP_ID));
+                    } else {
+                        StateUtil.IF_LOGIN = false
+                    }
+                }
+
+                override fun onCancel() {
+                    TODO("Not yet implemented")
+                }
+
+                override fun onWarning(p0: Int) {
+                    TODO("Not yet implemented")
+                }
+
+                override fun onError(p0: UiError?) {
+                    TODO("Not yet implemented")
+                }
+
+            })
         }
+    }
+
+    private fun initInfo(){
+        var editor = Single.getShared(this)
+        var userInfo = editor?.getString(resources.getString(R.string.QQUserInfo),"")
+        var loginInfo = editor?.getString(resources.getString(R.string.QQLoginInfo),"")
+        StateUtil.LOGIN_INFO = Single.getGson()?.fromJson(loginInfo, QQLoginInfo::class.java)
+        StateUtil.USER_INFO = Single.getGson()?.fromJson(userInfo, QQUserInfo::class.java)
     }
 
     private inner class CustomAsyncTask : AsyncTask<String, Int, Int>(){

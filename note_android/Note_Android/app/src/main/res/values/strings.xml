@@ -12,11 +12,18 @@
     <string name="invalid_password">Password must be >5 characters</string>
     <string name="login_failed">"Login failed"</string>
     <string name="title_activity_main">MainActivity</string>
+
+    <!--    BottomNavigationView-->
     <string name="title_home">首页</string>
-    <string name="title_dashboard">关注</string>
-    <string name="title_notifications">我的</string>
+    <string name="title_follow">关注</string>
+    <string name="title_notice">消息</string>
+    <string name="title_person">我的</string>
+
+    <!--    编辑器选择-->
     <string name="tip_richText">富文本编辑器</string>
     <string name="tip_markdown">Markdown编辑器</string>
+
+    <!--    默认签名-->
     <string name="no_autograph_tip">作者很懒，什么都没有留下</string>
 
     <!--    登陆相关-->
@@ -25,6 +32,8 @@
 
     <!--    QQ登陆相关-->
     <string name="APP_ID">101936988</string>
+    <string name="QQLoginInfo">QQLoginInfo</string>
+    <string name="QQUserInfo">QQUserInfo</string>
     <string name="Open_ID">Open_ID</string>
     <string name="Access_Token">Access_Token</string>
     <string name="Expires_In">Expires_In</string>
