@@ -14,6 +14,7 @@ import java.util.Collection;
 @Entity
 @Getter
 @Setter
+@Table(uniqueConstraints= @UniqueConstraint(columnNames="name"))
 public class Privilege {
 
     @Id

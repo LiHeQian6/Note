@@ -24,7 +24,7 @@ public class NoteAuthenticationFailureHandle implements AuthenticationFailureHan
         response.setContentType("application/json;charset=UTF-8");
         ObjectMapper mapper = new ObjectMapper();
         ResponseBean responseBean = new ResponseBean();
-        responseBean.setStatus(Status.COMMON_FAIL);
+        responseBean.setStatus(Status.USER_CREDENTIALS_ERROR);
         responseBean.setMessage(exception.getMessage());
         PrintWriter out = response.getWriter();
         out.write(mapper.writeValueAsString(responseBean));
