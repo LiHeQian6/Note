@@ -6,6 +6,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.example.note_android.R
@@ -14,7 +15,7 @@ import com.example.note_android.edit.EditActivity
 import com.example.note_android.fragment.notice.NoticeViewModel
 import com.example.note_android.scan.ScanActivity
 import com.example.note_android.util.ActivityUtil
-import com.xuexiang.xui.utils.StatusBarUtils
+import com.example.note_android.util.StateBarUtils
 import kotlinx.android.synthetic.main.fragment_home.view.*
 
 @Page(name = "主页")
@@ -27,9 +28,9 @@ class HomeFragment : Fragment(),View.OnClickListener {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        StateBarUtils.initStatusBarStyle(requireActivity(),true,resources.getColor(R.color.orange))
         homeViewModel =
             ViewModelProvider(this).get(NoticeViewModel::class.java)
-        StatusBarUtils.initStatusBarStyle(requireActivity(),true,resources.getColor(R.color.orange))
         val root = inflater.inflate(R.layout.fragment_home, container, false)
         initListener(root)
         return root

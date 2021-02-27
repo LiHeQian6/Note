@@ -11,6 +11,7 @@ import com.example.note_android.annotation.Page
 import com.example.note_android.edit.EditActivity
 import com.example.note_android.scan.ScanActivity
 import com.example.note_android.util.ActivityUtil
+import com.example.note_android.util.StateBarUtils
 import com.xuexiang.xui.utils.StatusBarUtils
 import kotlinx.android.synthetic.main.fragment_home.view.*
 
@@ -26,7 +27,7 @@ class NoticeFragment : Fragment(),View.OnClickListener {
     ): View? {
         noticeViewModel =
             ViewModelProvider(this).get(NoticeViewModel::class.java)
-        StatusBarUtils.initStatusBarStyle(requireActivity(),true,resources.getColor(R.color.orange))
+        StateBarUtils.initStatusBarStyle(requireActivity(),true,resources.getColor(R.color.orange))
         val root = inflater.inflate(R.layout.fragment_notice, container, false)
         initListener(root)
         return root

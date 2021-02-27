@@ -52,6 +52,7 @@ class PersonFragment : Fragment(),View.OnClickListener {
 
     override fun onResume() {
         super.onResume()
+        StateUtil.initInfo(requireContext())
         if(StateUtil.IF_LOGIN) {
             root.user_name?.setText(StateUtil.USER_INFO?.nickname)
             root.logout_button.visibility = View.VISIBLE
