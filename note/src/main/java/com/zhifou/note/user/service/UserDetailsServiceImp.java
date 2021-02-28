@@ -46,6 +46,10 @@ public class UserDetailsServiceImp implements UserDetailsService {
         }
     }
 
+    public User loadUserById(int userId) {
+        return userRepository.findUserById(userId);
+    }
+
 
 
 
