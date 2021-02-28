@@ -70,6 +70,7 @@ class MainActivity : AppCompatActivity() {
         viewPager = findViewById(R.id.nav_host_fragment);
         viewPager.adapter = ViewPagerAdapter(this)
         viewPager.isUserInputEnabled = false
+        viewPager.offscreenPageLimit = 4
         viewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
                 super.onPageSelected(position)
@@ -79,16 +80,17 @@ class MainActivity : AppCompatActivity() {
         nav_view.setOnNavigationItemSelectedListener { item: MenuItem ->
             when(item.itemId){
                 R.id.navigation_home -> {
-                    viewPager.setCurrentItem(0)
+//                    viewPager.setCurrentItem(0)
+                    viewPager.setCurrentItem(0,false)
                 }
                 R.id.navigation_follow -> {
-                    viewPager.setCurrentItem(1)
+                    viewPager.setCurrentItem(1,false)
                 }
                 R.id.navigation_notice -> {
-                    viewPager.setCurrentItem(2)
+                    viewPager.setCurrentItem(2,false)
                 }
                 R.id.navigation_persion -> {
-                    viewPager.setCurrentItem(3)
+                    viewPager.setCurrentItem(3,false)
                 }
             }
             false

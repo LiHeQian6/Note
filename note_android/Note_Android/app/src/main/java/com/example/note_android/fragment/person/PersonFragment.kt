@@ -68,6 +68,11 @@ class PersonFragment : Fragment(),View.OnClickListener {
         }
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        EventBus.getDefault().unregister(this)
+    }
+
     @Subscribe(threadMode = ThreadMode.MAIN)
     public fun setInfoEvent(loginEvent: LoginEvent){
         root.user_name?.setText(loginEvent.userInfo?.nickname)

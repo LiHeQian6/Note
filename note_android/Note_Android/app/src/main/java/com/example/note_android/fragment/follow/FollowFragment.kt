@@ -7,14 +7,18 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.note_android.R
+import com.example.note_android.fragment.RVItemOnClickListener
 import com.example.note_android.util.StateBarUtils
+import com.xuexiang.xui.widget.toast.XToast
 import kotlinx.android.synthetic.main.fragment_follow.view.*
 
 class FollowFragment : Fragment() {
 
     private lateinit var followViewModel: FollowViewModel
     private lateinit var root: View
+    private var list: MutableList<Any> = ArrayList()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -25,8 +29,28 @@ class FollowFragment : Fragment() {
             ViewModelProvider(this).get(FollowViewModel::class.java)
         StateBarUtils.initStatusBarStyle(requireActivity(),true,resources.getColor(R.color.orange))
         root = inflater.inflate(R.layout.fragment_follow, container, false)
+        initData()
+        initRVAdapter()
         initView()
         return root
+    }
+
+    private fun initRVAdapter() {
+        var layoutManager = LinearLayoutManager(requireContext())
+        var adapter = FollowRVAdapter(list,requireContext(),root.follow_recyclerView)
+        root.follow_recyclerView.layoutManager = layoutManager
+        root.follow_recyclerView.adapter = adapter
+        adapter.setOnItemClickListener(object : RVItemOnClickListener{
+            override fun onItemClick(position: Int) {
+                XToast.success(requireContext(),"这是第${position+1}个").show()
+            }
+        })
+    }
+
+    private fun initData() {
+        for (i in 1..10){
+            list.add(i)
+        }
     }
 
     private fun initView() {
