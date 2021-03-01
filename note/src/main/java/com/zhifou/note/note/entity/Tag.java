@@ -24,4 +24,12 @@ public class Tag {
     private Set<Note> notes;
     private int status;
 
+    @Override
+    public String toString() {
+        return "Tag{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", status=" + status +
+                '}';
+    }
 }

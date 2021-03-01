@@ -20,14 +20,24 @@ public class Type {
     private int id;
     private String name;
     @ManyToOne(targetEntity = Type.class,cascade = CascadeType.ALL)
+    @JsonIgnore
     @JoinColumn(name = "parent_id")
     private Type parent;
-    @JsonIgnore
     @OneToMany(mappedBy = "parent")
     private Set<Type> child;
     @JsonIgnore
     @OneToMany(mappedBy = "type")
     private Set<Note> notes;
-    private int status;
+    private int status=0;
 
+    @Override
+    public String toString() {
+        return "Type{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", parent=" + parent +
+                ", child=" + child +
+                ", status=" + status +
+                '}';
+    }
 }

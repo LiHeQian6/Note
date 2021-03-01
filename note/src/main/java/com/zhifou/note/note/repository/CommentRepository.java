@@ -1,14 +1,13 @@
 package com.zhifou.note.note.repository;
 
-import com.zhifou.note.note.entity.Note;
+import com.zhifou.note.note.entity.Comment;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 /**
  * @author : li
- * @Date: 2021-02-08 17:24
+ * @Date: 2021-03-01 22:13
  */
 @Repository
-public interface NoteRepository extends JpaRepository<Note,Integer> {
-    Note findNoteById(int noteId);
+public interface CommentRepository extends JpaRepository<Comment,Integer> {
 }
