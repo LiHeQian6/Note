@@ -18,7 +18,8 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Note_Android"
         android:usesCleartextTraffic="true">
-        <activity android:name=".userinfo.NoticeActivity"></activity>
+        <activity android:name=".note.ShowActivity"></activity>
+        <activity android:name=".userinfo.NoticeActivity" />
         <activity android:name=".scan.ScanActivity" />
         <activity
             android:name=".edit.EditActivity"

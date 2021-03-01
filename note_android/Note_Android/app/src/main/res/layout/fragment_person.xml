@@ -95,13 +95,18 @@
                             android:gravity="center"
                             android:orientation="vertical">
 
+                            <ImageView
+                                android:layout_width="@dimen/dp_30"
+                                android:layout_height="@dimen/dp_30"
+                                android:src="@drawable/ico_note"/>
+
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:gravity="center"
-                                android:text="99\n收藏"
+                                android:text="帖子"
                                 android:textColor="@color/black"
-                                android:textSize="@dimen/sp_15" />
+                                android:textSize="@dimen/sp_12" />
                         </LinearLayout>
 
                         <LinearLayout
@@ -111,13 +116,18 @@
                             android:gravity="center"
                             android:orientation="vertical">
 
+                            <ImageView
+                                android:layout_width="@dimen/dp_30"
+                                android:layout_height="@dimen/dp_30"
+                                android:src="@drawable/ico_shoucang"/>
+
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:gravity="center"
-                                android:text="99\n收藏"
+                                android:text="收藏"
                                 android:textColor="@color/black"
-                                android:textSize="@dimen/sp_15" />
+                                android:textSize="@dimen/sp_12" />
                         </LinearLayout>
 
                         <LinearLayout
@@ -127,13 +137,18 @@
                             android:gravity="center"
                             android:orientation="vertical">
 
+                            <ImageView
+                                android:layout_width="@dimen/dp_30"
+                                android:layout_height="@dimen/dp_30"
+                                android:src="@drawable/ico_love"/>
+
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:gravity="center"
-                                android:text="99\n收藏"
+                                android:text="赞过"
                                 android:textColor="@color/black"
-                                android:textSize="@dimen/sp_15" />
+                                android:textSize="@dimen/sp_12" />
                         </LinearLayout>
                     </LinearLayout>
                 </RelativeLayout>

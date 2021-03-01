@@ -26,6 +26,7 @@
             android:id="@+id/follow_recyclerView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_below="@+id/follow_tool_bar" />
+            android:layout_below="@+id/follow_tool_bar"
+            android:overScrollMode="never"/>
     </RelativeLayout>
 </layout>
