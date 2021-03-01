@@ -67,7 +67,7 @@ class WelcomeActivity : AppCompatActivity() {
     private fun checkLogin() {
         var editor = Single.getShared(this)
         var loginType = editor?.getString(resources.getString(R.string.Login_Type),"")
-        initInfo()
+        StateUtil.initInfo(this)
         if (loginType.equals("") ||
             StateUtil.LOGIN_INFO==null ||
             StateUtil.USER_INFO == null) {
@@ -101,14 +101,6 @@ class WelcomeActivity : AppCompatActivity() {
 
             })
         }
-    }
-
-    private fun initInfo(){
-        var editor = Single.getShared(this)
-        var userInfo = editor?.getString(resources.getString(R.string.QQUserInfo),"")
-        var loginInfo = editor?.getString(resources.getString(R.string.QQLoginInfo),"")
-        StateUtil.LOGIN_INFO = Single.getGson()?.fromJson(loginInfo, QQLoginInfo::class.java)
-        StateUtil.USER_INFO = Single.getGson()?.fromJson(userInfo, QQUserInfo::class.java)
     }
 
     private inner class CustomAsyncTask : AsyncTask<String, Int, Int>(){

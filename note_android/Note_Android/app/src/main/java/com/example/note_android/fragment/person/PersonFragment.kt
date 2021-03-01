@@ -52,6 +52,7 @@ class PersonFragment : Fragment(),View.OnClickListener {
 
     override fun onResume() {
         super.onResume()
+        StateUtil.initInfo(requireContext())
         if(StateUtil.IF_LOGIN) {
             root.user_name?.setText(StateUtil.USER_INFO?.nickname)
             root.logout_button.visibility = View.VISIBLE
@@ -65,6 +66,11 @@ class PersonFragment : Fragment(),View.OnClickListener {
             root.user_name?.setText("立即登录")
             root.logout_button.visibility = View.GONE
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        EventBus.getDefault().unregister(this)
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
