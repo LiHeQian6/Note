@@ -81,8 +81,7 @@ public class InitialPrivilegeDataLoader implements ApplicationListener<ContextRe
   
         Role role = roleRepository.findByName(name);
         if (role == null) {
-            role = new Role(name);
-            role.setPrivileges(privileges);
+            role = new Role(name,privileges);
             roleRepository.save(role);
         }
         return role;

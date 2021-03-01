@@ -32,30 +32,30 @@ public class ValidateCodeFilter extends OncePerRequestFilter {
         if ("/admin/login".equalsIgnoreCase(httpServletRequest.getRequestURI())
                 && "post".equalsIgnoreCase(httpServletRequest.getMethod())) {
 //                HttpSession session = httpServletRequest.getSession();
-            String codeInRedis = (String) redisTemplate.opsForValue().get(RedisKeyUtil.getImageCodeKey(httpServletRequest.getRemoteAddr()));
+            String codeInRedis = (String) redisTemplate.opsForValue().get(RedisKeyUtil.getVerifyCodeKey(httpServletRequest.getRemoteAddr()));
             String codeInReq = httpServletRequest.getParameter("imageCode");
             try {
                 validateCode(codeInRedis,codeInReq);
             } catch (Exception e) {
                 httpServletRequest.setAttribute("error",e.getMessage());
                 httpServletRequest.getRequestDispatcher("/admin/login").forward(httpServletRequest,httpServletResponse);
-                redisTemplate.delete(RedisKeyUtil.getImageCodeKey(httpServletRequest.getRemoteAddr()));
+                redisTemplate.delete(RedisKeyUtil.getVerifyCodeKey(httpServletRequest.getRemoteAddr()));
                 return;
             }
-            redisTemplate.delete(RedisKeyUtil.getImageCodeKey(httpServletRequest.getRemoteAddr()));
+            redisTemplate.delete(RedisKeyUtil.getVerifyCodeKey(httpServletRequest.getRemoteAddr()));
         }else if("/login".equalsIgnoreCase(httpServletRequest.getRequestURI())
                 && "post".equalsIgnoreCase(httpServletRequest.getMethod())){
-            String codeInRedis = (String) redisTemplate.opsForValue().get(RedisKeyUtil.getImageCodeKey(httpServletRequest.getRemoteAddr()));
+            String codeInRedis = (String) redisTemplate.opsForValue().get(RedisKeyUtil.getVerifyCodeKey(httpServletRequest.getRemoteAddr()));
 //            HttpSession session = httpServletRequest.getSession();
             String codeInReq = httpServletRequest.getParameter("imageCode");
             try {
                 validateCode(codeInRedis,codeInReq);
             } catch (Exception e) {
-                redisTemplate.delete(RedisKeyUtil.getImageCodeKey(httpServletRequest.getRemoteAddr()));
+                redisTemplate.delete(RedisKeyUtil.getVerifyCodeKey(httpServletRequest.getRemoteAddr()));
                 resolver.resolveException(httpServletRequest,httpServletResponse,null,e);
                 return;
             }
-            redisTemplate.delete(RedisKeyUtil.getImageCodeKey(httpServletRequest.getRemoteAddr()));
+            redisTemplate.delete(RedisKeyUtil.getVerifyCodeKey(httpServletRequest.getRemoteAddr()));
         }
         filterChain.doFilter(httpServletRequest, httpServletResponse);
     }

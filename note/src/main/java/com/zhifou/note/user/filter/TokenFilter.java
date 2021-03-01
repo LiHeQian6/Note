@@ -1,6 +1,7 @@
 package com.zhifou.note.user.filter;
 
 import cn.hutool.core.util.StrUtil;
+import com.zhifou.note.bean.Status;
 import com.zhifou.note.exception.bean.TokenException;
 import com.zhifou.note.util.JwtUtils;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -45,7 +46,7 @@ public class TokenFilter extends OncePerRequestFilter{
                         //设置当前上下文的认证信息
                         SecurityContextHolder.getContext().setAuthentication(authentication);
                     }else {
-                        resolver.resolveException(request,response,null,new TokenException("Token已经过期,请重新登录！"));
+                        resolver.resolveException(request,response,null,new TokenException("Token已经过期,请重新登录！", Status.TOKEN_EXPIRED));
                         return;
                     }
                 }

@@ -7,7 +7,7 @@ public class RedisKeyUtil {
     private static final String PREFIX_USER_LIKE = "like:user";
     private static final String PREFIX_FOLLOWEE = "followee";
     private static final String PREFIX_FOLLOWER = "follower";
-    private static final String PREFIX_IMAGE_CODE = "imageCode";
+    private static final String PREFIX_VERIFY_CODE = "verifyCode";
     private static final String PREFIX_TOKEN = "token";
     private static final String PREFIX_USER = "user";
     private static final String PREFIX_UV = "uv";
@@ -38,9 +38,9 @@ public class RedisKeyUtil {
         return PREFIX_FOLLOWER + SPLIT + entityType + SPLIT + entityId;
     }
 
-    // 登录验证码
-    public static String getImageCodeKey(String owner) {
-        return PREFIX_IMAGE_CODE + SPLIT + owner;
+    // 验证码
+    public static String getVerifyCodeKey(String owner) {
+        return PREFIX_VERIFY_CODE + SPLIT + owner;
     }
 
     // 登录的凭证

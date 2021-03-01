@@ -2,23 +2,30 @@ package com.zhifou.note.user.controller;
 
 import cn.hutool.captcha.CaptchaUtil;
 import cn.hutool.captcha.CircleCaptcha;
+import cn.hutool.captcha.LineCaptcha;
+import com.zhifou.note.exception.bean.UserException;
+import com.zhifou.note.exception.bean.ValidateCodeException;
+import com.zhifou.note.user.entity.User;
+import com.zhifou.note.user.service.UserDetailsServiceImp;
+import com.zhifou.note.util.MailUtil;
 import com.zhifou.note.util.RedisKeyUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import javax.mail.MessagingException;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import java.awt.*;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -27,22 +34,36 @@ import java.util.concurrent.TimeUnit;
  */
 @Api("用户")
 @Controller
+@Validated
 public class UserController {
 
     @Resource
     private RedisTemplate<String,Object> redisTemplate;
 
+    @Resource
+    private MailUtil mailUtil;
+    @Resource
+    private UserDetailsServiceImp userService;
 
+
+    @ApiOperation("用户注册")
     @ResponseBody
-    @RequestMapping("/userInfo")
-    public Object userInfo(){
-        Authentication user = SecurityContextHolder.getContext().getAuthentication();
-        return user;
+    @PostMapping("/register/{mailCode}")
+    public void userRegister(@Valid @RequestBody User user,@NotNull @PathVariable String mailCode) throws UserException {
+        String verifyCode = (String) redisTemplate.opsForValue().get(RedisKeyUtil.getVerifyCodeKey(user.getUsername()));
+        if (verifyCode==null) {
+            throw new ValidateCodeException("验证码已过期！");
+        }
+        if (mailCode.equals(verifyCode)) {
+            userService.registerUser(user);
+        }else {
+            throw new ValidateCodeException("验证码不正确");
+        }
     }
 
     @ApiOperation("获取图片验证码")
-    @RequestMapping(value = "/getImageCode",method = RequestMethod.GET)
-    public void getCode(HttpServletRequest request,HttpServletResponse response) throws IOException {
+    @GetMapping(value = "/getImageCode")
+    public void geImageCode(HttpServletRequest request,HttpServletResponse response) throws IOException {
         response.setCharacterEncoding("UTF-8");
         response.setHeader("Pragma", "No-cache");
         response.setHeader("Cache-Control", "no-cache");
@@ -50,13 +71,21 @@ public class UserController {
         response.setContentType("image/jpeg");
         CircleCaptcha captcha = CaptchaUtil.createCircleCaptcha(100, 40,4,8);
         captcha.setBackground(Color.LIGHT_GRAY);
-//        System.out.println(captcha.getCode());
-        redisTemplate.opsForValue().set(RedisKeyUtil.getImageCodeKey(request.getRemoteAddr()),captcha.getCode(),5, TimeUnit.MINUTES);
-//        request.getSession().setAttribute("code",captcha.getCode());
+        //将验证码存储到redis
+        redisTemplate.opsForValue().set(RedisKeyUtil.getVerifyCodeKey(request.getRemoteAddr()),captcha.getCode(),5, TimeUnit.MINUTES);
         ServletOutputStream out = response.getOutputStream();
         captcha.write(out);
         out.flush();
         out.close();
+    }
+
+    @ApiOperation("获取邮件验证码")
+    @GetMapping(value = "/getMailCode")
+    @ResponseBody
+    public void getMailCode(@RequestParam String mail) throws UnsupportedEncodingException, MessagingException {
+        LineCaptcha captcha = CaptchaUtil.createLineCaptcha(1, 1, 4, 0);
+        redisTemplate.opsForValue().set(RedisKeyUtil.getVerifyCodeKey(mail),captcha.getCode());
+        mailUtil.sendVerifyCode(mail,captcha.getCode(),"账号注册");
     }
 
 
