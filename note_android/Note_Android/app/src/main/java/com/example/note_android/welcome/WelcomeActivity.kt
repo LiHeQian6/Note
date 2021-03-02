@@ -17,6 +17,7 @@ import com.example.note_android.sql_lite.DataBaseHelper
 import com.example.note_android.sql_lite.QQLoginDbSchema
 import com.example.note_android.util.ActivityUtil
 import com.example.note_android.util.Single
+import com.example.note_android.util.StateBarUtils
 import com.example.note_android.util.StateUtil
 import com.tencent.connect.UserInfo
 import com.tencent.tauth.IUiListener

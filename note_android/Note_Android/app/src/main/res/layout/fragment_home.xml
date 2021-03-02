@@ -10,43 +10,48 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:fitsSystemWindows="true">
+        android:fitsSystemWindows="true"
+        android:orientation="vertical">
 
-        <LinearLayout
+        <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
-            android:layout_height="@dimen/dp_50"
-            android:gravity="center"
-            android:background="@color/orange">
+            android:background="@color/white"
+            android:layout_height="@dimen/dp_50">
 
             <LinearLayout
-                android:layout_width="@dimen/dp_280"
-                android:layout_height="@dimen/dp_30"
-                android:background="@drawable/custom_editext">
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center">
+
+                <LinearLayout
+                    android:layout_width="@dimen/dp_280"
+                    android:layout_height="@dimen/dp_30"
+                    android:background="@drawable/custom_editext">
+
+                    <ImageView
+                        android:layout_width="@dimen/dp_18"
+                        android:layout_height="@dimen/dp_18"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginLeft="@dimen/dp_8"
+                        android:src="@drawable/ico_sousuo"/>
+
+                    <EditText
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/dp_30"
+                        android:background="@drawable/custom_editext"
+                        android:hint="搜索"
+                        android:textSize="@dimen/sp_14"/>
+
+                </LinearLayout>
 
                 <ImageView
-                    android:layout_width="@dimen/dp_18"
-                    android:layout_height="@dimen/dp_18"
-                    android:layout_gravity="center_vertical"
+                    android:id="@+id/saoma"
+                    android:layout_width="@dimen/dp_25"
+                    android:layout_height="@dimen/dp_25"
                     android:layout_marginLeft="@dimen/dp_8"
-                    android:src="@drawable/ico_sousuo"/>
-
-                <EditText
-                    android:layout_width="match_parent"
-                    android:layout_height="@dimen/dp_30"
-                    android:background="@drawable/custom_editext"
-                    android:hint="搜索"
-                    android:textSize="@dimen/sp_14"/>
-
+                    android:src="@drawable/ico_saoma"/>
             </LinearLayout>
-
-            <ImageView
-                android:id="@+id/saoma"
-                android:layout_width="@dimen/dp_25"
-                android:layout_height="@dimen/dp_25"
-                android:layout_marginLeft="@dimen/dp_8"
-                android:src="@drawable/ico_saoma"/>
-        </LinearLayout>
+        </androidx.cardview.widget.CardView>
 
         <RelativeLayout
             android:layout_width="match_parent"

@@ -13,20 +13,25 @@
         android:fitsSystemWindows="true"
         tools:context=".fragment.follow.FollowFragment">
 
-        <Toolbar
-            android:id="@+id/follow_tool_bar"
+        <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="@dimen/dp_50"
-            android:background="@color/orange"
-            android:title="关注内容"
-            android:titleTextColor="@color/white">
-        </Toolbar>
+            android:id="@+id/bar_card">
+            <Toolbar
+                android:id="@+id/follow_tool_bar"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/white"
+                android:title="关注内容"
+                android:titleTextColor="@color/deep_gray">
+            </Toolbar>
+        </androidx.cardview.widget.CardView>
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/follow_recyclerView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_below="@+id/follow_tool_bar"
+            android:layout_below="@+id/bar_card"
             android:overScrollMode="never"/>
     </RelativeLayout>
 </layout>

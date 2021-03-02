@@ -49,8 +49,8 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+//        StateBarUtils.initStatusBarStyle(this,false,resources.getColor(R.color.white))
         mTencent = Tencent.createInstance(resources.getString(R.string.APP_ID),applicationContext)
-        StateBarUtils.initStatusBarStyle(this,true,resources.getColor(R.color.orange))
         navView = findViewById(R.id.nav_view)
 //        val navController = findNavController(R.id.nav_host_fragment)
         initNavView()

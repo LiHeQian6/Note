@@ -34,13 +34,17 @@ class NoticeFragment : Fragment(),View.OnClickListener {
     ): View? {
         noticeViewModel =
             ViewModelProvider(this).get(NoticeViewModel::class.java)
-        StateBarUtils.initStatusBarStyle(requireActivity(),true,resources.getColor(R.color.orange))
         root = inflater.inflate(R.layout.fragment_notice, container, false)
         initToolBar()
         initData()
         initRVAdapter()
         initListener()
         return root
+    }
+
+    override fun onResume() {
+        super.onResume()
+        initSystemUi()
     }
 
     private fun initToolBar() {
@@ -79,5 +83,7 @@ class NoticeFragment : Fragment(),View.OnClickListener {
         }
     }
 
-
+    private fun initSystemUi(){
+        StateBarUtils.initStatusBarStyle(requireActivity(),false,resources.getColor(R.color.white))
+    }
 }

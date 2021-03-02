@@ -6,6 +6,7 @@ import android.content.Context
 import android.graphics.Color
 import android.os.Build
 import android.os.Build.VERSION_CODES
+import android.util.Log
 import android.view.*
 import android.widget.FrameLayout
 import androidx.annotation.ColorInt
@@ -41,7 +42,7 @@ class StateBarUtils {
         }
 
         fun translucent(window: Window) {
-            translucent(window, 0x40000000)
+            translucent(window, 0x00000000)
         }
 
         fun supportTranslucent(): Boolean {
@@ -145,6 +146,7 @@ class StateBarUtils {
             } else {
                 setStatusBarLightMode(activity)
             }
+            Log.e("执行","执行一次")
         }
 
         fun isNotchOfficialSupport(): Boolean {

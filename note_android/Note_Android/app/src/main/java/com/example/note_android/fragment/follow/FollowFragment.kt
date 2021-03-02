@@ -27,12 +27,16 @@ class FollowFragment : Fragment() {
     ): View? {
         followViewModel =
             ViewModelProvider(this).get(FollowViewModel::class.java)
-        StateBarUtils.initStatusBarStyle(requireActivity(),true,resources.getColor(R.color.orange))
         root = inflater.inflate(R.layout.fragment_follow, container, false)
         initData()
         initRVAdapter()
         initView()
         return root
+    }
+
+    override fun onResume() {
+        super.onResume()
+        initSystemUi()
     }
 
     private fun initRVAdapter() {
@@ -59,5 +63,9 @@ class FollowFragment : Fragment() {
         title.gravity = Gravity.CENTER_HORIZONTAL
         title.textSize = resources.getDimension(R.dimen.sp_6)
         title.typeface = Typeface.DEFAULT
+    }
+
+    private fun initSystemUi(){
+        StateBarUtils.initStatusBarStyle(requireActivity(),false,resources.getColor(R.color.white))
     }
 }

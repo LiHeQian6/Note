@@ -1,6 +1,7 @@
 package com.example.note_android.fragment.home
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -31,14 +32,20 @@ class HomeFragment : Fragment(),View.OnClickListener {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        StateBarUtils.initStatusBarStyle(requireActivity(),true,resources.getColor(R.color.orange))
         homeViewModel =
             ViewModelProvider(this).get(NoticeViewModel::class.java)
+        //initSystemUi()
         root = inflater.inflate(R.layout.fragment_home, container, false)
         initData()
         initRVAdapter()
         initListener()
         return root
+    }
+
+    override fun onResume() {
+        super.onResume()
+        Log.e("执行","onResume执行一次")
+        initSystemUi()
     }
 
     private fun initRVAdapter() {
@@ -78,5 +85,7 @@ class HomeFragment : Fragment(),View.OnClickListener {
         }
     }
 
-
+    private fun initSystemUi(){
+        StateBarUtils.initStatusBarStyle(requireActivity(),false,resources.getColor(R.color.white))
+    }
 }

@@ -52,6 +52,7 @@ class PersonFragment : Fragment(),View.OnClickListener {
 
     override fun onResume() {
         super.onResume()
+        StateBarUtils.translucent(requireActivity())
         StateUtil.initInfo(requireContext())
         if(StateUtil.IF_LOGIN) {
             root.user_name?.setText(StateUtil.USER_INFO?.nickname)
@@ -100,51 +101,25 @@ class PersonFragment : Fragment(),View.OnClickListener {
     }
 
     private fun itemListener() {
-        root.setting_list?.setOnItemClickListener { parent, view, position, id ->
-            when(position){
-                0 -> {
-                    XToast.info(requireContext(),"正在开发").show()
-                }
-                1 -> {
-                    showSelectDialog()
-                }
-                2 -> {
-                    XToast.info(requireContext(),"正在开发").show()
-                }
-            }
-        }
-    }
-
-    private fun showSelectDialog() {
-        val list: MutableList<MaterialSimpleListItem> = ArrayList()
-        list.add(MaterialSimpleListItem.Builder(context)
-                .content(R.string.tip_richText)
-                .icon(R.drawable.ico_rich_text)
-                .build())
-        list.add(MaterialSimpleListItem.Builder(context)
-                .content(R.string.tip_markdown)
-                .icon(R.drawable.ico_markdown)
-                .build())
-        val adapter = MaterialSimpleListAdapter(list)
-        adapter.setOnItemClickListener { dialog, index, item ->
-            when(index) {
-                0 -> {
-                    Log.i("编辑器",SystemCodeUtil.RICH_TEXT)
-                    StateUtil.EDITOR = SystemCodeUtil.RICH_TEXT
-                }
-                1 -> {
-                    Log.i("编辑器",SystemCodeUtil.MARKDOWN)
-                    StateUtil.EDITOR = SystemCodeUtil.MARKDOWN
-                }
-            }
-        }
-        MaterialDialog.Builder(requireContext()).adapter(adapter, null).show()
+//        root.setting_list?.setOnItemClickListener { parent, view, position, id ->
+//            when(position){
+//                0 -> {
+//                    XToast.info(requireContext(),"正在开发").show()
+//                }
+//                1 -> {
+//                    showSelectDialog()
+//                }
+//                2 -> {
+//                    XToast.info(requireContext(),"正在开发").show()
+//                }
+//            }
+//        }
     }
 
     private fun initView() {
-        val itemArray: Array<String> = resources.getStringArray(R.array.persion_setting)
-        settingAdapter = SettingAdapter(itemArray,requireContext(),R.layout.setting_item)
-        root.setting_list.adapter = settingAdapter
+//        val itemArray: Array<String> = resources.getStringArray(R.array.persion_setting)
+//        settingAdapter = SettingAdapter(itemArray,requireContext(),R.layout.setting_item)
+//        root.setting_list.adapter = settingAdapter
 
         root.person_image.isCircle = true
     }
@@ -175,4 +150,7 @@ class PersonFragment : Fragment(),View.OnClickListener {
         }
     }
 
+    private fun initSystemUi(){
+        StateBarUtils.initStatusBarStyle(requireActivity(),false,resources.getColor(R.color.white))
+    }
 }

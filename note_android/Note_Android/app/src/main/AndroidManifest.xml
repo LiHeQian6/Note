@@ -19,7 +19,6 @@
         android:theme="@style/Theme.Note_Android"
         android:usesCleartextTraffic="true">
         <activity android:name=".note.ShowActivity"></activity>
-        <activity android:name=".userinfo.NoticeActivity" />
         <activity android:name=".scan.ScanActivity" />
         <activity
             android:name=".edit.EditActivity"
@@ -29,7 +28,6 @@
         <activity android:name=".welcome.WelcomeActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
