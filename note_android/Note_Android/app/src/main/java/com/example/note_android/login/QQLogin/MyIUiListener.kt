@@ -7,6 +7,7 @@ import com.example.note_android.login.bean.QQUserInfo
 import com.example.note_android.util.LoginEvent
 import com.example.note_android.util.Single
 import com.example.note_android.util.StateUtil
+import com.example.note_android.util.UserEvent
 import com.tencent.tauth.IUiListener
 import com.tencent.tauth.UiError
 import com.xuexiang.xui.widget.toast.XToast
@@ -48,7 +49,7 @@ class MyIUiListener(var context: Context,var option: String) : IUiListener {
             var shared = Single.getShared(context)?.edit()
             shared?.putString(context.resources.getString(R.string.QQUserInfo),p1.toString())
             shared?.apply()
-            EventBus.getDefault().post(LoginEvent(StateUtil.USER_INFO!!))
+            EventBus.getDefault().post(UserEvent(StateUtil.USER_INFO!!))
         }else {
             XToast.error(context,"用户信息获取失败").show()
         }

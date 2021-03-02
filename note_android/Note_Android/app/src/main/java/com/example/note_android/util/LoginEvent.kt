@@ -6,12 +6,6 @@ import org.json.JSONObject
 
 class LoginEvent {
 
-    var userInfo:QQUserInfo? = null
-                get() = field
-                set(value) {
-                    field = value
-                }
-
     var loginInfo:QQLoginInfo? = null
         get() = field
         set(value) {
@@ -29,7 +23,4 @@ class LoginEvent {
         this.p1 = p1
     }
 
-    constructor(userInfo: QQUserInfo){
-        this.userInfo = userInfo
-    }
 }

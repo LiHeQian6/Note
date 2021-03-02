@@ -71,12 +71,13 @@ class PersonFragment : Fragment(),View.OnClickListener {
 
     override fun onDestroy() {
         super.onDestroy()
+        Log.i("注销","EventBus注销")
         EventBus.getDefault().unregister(this)
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public fun setInfoEvent(loginEvent: LoginEvent){
-        root.user_name?.setText(loginEvent.userInfo?.nickname)
+    public fun setInfoEvent(userEvent: UserEvent){
+        root.user_name?.setText(userEvent.userInfo?.nickname)
         Glide.with(requireContext()).load(StateUtil.USER_INFO?.figureurl_qq_1)
                 .error(R.drawable.head_1)
                 .placeholder(R.drawable.head_1)
