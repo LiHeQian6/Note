@@ -48,7 +48,7 @@ public class InitialPrivilegeDataLoader implements ApplicationListener<ContextRe
         List<Privilege> adminPrivileges = Arrays.asList(
           readPrivilege, writePrivilege);
 
-        if (userRepository.findUserByUsername("admin")==null) {
+        if (userRepository.findUserByUsername("SYSTEM")==null) {
             //初始化角色
             Role admin = createRoleIfNotFound("ROLE_ADMIN", adminPrivileges);
             createRoleIfNotFound("ROLE_USER", Collections.singletonList(readPrivilege));
@@ -57,7 +57,7 @@ public class InitialPrivilegeDataLoader implements ApplicationListener<ContextRe
             authorities.add(new SimpleGrantedAuthority(admin.getName()));
             ArrayList<Role> roles = new ArrayList<>();
             roles.add(admin);
-            User user = new User("admin",passwordEncoder.encode("admin123."),roles,authorities);
+            User user = new User("SYSTEM",passwordEncoder.encode("admin123."),roles,authorities);
             userRepository.save(user);
         }
 

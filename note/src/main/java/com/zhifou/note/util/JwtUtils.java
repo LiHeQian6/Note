@@ -1,13 +1,17 @@
 package com.zhifou.note.util;
 
+import com.zhifou.note.user.entity.User;
+import com.zhifou.note.user.repository.UserRepository;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
@@ -36,6 +40,8 @@ public class JwtUtils implements Serializable {
 
     @Value("${jwt.expiration}")
     private Long expiration;
+    @Resource
+    private UserRepository userRepository;
 
     /**
      * @param: user
@@ -56,7 +62,7 @@ public class JwtUtils implements Serializable {
             }
             authorities = list;
         }
-        UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(token, "", authorities);
+        UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(token, token, authorities);
         return authentication;
     }
 
@@ -276,5 +282,25 @@ public class JwtUtils implements Serializable {
             return token;
         }
         return null;
+    }
+
+    /**
+     * @param:
+     * @return com.zhifou.note.user.entity.User
+     * @description 在用户使用token登录时获取用户信息
+     * @author li
+     * @Date 2021/3/1 15:18
+     */
+    public User getUserInfo(){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Object principal = authentication.getPrincipal();
+        if ((principal instanceof String)) {
+            String username = getUserNameFromToken(principal.toString());
+            UserDetails userDetails = userRepository.findUserByUsername(username);
+            UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(userDetails,authentication.getCredentials(),userDetails.getAuthorities());
+            SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+        }
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        return (User) auth.getPrincipal();
     }
 }

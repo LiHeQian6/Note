@@ -3,34 +3,9 @@ package com.zhifou.note.bean;
 public interface Constant {
 
     /**
-     * 激活成功
+     * 实体类型: 笔记
      */
-    int ACTIVATION_SUCCESS = 0;
-
-    /**
-     * 重复激活
-     */
-    int ACTIVATION_REPEAT = 1;
-
-    /**
-     * 激活失败
-     */
-    int ACTIVATION_FAILURE = 2;
-
-    /**
-     * 默认状态的登录凭证的超时时间
-     */
-    int DEFAULT_EXPIRED_SECONDS = 3600 * 12;
-
-    /**
-     * 记住状态的登录凭证超时时间
-     */
-    int REMEMBER_EXPIRED_SECONDS = 3600 * 24 * 100;
-
-    /**
-     * 实体类型: 帖子
-     */
-    int ENTITY_TYPE_POST = 1;
+    int ENTITY_TYPE_NOTE = 1;
 
     /**
      * 实体类型: 评论
@@ -56,21 +31,15 @@ public interface Constant {
      * 主题: 关注
      */
     String TOPIC_FOLLOW = "follow";
+    /**
+     * 主题: 收藏
+     */
+    String TOPIC_COLLECT = "collect";
 
     /**
-     * 主题: 发帖
+     * 主题: 关注的人发布笔记
      */
-    String TOPIC_PUBLISH = "publish";
-
-    /**
-     * 主题: 删帖
-     */
-    String TOPIC_DELETE = "delete";
-
-    /**
-     * 主题: 分享
-     */
-    String TOPIC_SHARE = "share";
+    String TOPIC_FOLLOWER_PUBLISH = "follower_publish";
 
     /**
      * 系统用户ID
@@ -78,18 +47,24 @@ public interface Constant {
     int SYSTEM_USER_ID = 1;
 
     /**
-     * 权限: 普通用户
+     * 笔记类别初始化数据
      */
-    String AUTHORITY_USER = "user";
+    String[] TYPE_INIT_DATA={"文史哲学","社会科学","理学","工学","经济管理","外语","艺术学"};
+
+    String[][] CHILD_TYPE_INIT_DATA={
+        {"文学","哲学","历史学","新闻传播","其他"},
+        {"法学","政治学","社会学","心理学","教育学","军事","其他"},
+        {"数学","物理学","化学","海洋学","医学","生物学","其他"},
+        {"机械","计算机","化工","材料","环境工程","建筑","土木工程","其他"},
+        {"经济学","管理学","其他"},
+        {"英语","日语","德语","法语","其他"},
+        {"美术","音乐","其他"}
+    };
 
     /**
-     * 权限: 管理员
+     * 笔记标签初始化数据
      */
-    String AUTHORITY_ADMIN = "admin";
+    String[] TAG_INIT_DATA={"C语言","LINUX","CENTOS","PYTHON","NGINX","SHELL","神经网络","算法","机器学习","人工智能"};
 
-    /**
-     * 权限: 版主
-     */
-    String AUTHORITY_MODERATOR = "moderator";
 
 }

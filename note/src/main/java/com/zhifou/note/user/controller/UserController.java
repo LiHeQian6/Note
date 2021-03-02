@@ -12,7 +12,6 @@ import com.zhifou.note.util.RedisKeyUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -32,8 +31,8 @@ import java.util.concurrent.TimeUnit;
  * @author : li
  * @Date: 2021-01-05 15:05
  */
-@Api("用户")
-@Controller
+@Api("用户模块")
+@RestController
 @Validated
 public class UserController {
 
@@ -47,7 +46,6 @@ public class UserController {
 
 
     @ApiOperation("用户注册")
-    @ResponseBody
     @PostMapping("/register/{mailCode}")
     public void userRegister(@Valid @RequestBody User user,@NotNull @PathVariable String mailCode) throws UserException {
         String verifyCode = (String) redisTemplate.opsForValue().get(RedisKeyUtil.getVerifyCodeKey(user.getUsername()));
@@ -81,7 +79,6 @@ public class UserController {
 
     @ApiOperation("获取邮件验证码")
     @GetMapping(value = "/getMailCode")
-    @ResponseBody
     public void getMailCode(@RequestParam String mail) throws UnsupportedEncodingException, MessagingException {
         LineCaptcha captcha = CaptchaUtil.createLineCaptcha(1, 1, 4, 0);
         redisTemplate.opsForValue().set(RedisKeyUtil.getVerifyCodeKey(mail),captcha.getCode());

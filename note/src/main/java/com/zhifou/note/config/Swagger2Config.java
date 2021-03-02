@@ -13,6 +13,7 @@ import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spring.web.plugins.Docket;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
+
 /**
  * @description swagger2配置类
  * @author li
@@ -36,11 +37,11 @@ public class Swagger2Config implements WebMvcConfigurer {
     private ApiInfo apiInfo() {
         return new ApiInfoBuilder()
          //页面标题
-        .title("知否笔记接口整合")
+        .title("知否笔记接口文档")
          //创建人
         .contact(new Contact("知否笔记", "https://github.com/LiHeQian6/note", ""))
          //版本号
-        .version("1.0")
+        .version("2.0")
          //描述
         .description("API 描述")
         .build();
