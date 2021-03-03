@@ -1,14 +1,13 @@
 package com.example.note_android.util
 
 import android.content.Context
-import android.content.SharedPreferences
 import com.example.note_android.R
 import com.example.note_android.login.bean.QQLoginInfo
 import com.example.note_android.login.bean.QQUserInfo
 
 class StateUtil {
     companion object{
-        var EDITOR = SystemCodeUtil.MARKDOWN
+        var EDITOR = SystemCode.MARKDOWN
         var IF_LOGIN:Boolean = false
         var USER_INFO: QQUserInfo? = null
         var LOGIN_INFO: QQLoginInfo? = null

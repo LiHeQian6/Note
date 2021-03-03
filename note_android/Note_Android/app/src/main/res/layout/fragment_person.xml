@@ -33,7 +33,7 @@
                 <ImageView
                     android:layout_width="@dimen/dp_30"
                     android:layout_height="@dimen/dp_30"
-                    android:layout_marginTop="@dimen/dp_10"
+                    android:layout_marginTop="@dimen/dp_30"
                     android:layout_marginRight="@dimen/dp_10"
                     android:src="@drawable/ico_setting"
                     android:layout_gravity="right" />

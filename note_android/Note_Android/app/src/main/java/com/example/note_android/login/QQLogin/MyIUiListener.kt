@@ -56,15 +56,12 @@ class MyIUiListener(var context: Context,var option: String) : IUiListener {
     }
 
     override fun onCancel() {
-        TODO("Not yet implemented")
     }
 
     override fun onWarning(p0: Int) {
-        TODO("Not yet implemented")
     }
 
     override fun onError(p0: UiError?) {
-        TODO("Not yet implemented")
     }
 
 }

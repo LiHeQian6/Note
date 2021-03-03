@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/reset_tip"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/dp_20"
+        android:text="修改密码："
+        android:textColor="@color/black"
+        android:textSize="@dimen/sp_25"
+        android:textStyle="bold"
+        app:layout_constraintHorizontal_bias="0.1"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/input_tip"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/dp_20"
+        android:text="新密码:"
+        android:textColor="@color/deep_gray"
+        android:textSize="@dimen/sp_15"
+        android:textStyle="normal"
+        app:layout_constraintHorizontal_bias="0.1"
+        app:layout_constraintLeft_toLeftOf="@+id/reset_tip"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/reset_tip" />
+
+    <EditText
+        android:id="@+id/new_password"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/dp_40"
+        android:layout_marginTop="@dimen/dp_10"
+        android:background="@drawable/register_editext"
+        android:inputType="textPassword"
+        android:textColorHint="#bcbcbc"
+        android:textSize="@dimen/sp_15"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintLeft_toLeftOf="@+id/input_tip"
+        app:layout_constraintTop_toBottomOf="@+id/input_tip"
+        app:layout_constraintWidth_percent="0.65" />
+
+    <TextView
+        android:id="@+id/confirm_tip"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/dp_15"
+        android:text="再次输入:"
+        android:textColor="@color/deep_gray"
+        android:textSize="@dimen/sp_15"
+        android:textStyle="normal"
+        app:layout_constraintHorizontal_bias="0.1"
+        app:layout_constraintLeft_toLeftOf="@+id/reset_tip"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/new_password" />
+
+    <EditText
+        android:id="@+id/confirm_password"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/dp_40"
+        android:layout_marginTop="@dimen/dp_10"
+        android:background="@drawable/register_editext"
+        android:inputType="textPassword"
+        android:textColorHint="#bcbcbc"
+        android:textSize="@dimen/sp_15"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintLeft_toLeftOf="@+id/input_tip"
+        app:layout_constraintTop_toBottomOf="@+id/confirm_tip"
+        app:layout_constraintWidth_percent="0.65" />
+
+    <com.xuexiang.xui.widget.button.roundbutton.RoundButton
+        android:id="@+id/reset_button"
+        style="@style/RoundButton.Blue"
+        android:layout_width="@dimen/dp_120"
+        android:layout_height="@dimen/dp_40"
+        android:layout_marginTop="@dimen/dp_35"
+        android:text="修 改"
+        android:textColor="@color/white"
+        android:textSize="@dimen/sp_14"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/confirm_password"
+        app:rb_backgroundColor="@color/orange"
+        app:rb_isRadiusAdjustBounds="true" />
+</androidx.constraintlayout.widget.ConstraintLayout>

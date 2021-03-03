@@ -12,18 +12,12 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.example.note_android.R
 import com.example.note_android.annotation.Page
 import com.example.note_android.login.LoginActivity
-import com.example.note_android.sql_lite.DataBaseHelper
 import com.example.note_android.util.*
 import com.tencent.tauth.Tencent
-import com.xuexiang.xui.widget.dialog.materialdialog.MaterialDialog
-import com.xuexiang.xui.widget.dialog.materialdialog.simplelist.MaterialSimpleListAdapter
-import com.xuexiang.xui.widget.dialog.materialdialog.simplelist.MaterialSimpleListItem
-import com.xuexiang.xui.widget.toast.XToast
 import kotlinx.android.synthetic.main.fragment_person.view.*
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
-import java.util.*
 
 @Page(name = "个人信息页面")
 class PersonFragment : Fragment(),View.OnClickListener {
@@ -146,7 +140,7 @@ class PersonFragment : Fragment(),View.OnClickListener {
                 if(StateUtil.IF_LOGIN)
                     return
                 else
-                    ActivityUtil.get()?.goActivityResult(requireActivity(),LoginActivity::class.java,SystemCodeUtil.QQ_LOGIN_REQUEST)
+                    ActivityUtil.get()?.goActivityResult(requireActivity(),LoginActivity::class.java,SystemCode.QQ_LOGIN_REQUEST)
             }
         }
     }

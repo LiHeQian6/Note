@@ -10,23 +10,18 @@ import com.example.note_android.R
 import com.example.note_android.annotation.Page
 import com.example.note_android.databinding.ActivityLoginBinding
 import com.example.note_android.login.QQLogin.MyIUiListener
-import com.example.note_android.login.bean.QQLoginInfo
 import com.example.note_android.login.bean.UserInfo
 import com.example.note_android.util.*
-import com.tencent.tauth.IUiListener
 import com.tencent.tauth.Tencent
-import com.tencent.tauth.UiError
-import com.xuexiang.xui.widget.toast.XToast
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
-import org.json.JSONObject
 
 
 @Page(name = "登录页")
 class LoginActivity : AppCompatActivity(), View.OnClickListener {
-    var loginBinding:ActivityLoginBinding? = null
-    var mTencent: Tencent? = null
+    private lateinit var loginBinding:ActivityLoginBinding
+    private lateinit var mTencent: Tencent
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,7 +35,7 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
     @Subscribe(threadMode = ThreadMode.MAIN)
     public fun initLoginInfo(loginEvent: LoginEvent){
         if (loginEvent != null) {
-            mTencent?.saveSession(loginEvent.p1)
+            mTencent.saveSession(loginEvent.p1)
             EventBus.getDefault().unregister(this)
             finish()
         }
@@ -48,17 +43,19 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
 
     private fun initView(){
         var user = UserInfo("admin","admin")
-        loginBinding!!.user = user
+        loginBinding.user = user
     }
 
     private fun initListener(){
-        loginBinding?.loginButton?.setOnClickListener(this)
-        loginBinding?.iconQqLogin?.setOnClickListener(this)
+        loginBinding.loginButton.setOnClickListener(this)
+        loginBinding.iconQqLogin.setOnClickListener(this)
+        loginBinding.btnToRegister.setOnClickListener(this)
+        loginBinding.btnForgetPassword.setOnClickListener(this)
     }
 
     private fun QQLogin(){
-        if (!mTencent!!.isSessionValid) {
-            mTencent!!.login(this, "all", MyIUiListener(applicationContext,"login"))
+        if (!mTencent.isSessionValid) {
+            mTencent.login(this, "all", MyIUiListener(applicationContext,"login"))
         }
     }
 
@@ -68,8 +65,11 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
         data: Intent?
     ) {
         super.onActivityResult(requestCode, resultCode, data)
-        Tencent.onActivityResultData(requestCode,resultCode,data, MyIUiListener(applicationContext,"login"))
-
+        when(requestCode){
+            SystemCode.QQ_LOGIN_REQUEST -> {
+                Tencent.onActivityResultData(requestCode,resultCode,data, MyIUiListener(applicationContext,"login"))
+            }
+        }
     }
 
     override fun onClick(v: View?) {
@@ -79,6 +79,12 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
             }
             R.id.icon_qq_login ->{
                 QQLogin()
+            }
+            R.id.btn_to_register -> {
+                ActivityUtil.get()?.goActivityResult(this,RegisterActivity::class.java,SystemCode.REGISTER)
+            }
+            R.id.btn_forget_password -> {
+                ActivityUtil.get()?.goActivityResult(this,ForgetPassActivity::class.java,SystemCode.FORGET_PASSWORD)
             }
         }
     }

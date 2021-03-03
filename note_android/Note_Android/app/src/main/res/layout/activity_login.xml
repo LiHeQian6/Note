@@ -88,13 +88,15 @@
             android:orientation="horizontal">
 
             <TextView
+                android:id="@+id/btn_to_register"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="手机号登陆"
+                android:text="立即注册"
                 android:textColor="@color/black"
                 android:textSize="@dimen/sp_13" />
 
             <TextView
+                android:id="@+id/btn_forget_password"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
@@ -160,6 +162,7 @@
                 android:id="@+id/icon_qq_login"
                 android:layout_width="@dimen/dp_30"
                 android:layout_height="@dimen/dp_30"
+                android:visibility="invisible"
                 android:background="@drawable/ico_qq" />
         </LinearLayout>
     </RelativeLayout>
