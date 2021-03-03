@@ -6,13 +6,13 @@ import lombok.Setter;
 
 /**
  * @author : li
- * @Date: 2021-02-27 21:55
+ * @Date: 2021-03-02 16:28
  */
 @Getter
 @Setter
-public class UserException extends CustomException{
+public class NoteException extends CustomException {
 
-    public UserException(String message, Status status) {
+    public NoteException(String message, Status status) {
         super(message, status);
     }
 }

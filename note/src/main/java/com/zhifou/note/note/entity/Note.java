@@ -61,4 +61,19 @@ public class Note {
                 ", status=" + status +
                 '}';
     }
+
+    public void update(Note newNote) {
+        if (newNote.getTitle()!=null) {
+            title= newNote.getTitle();
+        }
+        if (newNote.getContent()!=null) {
+            content= newNote.getContent();
+        }
+        if (newNote.getType()!=null) {
+            type= newNote.getType();
+        }
+        if (newNote.getTags()!=null) {
+            tags= newNote.getTags();
+        }
+    }
 }

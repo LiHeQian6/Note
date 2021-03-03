@@ -57,7 +57,7 @@ public class SecurityConfig {
                     .and()
                     .authorizeRequests()//启用基于 HttpServletRequest 的访问限制，开始配置哪些URL需要被保护、哪些不需要被保护
                     .antMatchers("/static/**","/logout").permitAll()//未登陆用户允许的请求
-                    .anyRequest().authenticated()//其他/admin路径下的请求全部需要登陆，获得ADMIN角色
+                    .anyRequest().authenticated()/*.hasRole("ADMIN")*///其他/admin路径下的请求全部需要登陆，获得ADMIN角色
                     .and()
                     .headers().frameOptions().sameOrigin()//设置X-Frame-Options同源可访问
                     .and()

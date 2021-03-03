@@ -22,6 +22,7 @@ public class Tag {
     @JsonIgnore
     @ManyToMany(mappedBy = "tags")
     private Set<Note> notes;
+    @JsonIgnore
     private int status;
 
     @Override

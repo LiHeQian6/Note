@@ -10,10 +10,9 @@ import lombok.Setter;
  */
 @Getter
 @Setter
-public class TokenException extends Exception {
-    private Status status;
-    public TokenException(String message,Status status) {
-        super(message);
-        this.status=status;
+public class TokenException extends CustomException {
+
+    public TokenException(String message, Status status) {
+        super(message, status);
     }
 }

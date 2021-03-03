@@ -28,6 +28,7 @@ public class Type {
     @JsonIgnore
     @OneToMany(mappedBy = "type")
     private Set<Note> notes;
+    @JsonIgnore
     private int status=0;
 
     @Override

@@ -2,6 +2,8 @@ package com.zhifou.note.exception.handler;
 
 import com.zhifou.note.bean.ResponseBean;
 import com.zhifou.note.bean.Status;
+import com.zhifou.note.exception.bean.CustomException;
+import com.zhifou.note.exception.bean.NoteException;
 import com.zhifou.note.exception.bean.TokenException;
 import com.zhifou.note.exception.bean.UserException;
 import lombok.extern.slf4j.Slf4j;
@@ -20,16 +22,8 @@ import org.springframework.web.servlet.NoHandlerFoundException;
 @RestControllerAdvice
 public class GlobalExceptionHandler{
 
-    @ExceptionHandler(UserException.class)
-    public ResponseBean UserException(UserException e){
-        ResponseBean responseBean = new ResponseBean();
-        responseBean.setStatus(e.getStatus());
-        responseBean.setMessage(e.getMessage());
-        return responseBean;
-    }
-
-    @ExceptionHandler(TokenException.class)
-    public ResponseBean TokenException(TokenException e){
+    @ExceptionHandler({TokenException.class,UserException.class, NoteException.class})
+    public ResponseBean CustomException(CustomException e){
         ResponseBean responseBean = new ResponseBean();
         responseBean.setStatus(e.getStatus());
         responseBean.setMessage(e.getMessage());
