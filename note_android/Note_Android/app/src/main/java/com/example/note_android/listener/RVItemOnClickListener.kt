@@ -1,4 +1,4 @@
-package com.example.note_android.fragment
+package com.example.note_android.listener
 
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView

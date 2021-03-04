@@ -8,11 +8,10 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.example.note_android.R
 import com.example.note_android.annotation.Page
 import com.example.note_android.edit.EditActivity
-import com.example.note_android.fragment.RVItemOnClickListener
+import com.example.note_android.listener.RVItemOnClickListener
 import com.example.note_android.fragment.notice.NoticeViewModel
 import com.example.note_android.scan.ScanActivity
 import com.example.note_android.util.ActivityUtil
@@ -55,7 +54,8 @@ class HomeFragment : Fragment(),View.OnClickListener {
 //        root.home_recyclerView.addItemDecoration(DividerItemDecoration(requireContext(),LinearLayoutManager.VERTICAL))
 
         root.home_recyclerView.adapter = adapter
-        adapter.setOnItemClickListener(object : RVItemOnClickListener{
+        adapter.setOnItemClickListener(object :
+            RVItemOnClickListener {
             override fun onItemClick(position: Int) {
                 XToast.success(requireContext(),"这是第${position+1}个").show()
             }

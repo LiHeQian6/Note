@@ -13,10 +13,10 @@ class ActivityUtil{
         const val OPEN_ACTIVITY_KEY = "options" //intent跳转传递传输key
         private var manager: ActivityUtil? = null
         private var intent: Intent? = null
-        fun get(): ActivityUtil? {
+        fun get(): ActivityUtil {
             intent = Intent()
             manager = IntentUtilHolder.INSTANCE
-            return manager
+            return manager as ActivityUtil
         }
     }
 

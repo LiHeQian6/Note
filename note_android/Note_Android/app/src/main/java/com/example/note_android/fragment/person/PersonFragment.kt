@@ -1,5 +1,6 @@
 package com.example.note_android.fragment.person
 
+import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -122,7 +123,8 @@ class PersonFragment : Fragment(),View.OnClickListener {
     private fun logout(){
         if(!StateUtil.IF_LOGIN)
             return
-        var editor = Single.getShared(requireContext())?.edit()
+        var editor = requireContext().getSharedPreferences(resources.getString(R.string.LoginInfo),
+            Context.MODE_PRIVATE).edit()
         editor?.clear()
         editor?.apply()
         root.user_name?.setText("立即登录")

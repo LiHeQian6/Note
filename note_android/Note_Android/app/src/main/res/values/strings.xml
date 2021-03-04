@@ -1,6 +1,5 @@
 <resources>
     <string name="app_name">知否笔记</string>
-    <string name="IP">Note_Android</string>
     <string name="LoginTip">Note_Android</string>
     <string name="title_activity_login_test">LoginActivity_test</string>
     <string name="prompt_email">Email</string>
@@ -27,6 +26,7 @@
     <string name="no_autograph_tip">作者很懒，什么都没有留下</string>
 
     <!--    登陆相关-->
+    <string name="LoginInfo">LoginInfo</string>
     <string name="Login_Type">Login_Type</string>
     <string name="LoginWithQQ">QQ</string>
 
@@ -48,4 +48,7 @@
         <item>编辑器设置</item>
         <item>系统设置</item>
     </array>
+
+    <!--    网络请求相关-->
+    <string name="IP">http://47.94.247.44:8080/</string>
 </resources>

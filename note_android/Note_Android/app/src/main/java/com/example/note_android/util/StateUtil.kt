@@ -4,6 +4,7 @@ import android.content.Context
 import com.example.note_android.R
 import com.example.note_android.login.bean.QQLoginInfo
 import com.example.note_android.login.bean.QQUserInfo
+import com.google.gson.Gson
 
 class StateUtil {
     companion object{
@@ -14,11 +15,17 @@ class StateUtil {
         var LOGIN_TYPE:String = ""
 
         fun initInfo(context: Context){
-            var editor = Single.getShared(context)
+            var gson = Gson()
+            var editor = context.getSharedPreferences(
+                context.resources.getString(R.string.LoginInfo),
+                Context.MODE_PRIVATE)
             var userInfo = editor?.getString(context.resources.getString(R.string.QQUserInfo),"")
             var loginInfo = editor?.getString(context.resources.getString(R.string.QQLoginInfo),"")
-            this.LOGIN_INFO = Single.getGson()?.fromJson(loginInfo, QQLoginInfo::class.java)
-            this.USER_INFO = Single.getGson()?.fromJson(userInfo, QQUserInfo::class.java)
+            if (userInfo.equals("") || loginInfo.equals("")){
+                return
+            }
+            this.LOGIN_INFO = gson.fromJson(loginInfo, QQLoginInfo::class.java)
+            this.USER_INFO = gson.fromJson(userInfo, QQUserInfo::class.java)
         }
     }
 }

@@ -14,7 +14,7 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.note_android.R
 import com.example.note_android.annotation.Page
-import com.example.note_android.fragment.RVItemOnClickListener
+import com.example.note_android.listener.RVItemOnClickListener
 import com.example.note_android.util.StateBarUtils
 import com.xuexiang.xui.widget.toast.XToast
 import kotlinx.android.synthetic.main.fragment_notice.view.*
@@ -70,7 +70,8 @@ class NoticeFragment : Fragment(),View.OnClickListener {
     }
 
     private fun initListener() {
-        adapter.setOnItemClickListener(object : RVItemOnClickListener{
+        adapter.setOnItemClickListener(object :
+            RVItemOnClickListener {
             override fun onItemClick(position: Int) {
                 XToast.success(requireContext(),"这是第${position+1}个").show()
             }

@@ -69,22 +69,28 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
             SystemCode.QQ_LOGIN_REQUEST -> {
                 Tencent.onActivityResultData(requestCode,resultCode,data, MyIUiListener(applicationContext,"login"))
             }
+            SystemCode.REGISTER -> {
+                var email = data?.extras?.get("email").toString()
+                var password = data?.extras?.get("password").toString()
+                loginBinding.loginEmail.setText(email)
+                loginBinding.loginPassword.setText(password)
+            }
         }
     }
 
     override fun onClick(v: View?) {
         when(v?.id){
             R.id.login_button ->{
-                ActivityUtil.get()?.goActivityKill(this,MainActivity::class.java)
+                ActivityUtil.get().goActivityKill(this,MainActivity::class.java)
             }
             R.id.icon_qq_login ->{
                 QQLogin()
             }
             R.id.btn_to_register -> {
-                ActivityUtil.get()?.goActivityResult(this,RegisterActivity::class.java,SystemCode.REGISTER)
+                ActivityUtil.get().goActivityResult(this,RegisterActivity::class.java,SystemCode.REGISTER)
             }
             R.id.btn_forget_password -> {
-                ActivityUtil.get()?.goActivityResult(this,ForgetPassActivity::class.java,SystemCode.FORGET_PASSWORD)
+                ActivityUtil.get().goActivityResult(this,ForgetPassActivity::class.java,SystemCode.FORGET_PASSWORD)
             }
         }
     }

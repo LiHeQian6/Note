@@ -6,7 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.note_android.R
-import com.example.note_android.fragment.RVItemOnClickListener
+import com.example.note_android.listener.RVItemOnClickListener
 
 class FollowRVAdapter(var list: MutableList<Any>,
                       var context: Context,
