@@ -7,7 +7,6 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import com.example.note_android.R
 import com.example.note_android.databinding.ActivityForgetPassBinding
-import com.example.note_android.login.adapter.VPAdapter
 import com.example.note_android.login.fragment.ForgetFragment
 import com.xuexiang.xui.XUI
 

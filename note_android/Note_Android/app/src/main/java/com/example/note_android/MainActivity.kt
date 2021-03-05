@@ -14,6 +14,7 @@ import com.example.note_android.util.*
 import com.google.android.material.bottomnavigation.LabelVisibilityMode
 import com.tencent.connect.UserInfo
 import com.tencent.tauth.Tencent
+import com.xuexiang.xui.XUI
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
@@ -25,6 +26,8 @@ class MainActivity : AppCompatActivity() {
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        XUI.init(application)
+        XUI.getInstance().initFontStyle("fonts/hwxk.ttf")
         setContentView(R.layout.activity_main)
 //        StateBarUtils.initStatusBarStyle(this,false,resources.getColor(R.color.white))
         mTencent = Tencent.createInstance(resources.getString(R.string.APP_ID),applicationContext)

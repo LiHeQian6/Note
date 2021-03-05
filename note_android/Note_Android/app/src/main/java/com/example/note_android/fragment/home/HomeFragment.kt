@@ -5,6 +5,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -16,6 +17,7 @@ import com.example.note_android.fragment.notice.NoticeViewModel
 import com.example.note_android.scan.ScanActivity
 import com.example.note_android.util.ActivityUtil
 import com.example.note_android.util.StateBarUtils
+import com.scwang.smart.refresh.layout.api.RefreshLayout
 import com.xuexiang.xui.widget.toast.XToast
 import kotlinx.android.synthetic.main.fragment_home.view.*
 
@@ -38,7 +40,15 @@ class HomeFragment : Fragment(),View.OnClickListener {
         initData()
         initRVAdapter()
         initListener()
+        initRefreshLayout()
         return root
+    }
+
+    private fun initRefreshLayout() {
+        root.home_refresh.setOnRefreshListener {
+        }
+        root.home_refresh.setOnLoadMoreListener() {
+        }
     }
 
     override fun onResume() {

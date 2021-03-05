@@ -15,8 +15,8 @@
 
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
-            android:background="@color/white"
-            android:layout_height="@dimen/dp_50">
+            android:layout_height="@dimen/dp_50"
+            android:background="@color/white">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -33,14 +33,14 @@
                         android:layout_height="@dimen/dp_18"
                         android:layout_gravity="center_vertical"
                         android:layout_marginLeft="@dimen/dp_8"
-                        android:src="@drawable/ico_sousuo"/>
+                        android:src="@drawable/ico_sousuo" />
 
                     <EditText
                         android:layout_width="match_parent"
                         android:layout_height="@dimen/dp_30"
                         android:background="@drawable/custom_editext"
                         android:hint="搜索"
-                        android:textSize="@dimen/sp_14"/>
+                        android:textSize="@dimen/sp_14" />
 
                 </LinearLayout>
 
@@ -49,7 +49,7 @@
                     android:layout_width="@dimen/dp_25"
                     android:layout_height="@dimen/dp_25"
                     android:layout_marginLeft="@dimen/dp_8"
-                    android:src="@drawable/ico_saoma"/>
+                    android:src="@drawable/ico_saoma" />
             </LinearLayout>
         </androidx.cardview.widget.CardView>
 
@@ -57,21 +57,40 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/home_recyclerView"
+            <com.scwang.smart.refresh.layout.SmartRefreshLayout
+                android:id="@+id/home_refresh"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:overScrollMode="never"/>
+                app:srlAccentColor="@color/orange">
 
-            <ImageView
+                <com.scwang.smart.refresh.header.MaterialHeader
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/home_recyclerView"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:overScrollMode="never" />
+
+                <com.scwang.smart.refresh.footer.BallPulseFooter
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/dp_30" />
+            </com.scwang.smart.refresh.layout.SmartRefreshLayout>
+
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
                 android:id="@+id/add_button"
                 android:layout_width="@dimen/dp_50"
                 android:layout_height="@dimen/dp_50"
-                android:layout_alignParentBottom="true"
+                android:backgroundTint="@color/white"
+                android:scaleType="center"
+                app:rippleColor="@color/orange"
+                app:borderWidth="@dimen/dp_0"
                 android:layout_alignParentRight="true"
-                android:layout_marginBottom="@dimen/dp_60"
+                android:layout_alignParentBottom="true"
                 android:layout_marginRight="@dimen/dp_20"
-                android:src="@drawable/ico_add"/>
+                android:layout_marginBottom="@dimen/dp_60"
+                android:src="@drawable/ico_add" />
         </RelativeLayout>
     </LinearLayout>
 </layout>

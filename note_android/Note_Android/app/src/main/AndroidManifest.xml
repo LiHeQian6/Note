@@ -28,14 +28,15 @@
         <activity
             android:name=".edit.EditActivity"
             android:windowSoftInputMode="adjustPan" />
-        <activity android:name=".MainActivity" />
-        <activity android:name=".login.LoginActivity" />
-        <activity android:name=".welcome.WelcomeActivity">
+        <activity android:name=".MainActivity" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
+        <activity android:name=".login.LoginActivity" />
+        <activity android:name=".welcome.WelcomeActivity">
         </activity>
         <activity
             android:name="com.tencent.tauth.AuthActivity"
