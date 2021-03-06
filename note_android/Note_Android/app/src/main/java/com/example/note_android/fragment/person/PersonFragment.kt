@@ -6,6 +6,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
@@ -13,6 +14,7 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.example.note_android.R
 import com.example.note_android.annotation.Page
 import com.example.note_android.login.LoginActivity
+import com.example.note_android.setting.SettingsActivity
 import com.example.note_android.util.*
 import com.tencent.tauth.Tencent
 import kotlinx.android.synthetic.main.fragment_person.view.*
@@ -48,8 +50,7 @@ class PersonFragment : Fragment(),View.OnClickListener {
     override fun onResume() {
         super.onResume()
         StateBarUtils.translucent(requireActivity())
-        StateUtil.initInfo(requireContext())
-        if(StateUtil.IF_LOGIN) {
+        if(StateUtil.IF_LOGIN && StateUtil.initInfo(requireContext())) {
             root.user_name?.setText(StateUtil.USER_INFO?.nickname)
             root.logout_button.visibility = View.VISIBLE
             Glide.with(requireContext()).load(StateUtil.USER_INFO?.figureurl_qq_2)
@@ -84,6 +85,8 @@ class PersonFragment : Fragment(),View.OnClickListener {
     private fun initListener() {
         root.logout_button.setOnClickListener(this)
         root.user_name.setOnClickListener(this)
+        root.ico_settings.setOnClickListener(this)
+        root.user_bac_image.setOnClickListener(this)
     }
 
     private fun checkLogin() {
@@ -97,25 +100,10 @@ class PersonFragment : Fragment(),View.OnClickListener {
     }
 
     private fun itemListener() {
-//        root.setting_list?.setOnItemClickListener { parent, view, position, id ->
-//            when(position){
-//                0 -> {
-//                    XToast.info(requireContext(),"正在开发").show()
-//                }
-//                1 -> {
-//                    showSelectDialog()
-//                }
-//                2 -> {
-//                    XToast.info(requireContext(),"正在开发").show()
-//                }
-//            }
-//        }
+
     }
 
     private fun initView() {
-//        val itemArray: Array<String> = resources.getStringArray(R.array.persion_setting)
-//        settingAdapter = SettingAdapter(itemArray,requireContext(),R.layout.setting_item)
-//        root.setting_list.adapter = settingAdapter
 
         root.person_image.isCircle = true
     }
@@ -142,12 +130,14 @@ class PersonFragment : Fragment(),View.OnClickListener {
                 if(StateUtil.IF_LOGIN)
                     return
                 else
-                    ActivityUtil.get()?.goActivityResult(requireActivity(),LoginActivity::class.java,SystemCode.QQ_LOGIN_REQUEST)
+                    ActivityUtil.get().goActivityResult(requireActivity(),LoginActivity::class.java,SystemCode.QQ_LOGIN_REQUEST)
+            }
+            R.id.ico_settings -> {
+                Log.e("点击了","点击了")
+                ActivityUtil.get().activity(requireContext(),SettingsActivity::class.java)
+            }
+            R.id.user_bac_image -> {
             }
         }
-    }
-
-    private fun initSystemUi(){
-        StateBarUtils.initStatusBarStyle(requireActivity(),false,resources.getColor(R.color.white))
     }
 }

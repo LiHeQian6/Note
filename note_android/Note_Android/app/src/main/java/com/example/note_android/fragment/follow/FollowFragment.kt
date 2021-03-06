@@ -36,7 +36,7 @@ class FollowFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        initSystemUi()
+        StateBarUtils.initStatusBarStyle(requireActivity(),false,resources.getColor(R.color.white))
     }
 
     private fun initRVAdapter() {
@@ -64,9 +64,5 @@ class FollowFragment : Fragment() {
         title.gravity = Gravity.CENTER_HORIZONTAL
         title.textSize = resources.getDimension(R.dimen.sp_6)
         title.typeface = Typeface.DEFAULT
-    }
-
-    private fun initSystemUi(){
-        StateBarUtils.initStatusBarStyle(requireActivity(),false,resources.getColor(R.color.white))
     }
 }

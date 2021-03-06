@@ -44,7 +44,7 @@ class NoticeFragment : Fragment(),View.OnClickListener {
 
     override fun onResume() {
         super.onResume()
-        initSystemUi()
+        StateBarUtils.initStatusBarStyle(requireActivity(),false,resources.getColor(R.color.white))
     }
 
     private fun initToolBar() {
@@ -82,9 +82,5 @@ class NoticeFragment : Fragment(),View.OnClickListener {
         when(v?.id){
 
         }
-    }
-
-    private fun initSystemUi(){
-        StateBarUtils.initStatusBarStyle(requireActivity(),false,resources.getColor(R.color.white))
     }
 }

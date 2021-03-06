@@ -60,8 +60,7 @@
             <com.scwang.smart.refresh.layout.SmartRefreshLayout
                 android:id="@+id/home_refresh"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                app:srlAccentColor="@color/orange">
+                android:layout_height="match_parent">
 
                 <com.scwang.smart.refresh.header.MaterialHeader
                     android:layout_width="match_parent"
@@ -89,7 +88,7 @@
                 android:layout_alignParentRight="true"
                 android:layout_alignParentBottom="true"
                 android:layout_marginRight="@dimen/dp_20"
-                android:layout_marginBottom="@dimen/dp_60"
+                android:layout_marginBottom="@dimen/dp_30"
                 android:src="@drawable/ico_add" />
         </RelativeLayout>
     </LinearLayout>

@@ -21,8 +21,6 @@ class RegisterActivity : AppCompatActivity(),View.OnClickListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        XUI.init(application)
-        XUI.getInstance().initFontStyle("fonts/hwxk.ttf")
         dataBinding = DataBindingUtil.setContentView(this,R.layout.activity_register)
         registerVM = RegisterVM(this)
         initView()
@@ -41,17 +39,19 @@ class RegisterActivity : AppCompatActivity(),View.OnClickListener {
             HttpListener {
             override fun complete(dataType: String, data: String) {
                 if(data == "Success"){
-                    var intent = Intent()
+                    intent.putExtra("result","Success")
                     intent.putExtra("email",dataBinding.email.text)
                     intent.putExtra("password",dataBinding.password.text)
                     setResult(SystemCode.REGISTER,intent)
                     finish()
+                }else{
+                    intent.putExtra("result","Fail")
                 }
             }
         })
     }
 
-    private fun checkData():Boolean{
+    private fun checkData(option:Int):Boolean{
         if(!Patterns.EMAIL_ADDRESS.matcher(dataBinding.email.text).matches()){
             Toast.makeText(applicationContext,"邮箱格式不合法！",Toast.LENGTH_SHORT).show()
             return false
@@ -60,7 +60,7 @@ class RegisterActivity : AppCompatActivity(),View.OnClickListener {
             Toast.makeText(applicationContext,"密码不得小于6位！",Toast.LENGTH_SHORT).show()
             return false
         }
-        if(dataBinding.verifyCode.text.length != 4){
+        if(option == 1 && dataBinding.verifyCode.text.length != 4){
             Toast.makeText(applicationContext,"验证码必须为4位",Toast.LENGTH_SHORT).show()
             return false
         }
@@ -70,10 +70,12 @@ class RegisterActivity : AppCompatActivity(),View.OnClickListener {
     override fun onClick(v: View?) {
         when(v?.id){
             R.id.get_verify_code -> {
-                registerVM.getVerifyCode()
+                if(checkData(0)) {
+                    registerVM.getVerifyCode(dataBinding.email.text.toString())
+                }
             }
             R.id.register_button -> {
-                if(checkData())
+                if(checkData(1))
                     registerVM.register(
                         dataBinding.email.text.toString(),
                         dataBinding.password.text.toString(),

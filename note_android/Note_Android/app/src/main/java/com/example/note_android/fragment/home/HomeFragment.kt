@@ -35,7 +35,6 @@ class HomeFragment : Fragment(),View.OnClickListener {
     ): View? {
         homeViewModel =
             ViewModelProvider(this).get(NoticeViewModel::class.java)
-        //initSystemUi()
         root = inflater.inflate(R.layout.fragment_home, container, false)
         initData()
         initRVAdapter()
@@ -45,16 +44,20 @@ class HomeFragment : Fragment(),View.OnClickListener {
     }
 
     private fun initRefreshLayout() {
-        root.home_refresh.setOnRefreshListener {
-        }
-        root.home_refresh.setOnLoadMoreListener() {
-        }
+//        root.home_refresh.setEnableLoadMore(true)
+//        root.home_refresh.finishRefresh(1500)
+//        root.home_refresh.finishLoadMore(1500)
+//        root.home_refresh.setOnRefreshListener {
+//            root.home_refresh.finishRefresh()
+//        }
+//        root.home_refresh.setOnLoadMoreListener() {
+//            root.home_refresh.finishLoadMore()
+//        }
     }
 
     override fun onResume() {
         super.onResume()
-        Log.e("执行","onResume执行一次")
-        initSystemUi()
+        StateBarUtils.initStatusBarStyle(requireActivity(),false,resources.getColor(R.color.white))
     }
 
     private fun initRVAdapter() {
@@ -93,9 +96,5 @@ class HomeFragment : Fragment(),View.OnClickListener {
                 ScanActivity.start(requireActivity(),1, R.style.XQRCodeTheme_Custom)
             }
         }
-    }
-
-    private fun initSystemUi(){
-        StateBarUtils.initStatusBarStyle(requireActivity(),false,resources.getColor(R.color.white))
     }
 }

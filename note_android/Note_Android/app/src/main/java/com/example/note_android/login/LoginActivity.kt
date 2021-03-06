@@ -28,7 +28,7 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
         loginBinding = DataBindingUtil.setContentView(this,R.layout.activity_login)
         mTencent = Tencent.createInstance(resources.getString(R.string.APP_ID),applicationContext)
         EventBus.getDefault().register(this)
-        initView()
+        //initView()
         initListener()
     }
 
@@ -70,10 +70,12 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
                 Tencent.onActivityResultData(requestCode,resultCode,data, MyIUiListener(applicationContext,"login"))
             }
             SystemCode.REGISTER -> {
-                var email = data?.extras?.get("email").toString()
-                var password = data?.extras?.get("password").toString()
-                loginBinding.loginEmail.setText(email)
-                loginBinding.loginPassword.setText(password)
+                if(data?.extras?.get("result").toString() == "Success") {
+                    var email = data?.extras?.get("email").toString()
+                    var password = data?.extras?.get("password").toString()
+                    loginBinding.loginEmail.setText(email)
+                    loginBinding.loginPassword.setText(password)
+                }
             }
         }
     }
@@ -84,7 +86,7 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
                 ActivityUtil.get().goActivityKill(this,MainActivity::class.java)
             }
             R.id.icon_qq_login ->{
-                QQLogin()
+                //QQLogin()
             }
             R.id.btn_to_register -> {
                 ActivityUtil.get().goActivityResult(this,RegisterActivity::class.java,SystemCode.REGISTER)

@@ -1,21 +1,26 @@
 package com.example.note_android
 
+import android.content.Context
 import android.content.Intent
+import android.content.res.ColorStateList
 import android.os.Build
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
 import androidx.annotation.RequiresApi
-import com.google.android.material.bottomnavigation.BottomNavigationView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.viewpager2.widget.ViewPager2
 import com.example.note_android.login.QQLogin.MyIUiListener
-import com.example.note_android.util.*
+import com.example.note_android.util.StateUtil
+import com.example.note_android.util.SystemCode
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.bottomnavigation.LabelVisibilityMode
 import com.tencent.connect.UserInfo
 import com.tencent.tauth.Tencent
 import com.xuexiang.xui.XUI
+import io.github.inflationx.viewpump.ViewPumpContextWrapper
 import kotlinx.android.synthetic.main.activity_main.*
+
 
 class MainActivity : AppCompatActivity() {
 
@@ -27,14 +32,16 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         XUI.init(application)
-        XUI.getInstance().initFontStyle("fonts/hwxk.ttf")
+        XUI.initFontStyle("fonts/hwxk.ttf")
         setContentView(R.layout.activity_main)
-//        StateBarUtils.initStatusBarStyle(this,false,resources.getColor(R.color.white))
         mTencent = Tencent.createInstance(resources.getString(R.string.APP_ID),applicationContext)
         navView = findViewById(R.id.nav_view)
-//        val navController = findNavController(R.id.nav_host_fragment)
         initNavView()
         initViewPage()
+    }
+
+    override fun attachBaseContext(newBase: Context) {
+        super.attachBaseContext(ViewPumpContextWrapper.wrap(newBase))
     }
 
     private fun initNavView() {
@@ -79,7 +86,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if(requestCode == SystemCode.QQ_LOGIN_REQUEST){
+        if(requestCode == SystemCode.QQ_LOGIN_REQUEST && StateUtil.LOGIN_INFO!= null){
             mTencent.openId = StateUtil.LOGIN_INFO?.openid
             mTencent.setAccessToken(StateUtil.LOGIN_INFO?.access_token, StateUtil.LOGIN_INFO?.expires_in)
             var user = UserInfo(this,mTencent.qqToken)

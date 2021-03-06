@@ -14,7 +14,7 @@ class StateUtil {
         var LOGIN_INFO: QQLoginInfo? = null
         var LOGIN_TYPE:String = ""
 
-        fun initInfo(context: Context){
+        fun initInfo(context: Context): Boolean{
             var gson = Gson()
             var editor = context.getSharedPreferences(
                 context.resources.getString(R.string.LoginInfo),
@@ -22,10 +22,11 @@ class StateUtil {
             var userInfo = editor?.getString(context.resources.getString(R.string.QQUserInfo),"")
             var loginInfo = editor?.getString(context.resources.getString(R.string.QQLoginInfo),"")
             if (userInfo.equals("") || loginInfo.equals("")){
-                return
+                return false
             }
             this.LOGIN_INFO = gson.fromJson(loginInfo, QQLoginInfo::class.java)
             this.USER_INFO = gson.fromJson(userInfo, QQUserInfo::class.java)
+            return true
         }
     }
 }

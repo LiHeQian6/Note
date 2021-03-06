@@ -146,7 +146,6 @@ class StateBarUtils {
             } else {
                 setStatusBarLightMode(activity)
             }
-            Log.e("执行","执行一次")
         }
 
         fun isNotchOfficialSupport(): Boolean {

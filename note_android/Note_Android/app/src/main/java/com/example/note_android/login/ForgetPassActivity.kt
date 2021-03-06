@@ -17,7 +17,7 @@ class ForgetPassActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         XUI.init(application)
-        XUI.getInstance().initFontStyle("fonts/hwxk.ttf")
+        XUI.initFontStyle("fonts/hwxk.ttf")
         initFragment()
         dataBinding = DataBindingUtil.setContentView(this,R.layout.activity_forget_pass)
     }

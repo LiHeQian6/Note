@@ -18,17 +18,17 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Note_Android"
         android:usesCleartextTraffic="true">
-        <activity android:name=".login.ForgetPassActivity">
-
-        </activity>
-        <activity android:name=".login.RegisterActivity" >
-        </activity>
+        <activity
+            android:name=".setting.SettingsActivity"
+            android:label="@string/title_activity_settings"></activity>
+        <activity android:name=".login.ForgetPassActivity"></activity>
+        <activity android:name=".login.RegisterActivity"></activity>
         <activity android:name=".note.ShowActivity" />
         <activity android:name=".scan.ScanActivity" />
         <activity
             android:name=".edit.EditActivity"
             android:windowSoftInputMode="adjustPan" />
-        <activity android:name=".MainActivity" >
+        <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -36,8 +36,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".login.LoginActivity" />
-        <activity android:name=".welcome.WelcomeActivity">
-        </activity>
+        <activity android:name=".welcome.WelcomeActivity"></activity>
         <activity
             android:name="com.tencent.tauth.AuthActivity"
             android:launchMode="singleTask"

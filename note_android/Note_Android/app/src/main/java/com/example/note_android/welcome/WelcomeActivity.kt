@@ -29,7 +29,7 @@ class WelcomeActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         XUI.init(application)
-        XUI.getInstance().initFontStyle("fonts/hwxk.ttf")
+        XUI.initFontStyle("fonts/hwxk.ttf")
         setContentView(R.layout.activity_welcome)
         mTencent = Tencent.createInstance(resources.getString(R.string.APP_ID),applicationContext)
         initView()
