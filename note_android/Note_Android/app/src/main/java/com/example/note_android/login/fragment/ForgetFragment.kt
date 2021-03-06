@@ -42,12 +42,12 @@ class ForgetFragment: Fragment(),View.OnClickListener {
         Toast.makeText(requireContext(),"获取失败", Toast.LENGTH_SHORT).show()
     }
 
-    private fun checkData(): Boolean{
+    private fun checkData(option: Int): Boolean{
         if(!Patterns.EMAIL_ADDRESS.matcher(rootView.forget_email.text).matches()){
             Toast.makeText(requireContext(),"邮箱格式不合法！", Toast.LENGTH_SHORT).show()
             return false
         }
-        if(rootView.verify_code.text.length != 4){
+        if(option == 1 && rootView.verify_code.text.length != 4){
             Toast.makeText(requireContext(),"验证码必须为4位", Toast.LENGTH_SHORT).show()
             return false
         }
@@ -57,12 +57,13 @@ class ForgetFragment: Fragment(),View.OnClickListener {
     override fun onClick(v: View?) {
         when(v?.id){
             R.id.forget_button -> {
-                if(checkData()){
+                if(checkData(1)){
                     commit()
                 }
             }
             R.id.get_forget_verify_code -> {
-                getVerifyCode()
+                if(checkData(0))
+                    getVerifyCode()
             }
         }
     }

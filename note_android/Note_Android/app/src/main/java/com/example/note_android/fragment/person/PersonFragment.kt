@@ -6,7 +6,6 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
@@ -14,7 +13,6 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.example.note_android.R
 import com.example.note_android.annotation.Page
 import com.example.note_android.login.LoginActivity
-import com.example.note_android.setting.SettingsActivity
 import com.example.note_android.util.*
 import com.tencent.tauth.Tencent
 import kotlinx.android.synthetic.main.fragment_person.view.*
@@ -26,7 +24,6 @@ import org.greenrobot.eventbus.ThreadMode
 class PersonFragment : Fragment(),View.OnClickListener {
 
     private lateinit var personViewModel: PersonViewModel
-    private lateinit var settingAdapter : SettingAdapter
     private lateinit var root: View
     private lateinit var mTencent:Tencent
 
@@ -54,8 +51,8 @@ class PersonFragment : Fragment(),View.OnClickListener {
             root.user_name?.setText(StateUtil.USER_INFO?.nickname)
             root.logout_button.visibility = View.VISIBLE
             Glide.with(requireContext()).load(StateUtil.USER_INFO?.figureurl_qq_2)
-                    .error(R.drawable.head_1)
-                    .placeholder(R.drawable.head_1)
+                    .error(R.drawable.head_img)
+                    .placeholder(R.drawable.head_img)
                     .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
                     .dontAnimate()
                     .into(root.person_image)
@@ -75,8 +72,8 @@ class PersonFragment : Fragment(),View.OnClickListener {
     public fun setInfoEvent(userEvent: UserEvent){
         root.user_name?.setText(userEvent.userInfo?.nickname)
         Glide.with(requireContext()).load(StateUtil.USER_INFO?.figureurl_qq_1)
-                .error(R.drawable.head_1)
-                .placeholder(R.drawable.head_1)
+                .error(R.drawable.head_img)
+                .placeholder(R.drawable.head_img)
                 .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
                 .into(root.person_image)
         EventBus.getDefault().unregister(this)
@@ -133,8 +130,7 @@ class PersonFragment : Fragment(),View.OnClickListener {
                     ActivityUtil.get().goActivityResult(requireActivity(),LoginActivity::class.java,SystemCode.QQ_LOGIN_REQUEST)
             }
             R.id.ico_settings -> {
-                Log.e("点击了","点击了")
-                ActivityUtil.get().activity(requireContext(),SettingsActivity::class.java)
+
             }
             R.id.user_bac_image -> {
             }
