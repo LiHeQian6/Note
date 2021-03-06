@@ -37,54 +37,22 @@
                 <div class="col-md-4">
                     <div>
                         <h3 class="box-title m-t-30">系统日志</h3>
-                        <p class="text-muted m-b-20">选择要查看日志的日期</p>
+                        <p id="date" th:text="${date}"  class="text-muted m-b-20">选择要查看日志的日期</p>
                         <div class="col-md-12" style="background-color: floralwhite;">
                             <div id="datepicker-inline"></div>
                         </div>
                         <div class="col-md-12" style="text-align: center;padding-top: 30px">
                             <div class="bootstrap-pagination" style="display: inline-block">
-                                <nav>
-                                    <ul class="pagination pagination-sm align-items-center">
-                                        第<li class="page-item disabled"><a class="page-link" href="#">1</a>
-                                        </li>
-                                        <li class="page-item"><a class="page-link" href="#">2</a>
-                                        </li>
-                                        <li class="page-item"><a class="page-link" href="#">3</a>
-                                        </li>页
-                                    </ul>
+                                <nav><ul id="log-page" class="pagination pagination-sm align-items-center" >
+                                    <li th:if="${i!=0}" th:each="i:${#numbers.sequence(1,logCount)}" th:classappend="${i==num?'disabled':''}" class="page-item pageItem">
+                                        <a class="page-link" th:text="${i}" th:href="|/admin/system-log/${date}/${i}|">1</a></li></ul>
                                 </nav>
                             </div>
                         </div>
                     </div>
                 </div>
                 <div class="col-md-8 bg-light">
-                  <pre class="pre-scrollable col-md-12" style="min-height: 70vh;padding: 20px;">
-2021-02-16 10:03:53.203  INFO 7296 --- [restartedMain] com.zhifou.note.NoteApplication          : Starting NoteApplication using Java 10.0.1 on MY-2020 with PID 7296 (D:\毕业设计\note\note\target\classes started by Administrator in D:\毕业设计\note\note)
-2021-02-16 10:03:53.249  INFO 7296 --- [restartedMain] com.zhifou.note.NoteApplication          : The following profiles are active: dev
-2021-02-16 10:03:53.394  INFO 7296 --- [restartedMain] .e.DevToolsPropertyDefaultsPostProcessor : Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
-2021-02-16 10:03:53.395  INFO 7296 --- [restartedMain] .e.DevToolsPropertyDefaultsPostProcessor : For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
-2021-02-16 10:03:57.874  INFO 7296 --- [restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Multiple Spring Data modules found, entering strict repository configuration mode!
-2021-02-16 10:03:57.874  INFO 7296 --- [restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
-2021-02-16 10:03:58.277  INFO 7296 --- [restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 390 ms. Found 3 JPA repository interfaces.
-2021-02-16 10:03:58.357  INFO 7296 --- [restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Multiple Spring Data modules found, entering strict repository configuration mode!
-2021-02-16 10:03:58.358  INFO 7296 --- [restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data Redis repositories in DEFAULT mode.
-2021-02-16 10:03:58.380  INFO 7296 --- [restartedMain] .RepositoryConfigurationExtensionSupport : Spring Data Redis - Could not safely identify store assignment for repository candidate interface com.zhifou.note.user.repository.PrivilegeRepository. If you want this repository to be a Redis repository, consider annotating your entities with one of these annotations: org.springframework.data.redis.core.RedisHash (preferred), or consider extending one of the following types with your repository: org.springframework.data.keyvalue.repository.KeyValueRepository.
-2021-02-16 10:03:58.381  INFO 7296 --- [restartedMain] .RepositoryConfigurationExtensionSupport : Spring Data Redis - Could not safely identify store assignment for repository candidate interface com.zhifou.note.user.repository.RoleRepository. If you want this repository to be a Redis repository, consider annotating your entities with one of these annotations: org.springframework.data.redis.core.RedisHash (preferred), or consider extending one of the following types with your repository: org.springframework.data.keyvalue.repository.KeyValueRepository.
-2021-02-16 10:03:58.381  INFO 7296 --- [restartedMain] .RepositoryConfigurationExtensionSupport : Spring Data Redis - Could not safely identify store assignment for repository candidate interface com.zhifou.note.user.repository.UserRepository. If you want this repository to be a Redis repository, consider annotating your entities with one of these annotations: org.springframework.data.redis.core.RedisHash (preferred), or consider extending one of the following types with your repository: org.springframework.data.keyvalue.repository.KeyValueRepository.
-2021-02-16 10:03:58.381  INFO 7296 --- [restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 8 ms. Found 0 Redis repository interfaces.
-2021-02-16 10:03:59.277  INFO 7296 --- [restartedMain] trationDelegate$BeanPostProcessorChecker : Bean 'com.alibaba.druid.spring.boot.autoconfigure.stat.DruidSpringAopConfiguration' of type [com.alibaba.druid.spring.boot.autoconfigure.stat.DruidSpringAopConfiguration] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
-2021-02-16 10:03:59.699  INFO 7296 --- [restartedMain] trationDelegate$BeanPostProcessorChecker : Bean 'spring.datasource.druid-com.alibaba.druid.spring.boot.autoconfigure.properties.DruidStatProperties' of type [com.alibaba.druid.spring.boot.autoconfigure.properties.DruidStatProperties] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
-2021-02-16 10:03:59.954  INFO 7296 --- [restartedMain] trationDelegate$BeanPostProcessorChecker : Bean 'advisor' of type [org.springframework.aop.support.RegexpMethodPointcutAdvisor] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
-2021-02-16 10:04:01.662  INFO 7296 --- [restartedMain] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port(s): 8080 (http)
-2021-02-16 10:04:01.673  INFO 7296 --- [restartedMain] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
-2021-02-16 10:04:01.673  INFO 7296 --- [restartedMain] org.apache.catalina.core.StandardEngine  : Starting Servlet engine: [Apache Tomcat/9.0.41]
-2021-02-16 10:04:02.142  INFO 7296 --- [restartedMain] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
-2021-02-16 10:04:02.142  INFO 7296 --- [restartedMain] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 8744 ms
-2021-02-16 10:04:03.748  INFO 7296 --- [restartedMain] c.a.d.s.b.a.DruidDataSourceAutoConfigure : Init DruidDataSource
-2021-02-16 10:04:12.591  INFO 7296 --- [restartedMain] com.alibaba.druid.pool.DruidDataSource   : {dataSource-1} inited
-2021-02-16 10:04:13.297  INFO 7296 --- [restartedMain] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
-2021-02-16 10:04:13.873  INFO 7296 --- [restartedMain] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 5.4.25.Final
-                  </pre>
+                  <pre class="pre-scrollable col-md-12" id="log" th:text="${firstLog}" style="min-height: 70vh;padding: 20px;"></pre>
                 </div>
             </div>
           </div>
@@ -99,15 +67,18 @@
    <script th:src="@{/static/js/custom.min.js}"></script>
    <script th:src="@{/static/assets/plugins/bootstrap-datepicker/bootstrap-datepicker.min.js}"></script>
    <script type="text/javascript">
-			$(document).ready(function () {
-          jQuery('#datepicker-inline').datepicker({
-              todayHighlight: true,
-              todayBtn: 'linked'
+       $(document).ready(function () {
+           var datePicker = jQuery('#datepicker-inline');
+           datePicker.datepicker({
+               todayHighlight: true,
+               todayBtn: 'linked',
+               dateFormat:'yyyy-MM-dd',
+               endDate: new Date(),
               }).on('changeDate', function(e){
-                console.log(e.format('dd/mm/yyyy'))
+              window.location="/admin/system-log/"+e.format('yyyy-mm-dd')+"/1";
           });
-        });
-        </script>
+       });
+   </script>
   </div>
  </body>
 </html>

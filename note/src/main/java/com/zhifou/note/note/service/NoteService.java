@@ -1,13 +1,16 @@
 package com.zhifou.note.note.service;
 
 import com.zhifou.note.bean.Status;
-import com.zhifou.note.exception.bean.NoteException;
+import com.zhifou.note.exception.NoteException;
 import com.zhifou.note.note.entity.Note;
+import com.zhifou.note.note.entity.Tag;
+import com.zhifou.note.note.entity.Type;
 import com.zhifou.note.note.repository.NoteRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.util.Set;
 
 /**
  * @author : li
@@ -18,6 +21,10 @@ import javax.annotation.Resource;
 public class NoteService {
     @Resource
     private NoteRepository noteRepository;
+    @Resource
+    private TypeService typeService;
+    @Resource
+    private TagService tagService;
 
 
     public Note getNote(int id) throws NoteException {
@@ -29,6 +36,10 @@ public class NoteService {
     }
 
     public void addNote(Note note) {
+        Type type = note.getType();
+        note.setType(typeService.getType(type.getId()));
+        Set<Tag> tags = note.getTags();
+        note.setTags(tagService.getTags(tags));
         noteRepository.save(note);
     }
 
@@ -41,6 +52,10 @@ public class NoteService {
     }
 
     public void updateNote(Note note) {
+        Type type = note.getType();
+        note.setType(typeService.getType(type.getId()));
+        Set<Tag> tags = note.getTags();
+        note.setTags(tagService.getTags(tags));
         noteRepository.save(note);
     }
 

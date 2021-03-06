@@ -1,7 +1,7 @@
 package com.zhifou.note.user.service;
 
 import com.zhifou.note.bean.Status;
-import com.zhifou.note.exception.bean.UserException;
+import com.zhifou.note.exception.UserException;
 import com.zhifou.note.user.entity.Role;
 import com.zhifou.note.user.entity.User;
 import com.zhifou.note.user.repository.RoleRepository;

@@ -2,7 +2,7 @@ package com.zhifou.note.message.service;
 
 import com.zhifou.note.bean.NoteVO;
 import com.zhifou.note.bean.UserVO;
-import com.zhifou.note.exception.bean.NoteException;
+import com.zhifou.note.exception.NoteException;
 import com.zhifou.note.note.entity.Note;
 import com.zhifou.note.note.service.NoteService;
 import com.zhifou.note.user.entity.User;

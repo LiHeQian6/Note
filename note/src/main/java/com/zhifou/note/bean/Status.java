@@ -12,8 +12,8 @@ public enum  Status {
 
     /* 参数错误：1000～1999 */
     PARAM_NOT_VALID(1001, "参数无效"),
-
     NOT_FOUND_NOTE(1002, "未找到指定笔记"),
+
     PARAM_TYPE_ERROR(1003, "参数类型错误"),
     PARAM_NOT_COMPLETE(1004, "参数缺失"),
 

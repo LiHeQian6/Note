@@ -1,6 +1,6 @@
 package com.zhifou.note.note.controller;
 
-import com.zhifou.note.exception.bean.NoteException;
+import com.zhifou.note.exception.NoteException;
 import com.zhifou.note.note.entity.Comment;
 import com.zhifou.note.note.entity.Note;
 import com.zhifou.note.note.service.CommentService;

@@ -36,7 +36,6 @@ public class Type {
         return "Type{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
-                ", parent=" + parent +
                 ", child=" + child +
                 ", status=" + status +
                 '}';

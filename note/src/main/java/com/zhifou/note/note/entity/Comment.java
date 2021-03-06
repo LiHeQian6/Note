@@ -27,15 +27,15 @@ public class Comment {
     @Transient
     private int likeNum;
     private Date createTime=new Date();
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     @NotNull(message = "评论所属笔记不能为空")
     private Note note;
     @JsonIgnore
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     private Comment parent;
     @OneToMany(mappedBy = "parent")
     private Set<Comment> child;
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     @NotNull(message = "评论用户不能为空")
     private User user;
     private int status;

@@ -1,6 +1,6 @@
 package com.zhifou.note.user.filter;
 
-import com.zhifou.note.exception.bean.ValidateCodeException;
+import com.zhifou.note.exception.ValidateCodeException;
 import com.zhifou.note.util.RedisKeyUtil;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.redis.core.RedisTemplate;

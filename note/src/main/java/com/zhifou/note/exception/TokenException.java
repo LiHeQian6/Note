@@ -1,4 +1,4 @@
-package com.zhifou.note.exception.bean;
+package com.zhifou.note.exception;
 
 import com.zhifou.note.bean.Status;
 import lombok.Getter;

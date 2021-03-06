@@ -70,4 +70,28 @@ public class NoteVO {
         type=note.getType();
         tags=note.getTags();
     }
+
+    public void setLike(long like) {
+        this.like = like;
+    }
+
+    public void setCollect(long collect) {
+        this.collect = collect;
+    }
+
+    public void setIsLike(boolean like) {
+        isLike = like;
+    }
+
+    public void setIsCollect(boolean collect) {
+        isCollect = collect;
+    }
+
+    public boolean isLike() {
+        return isLike;
+    }
+
+    public boolean isCollect() {
+        return isCollect;
+    }
 }

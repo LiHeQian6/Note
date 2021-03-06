@@ -18,6 +18,6 @@ public class TypeService {
     private TypeRepository typeRepository;
 
     public Type getType(int id){
-        return typeRepository.findTypeById(id);
+        return typeRepository.getById(id);
     }
 }

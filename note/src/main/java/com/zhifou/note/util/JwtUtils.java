@@ -14,6 +14,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
+import org.thymeleaf.util.StringUtils;
 
 import javax.annotation.Resource;
 import java.io.Serializable;
@@ -294,6 +295,9 @@ public class JwtUtils implements Serializable {
     public User getUserInfo(){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Object principal = authentication.getPrincipal();
+        if (StringUtils.equals(principal.toString(),"anonymousUser")) {
+            return null;
+        }
         if ((principal instanceof String)) {
             String username = getUserNameFromToken(principal.toString());
             UserDetails userDetails = userRepository.findUserByUsername(username);

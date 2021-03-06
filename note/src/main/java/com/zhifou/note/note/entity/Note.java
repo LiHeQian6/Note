@@ -30,13 +30,13 @@ public class Note {
 /*    private int likeNum; //交由redis存储
     private int lookNum;*/
     private Date createTime=new Date();
-    @ManyToOne(targetEntity = User.class,cascade = CascadeType.ALL)
+    @ManyToOne(targetEntity = User.class)
     private User user;
-    @ManyToOne(targetEntity = Type.class,cascade = CascadeType.ALL)
+    @ManyToOne(targetEntity = Type.class)
     @Valid
     @NotNull(message = "必须选择一个分类")
     private Type type;
-    @ManyToMany(cascade = CascadeType.ALL)
+    @ManyToMany
     @JoinTable(
             name = "notes_tags",
             joinColumns = @JoinColumn(
@@ -46,6 +46,8 @@ public class Note {
     @Valid
     @Size(min = 1,message = "至少选择一个标签")
     private Set<Tag> tags;
+    @OneToMany(mappedBy = "note")
+    private Set<Comment> comments;
     private int status=0;
 
     @Override
@@ -62,18 +64,24 @@ public class Note {
                 '}';
     }
 
-    public void update(Note newNote) {
+    public boolean update(Note newNote) {
+        boolean result=false;
         if (newNote.getTitle()!=null) {
             title= newNote.getTitle();
+            result=true;
         }
         if (newNote.getContent()!=null) {
             content= newNote.getContent();
+            result=true;
         }
         if (newNote.getType()!=null) {
             type= newNote.getType();
+            result=true;
         }
         if (newNote.getTags()!=null) {
             tags= newNote.getTags();
+            result=true;
         }
+        return result;
     }
 }

@@ -1,4 +1,4 @@
-package com.zhifou.note.exception.bean;
+package com.zhifou.note.exception;
 
 
 import org.springframework.security.core.AuthenticationException;

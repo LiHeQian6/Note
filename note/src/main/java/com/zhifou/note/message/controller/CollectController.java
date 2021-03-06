@@ -1,6 +1,6 @@
 package com.zhifou.note.message.controller;
 
-import com.zhifou.note.exception.bean.NoteException;
+import com.zhifou.note.exception.NoteException;
 import com.zhifou.note.message.service.CollectService;
 import com.zhifou.note.note.service.NoteService;
 import com.zhifou.note.user.entity.User;

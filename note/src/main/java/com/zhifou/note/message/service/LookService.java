@@ -35,7 +35,7 @@ public class LookService {
                 boolean isMember = redisTemplate.opsForSet().isMember(RedisKeyUtil.getNoteLookKey(noteId), ip);
                 operations.multi();
                 if (!isMember) {
-                    redisTemplate.opsForSet().add(ip);
+                    redisTemplate.opsForSet().add(RedisKeyUtil.getNoteLookKey(noteId),ip);
                 }
                 return operations.exec();
             }
