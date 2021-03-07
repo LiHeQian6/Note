@@ -33,6 +33,7 @@
         <com.scwang.smart.refresh.layout.SmartRefreshLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/bar_card">
             <com.scwang.smart.refresh.header.MaterialHeader
                 android:layout_width="match_parent"

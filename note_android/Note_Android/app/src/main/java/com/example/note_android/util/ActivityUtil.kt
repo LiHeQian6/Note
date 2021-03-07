@@ -10,7 +10,7 @@ import com.example.note_android.annotation.Page
 class ActivityUtil{
 
     companion object {
-        const val OPEN_ACTIVITY_KEY = "options" //intent跳转传递传输key
+        const val OPEN_ACTIVITY_KEY = "Option" //intent跳转传递传输key
         private var manager: ActivityUtil? = null
         private var intent: Intent? = null
         fun get(): ActivityUtil {

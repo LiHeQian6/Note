@@ -9,7 +9,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.note_android.R
-import com.example.note_android.listener.RVItemOnClickListener
+import com.example.note_android.listener.OnItemClickListener
 import com.example.note_android.util.StateBarUtils
 import com.xuexiang.xui.widget.toast.XToast
 import kotlinx.android.synthetic.main.fragment_follow.view.*
@@ -45,7 +45,7 @@ class FollowFragment : Fragment() {
         root.follow_recyclerView.layoutManager = layoutManager
         root.follow_recyclerView.adapter = adapter
         adapter.setOnItemClickListener(object :
-            RVItemOnClickListener {
+            OnItemClickListener {
             override fun onItemClick(position: Int) {
                 XToast.success(requireContext(),"这是第${position+1}个").show()
             }

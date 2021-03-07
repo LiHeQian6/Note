@@ -11,10 +11,12 @@ import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.example.note_android.R
+import com.example.note_android.about.AboutMeActivity
 import com.example.note_android.annotation.Page
 import com.example.note_android.login.LoginActivity
 import com.example.note_android.util.*
 import com.tencent.tauth.Tencent
+import kotlinx.android.synthetic.main.fragment_person.*
 import kotlinx.android.synthetic.main.fragment_person.view.*
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
@@ -49,7 +51,6 @@ class PersonFragment : Fragment(),View.OnClickListener {
         StateBarUtils.translucent(requireActivity())
         if(StateUtil.IF_LOGIN && StateUtil.initInfo(requireContext())) {
             root.user_name?.setText(StateUtil.USER_INFO?.nickname)
-            root.logout_button.visibility = View.VISIBLE
             Glide.with(requireContext()).load(StateUtil.USER_INFO?.figureurl_qq_2)
                     .error(R.drawable.head_img)
                     .placeholder(R.drawable.head_img)
@@ -58,7 +59,6 @@ class PersonFragment : Fragment(),View.OnClickListener {
                     .into(root.person_image)
         }else{
             root.user_name?.setText("立即登录")
-            root.logout_button.visibility = View.GONE
         }
     }
 
@@ -80,19 +80,19 @@ class PersonFragment : Fragment(),View.OnClickListener {
     }
 
     private fun initListener() {
-        root.logout_button.setOnClickListener(this)
         root.user_name.setOnClickListener(this)
         root.ico_settings.setOnClickListener(this)
         root.user_bac_image.setOnClickListener(this)
+        root.my_note.setOnClickListener(this)
+        root.my_favourite.setOnClickListener(this)
+        root.my_click_up.setOnClickListener(this)
     }
 
     private fun checkLogin() {
         if(!StateUtil.IF_LOGIN){
             root.user_name?.setText("立即登录")
-            root.logout_button.visibility = View.GONE
         }else{
             root.user_name?.setText(StateUtil.USER_INFO?.nickname)
-            root.logout_button.visibility = View.VISIBLE
         }
     }
 
@@ -113,16 +113,12 @@ class PersonFragment : Fragment(),View.OnClickListener {
         editor?.clear()
         editor?.apply()
         root.user_name?.setText("立即登录")
-        root.logout_button.visibility = View.GONE
         StateUtil.IF_LOGIN = false
         mTencent.logout(requireContext())
     }
 
     override fun onClick(v: View?) {
         when(v?.id){
-            R.id.logout_button -> {
-                logout()
-            }
             R.id.user_name -> {
                 if(StateUtil.IF_LOGIN)
                     return
@@ -133,6 +129,15 @@ class PersonFragment : Fragment(),View.OnClickListener {
 
             }
             R.id.user_bac_image -> {
+            }
+            R.id.my_note -> {
+                ActivityUtil.get().goActivity(requireContext(),AboutMeActivity::class.java,MessageBean("Success","MyNote",""))
+            }
+            R.id.my_favourite -> {
+                ActivityUtil.get().goActivity(requireContext(),AboutMeActivity::class.java,MessageBean("Success","MyLike",""))
+            }
+            R.id.my_click_up -> {
+                ActivityUtil.get().goActivity(requireContext(),AboutMeActivity::class.java,MessageBean("Success","MyClickUp",""))
             }
         }
     }
