@@ -36,7 +36,14 @@ public class Comment {
     @OneToMany(mappedBy = "parent")
     private Set<Comment> child;
     @ManyToOne
-    @NotNull(message = "评论用户不能为空")
     private User user;
     private int status;
+
+    public boolean update(Comment newComment) {
+        if (newComment.getContent()!=null) {
+            content= newComment.getContent();
+            return true;
+        }
+        return false;
+    }
 }

@@ -5,10 +5,7 @@ import com.zhifou.note.user.entity.User;
 import com.zhifou.note.util.JwtUtils;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -41,13 +38,15 @@ public class FollowController {
 
     @ApiOperation("获取自己的关注列表")
     @GetMapping("/followee")
-    public List<Map<String, Object>> getFollowee(@ApiParam("从第x(first:0)个开始") int offset,@ApiParam("每页有几个") int limit){
+    public List<Map<String, Object>> getFollowee(@ApiParam("从第x(first:0)个开始")@RequestParam int offset,
+                                                 @ApiParam("每页有几个") @RequestParam int limit){
         User userInfo = jwtUtils.getUserInfo();
         return followService.getFollowee(userInfo.getId(),offset,limit);
     }
     @ApiOperation("获取自己的粉丝列表")
     @GetMapping("/follower")
-    public List<Map<String, Object>> getFollowers(@ApiParam("从第x(first:0)个开始") int offset,@ApiParam("每页有几个") int limit){
+    public List<Map<String, Object>> getFollowers(@ApiParam("从第x(first:0)个开始")@RequestParam int offset,
+                                                  @ApiParam("每页有几个")@RequestParam int limit){
         User userInfo = jwtUtils.getUserInfo();
         return followService.getFollowers(userInfo.getId(),offset,limit);
     }

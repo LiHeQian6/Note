@@ -5,6 +5,7 @@ public class RedisKeyUtil {
     private static final String SPLIT = ":";
     private static final String PREFIX_ENTITY_LIKE = "like:entity";
     private static final String PREFIX_USER_LIKE = "like:user";
+    private static final String PREFIX_USER_LIKED = "user:liked";
     private static final String PREFIX_FOLLOWEE = "followee";
     private static final String PREFIX_FOLLOWER = "follower";
     private static final String PREFIX_VERIFY_CODE = "verifyCode";
@@ -15,7 +16,6 @@ public class RedisKeyUtil {
     private static final String PREFIX_LOOK = "look";
     private static final String PREFIX_USER_COLLECT = "collect:user";
     private static final String PREFIX_NOTE_COLLECT = "collect:note";
-//    private static final String PREFIX_POST = "post";
 
     // 某个实体的赞
     // like:entity:entityType:entityId -> set(userId) //entity 指笔记和评论
@@ -51,10 +51,10 @@ public class RedisKeyUtil {
         return PREFIX_TOKEN + SPLIT + token;
     }
 
-    // 用户
-    public static String getUserKey(int userId) {
-        return PREFIX_USER + SPLIT + userId;
-    }
+//    // 用户
+//    public static String getUserKey(int userId) {
+//        return PREFIX_USER + SPLIT + userId;
+//    }
 
     // 单日UV
     public static String getUVKey(String date) {
@@ -81,11 +81,18 @@ public class RedisKeyUtil {
         return PREFIX_LOOK+SPLIT+noteId;
     }
 
+    //用户收藏列表
     public static String getUserCollectKey(int userId) {
         return PREFIX_USER_COLLECT+SPLIT+userId;
     }
 
+    //收藏该笔记的用户列表
     public static String getNoteCollectKey(int noteId) {
         return PREFIX_NOTE_COLLECT+SPLIT+noteId;
+    }
+
+    //获取用户点赞历史
+    public static String getUserLikedKey(int userId) {
+        return PREFIX_USER_LIKED+SPLIT+userId;
     }
 }

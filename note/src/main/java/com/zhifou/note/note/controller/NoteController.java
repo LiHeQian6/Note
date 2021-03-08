@@ -1,5 +1,6 @@
 package com.zhifou.note.note.controller;
 
+import com.zhifou.note.bean.CommentVO;
 import com.zhifou.note.bean.Constant;
 import com.zhifou.note.bean.NoteVO;
 import com.zhifou.note.exception.NoteException;
@@ -7,7 +8,6 @@ import com.zhifou.note.message.service.CollectService;
 import com.zhifou.note.message.service.FollowService;
 import com.zhifou.note.message.service.LikeService;
 import com.zhifou.note.message.service.LookService;
-import com.zhifou.note.note.entity.Comment;
 import com.zhifou.note.note.entity.Note;
 import com.zhifou.note.note.service.CommentService;
 import com.zhifou.note.note.service.NoteService;
@@ -48,14 +48,14 @@ public class NoteController implements Constant {
     @ApiOperation("浏览笔记")
     @GetMapping("/note/{id}")
     public NoteVO browseNote(@PathVariable int id, HttpServletRequest request) throws NoteException {
+        User userInfo = jwtUtils.getUserInfo();
         lookService.look(request.getRemoteAddr(),id);
         long look = lookService.lookNum(id);
         long like = likeService.findEntityLikeCount(ENTITY_TYPE_NOTE, id);
         long collect = collectService.getNoteCollectCount(id);
-        Set<Comment> comments = commentService.getNoteComments(id);
+        Set<CommentVO> comments = commentService.getNoteComments(id,userInfo!=null?userInfo.getId():0);
         Note note = noteService.getNote(id);
         NoteVO noteVO = new NoteVO(note, like, look, collect, comments);
-        User userInfo = jwtUtils.getUserInfo();
         if (userInfo !=null) {
             boolean followed = followService.hasFollowed(userInfo.getId(), note.getUser().getId());
             noteVO.getUser().setFollow(followed);

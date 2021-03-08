@@ -1,6 +1,9 @@
 package com.zhifou.note.user.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.zhifou.note.bean.RegisterValid;
+import com.zhifou.note.bean.Status;
+import com.zhifou.note.exception.UserException;
 import com.zhifou.note.note.entity.Note;
 import lombok.Getter;
 import lombok.Setter;
@@ -10,6 +13,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
 import java.util.*;
 
 /**
@@ -24,11 +28,12 @@ public class User extends org.springframework.security.core.userdetails.User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-    @Email(message = "邮箱格式错误")
+    @Email(message = "邮箱格式错误",groups = RegisterValid.class)
     private String username;
-    @Length(min = 8,message = "密码必须大于8位")
+    @Length(min = 8,message = "密码必须大于8位",groups = RegisterValid.class)
     private String password;
     private String introduction="还没有任何介绍哦！";
+    @NotBlank(message = "昵称不能为空")
     private String nickName="一只笔记君";
     private String photo;
     private String certification;//实名认证，保存真实学号
@@ -97,5 +102,25 @@ public class User extends org.springframework.security.core.userdetails.User {
                 ", roles=" + roles +
                 ", authorities=" + authorities +
                 '}';
+    }
+
+    public boolean update(User user) throws UserException {
+        boolean result=false;
+        if (user.getPassword()!=null) {
+            if (user.getPassword().length()<8) {
+                throw new UserException("密码必须大于8位！", Status.PARAM_NOT_VALID);
+            }
+            password= user.getPassword();
+            result=true;
+        }
+        if (user.getIntroduction()!=null) {
+            introduction= user.getIntroduction();
+            result=true;
+        }
+        if (user.getNickName()!=null) {
+            nickName= user.getNickName();
+            result=true;
+        }
+        return result;
     }
 }

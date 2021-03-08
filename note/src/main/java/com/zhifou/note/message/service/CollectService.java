@@ -31,6 +31,8 @@ public class CollectService {
     private NoteService noteService;
     @Resource
     private UserDetailsServiceImp userService;
+    @Resource
+    private FollowService followService;
 
 
     /**
@@ -126,7 +128,7 @@ public class CollectService {
      * @author li
      * @Date 2021/3/3 21:35
      */
-    public List<Map<String, Object>> getNoteCollect(int noteId, int offset, int limit) {
+    public List<Map<String, Object>> getNoteCollect(int noteId, int offset, int limit) throws NoteException {
         String noteCollectKey = RedisKeyUtil.getNoteCollectKey(noteId);
         Set<Integer> targetIds = redisTemplate.opsForZSet().reverseRange(noteCollectKey, offset, offset + limit - 1);
 
@@ -138,7 +140,7 @@ public class CollectService {
         for (Integer targetId : targetIds) {
             Map<String, Object> map = new HashMap<>();
             User user = userService.loadUserById(targetId);
-            UserVO userVO = new UserVO(user,true);
+            UserVO userVO = new UserVO(user,followService.hasFollowed(noteService.getNote(noteId).getUser().getId(),targetId));
             map.put("user", userVO);
             Double score = redisTemplate.opsForZSet().score(noteCollectKey, targetId);
             map.put("collectTime", new Date(score.longValue()));

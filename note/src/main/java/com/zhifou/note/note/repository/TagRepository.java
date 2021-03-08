@@ -12,5 +12,7 @@ import java.util.Set;
  */
 @Repository
 public interface TagRepository extends JpaRepository<Tag,Integer> {
-    Set<Tag> findTagsByIdIn(Set<Integer> id);
+    Set<Tag> findTagsByStatus(int status);
+
+    boolean existsByName(String name);
 }

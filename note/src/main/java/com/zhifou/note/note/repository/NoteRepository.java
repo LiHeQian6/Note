@@ -10,5 +10,5 @@ import org.springframework.stereotype.Repository;
  */
 @Repository
 public interface NoteRepository extends JpaRepository<Note,Integer> {
-    Note findNoteById(int noteId);
+    Note findNoteByIdAndStatus(int noteId,int status);
 }

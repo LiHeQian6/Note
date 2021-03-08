@@ -46,8 +46,10 @@ public class UserDetailsServiceImp implements UserDetailsService {
         }
     }
 
-    public User loadUserById(int userId) {
-        return userRepository.findUserById(userId);
+    public void resetPassword(String username, String newPassword) throws UserException {
+        User user = findUserByUsername(username);
+        user.setPassword(passwordEncoder.encode(newPassword));
+        userRepository.save(user);
     }
 
 
@@ -55,15 +57,28 @@ public class UserDetailsServiceImp implements UserDetailsService {
 
 
 
-
+    public User loadUserById(int userId) {
+        return userRepository.findUserById(userId);
+    }
+    public User findUserByUsername(String username) throws UserException {
+        User user = userRepository.findUserByUsername(username);
+        if (user == null) {
+            throw new UserException("未找到该用户！",Status.USER_ACCOUNT_NOT_EXIST);
+        }
+        return user;
+    }
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-
         User user = userRepository.findUserByUsername(username);
         if (user == null) {
             throw new InternalAuthenticationServiceException("用户名或密码错误！");
         }
         return new User(user.getUsername(), user.getPassword(),user.getRoles(),user.getAuthorities());
+    }
+
+    public void updateUserInfo(User user) {
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        userRepository.save(user);
     }
 }

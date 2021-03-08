@@ -105,8 +105,8 @@ public class SecurityConfig {
                     .logoutUrl("/logout")//登出请求地址
                     .and()
                     .authorizeRequests()//启用基于 HttpServletRequest 的访问限制，开始配置哪些URL需要被保护、哪些不需要被保护
-                    .antMatchers(HttpMethod.GET,"/note/**").permitAll()
-                    .antMatchers("/getImageCode","/getMailCode",
+                    .antMatchers(HttpMethod.GET,"/note/**","/types","/tags").permitAll()
+                    .antMatchers("/getImageCode","/getMailCode/**",
                             "/register/**","/static/**","/webjars/**","/swagger-resources/**",
                             "/webjars/**", "/v2/**", "/swagger-ui.html/**",
                             "/druid/**","/logout").permitAll()//未登陆用户允许的请求

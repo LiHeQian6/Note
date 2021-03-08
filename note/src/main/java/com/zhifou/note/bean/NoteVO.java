@@ -1,6 +1,5 @@
 package com.zhifou.note.bean;
 
-import com.zhifou.note.note.entity.Comment;
 import com.zhifou.note.note.entity.Note;
 import com.zhifou.note.note.entity.Tag;
 import com.zhifou.note.note.entity.Type;
@@ -25,16 +24,17 @@ public class NoteVO {
     private long look;
     private long collect;
     private boolean isCollect;
-    private Set<Comment> comments;
+    private Set<CommentVO> comments;
     private Date createTime;
     private UserVO user;
     private Type type;
     private Set<Tag> tags;
 
-    public NoteVO(Note note,int like,boolean isLike,int look,int collect,boolean isCollect,Set<Comment> comments){
+    //笔记详情页使用
+    public NoteVO(Note note,int like,boolean isLike,int look,int collect,boolean isCollect,Set<CommentVO> comments){
         id=note.getId();
         title=note.getTitle();
-        content=note.getContent();
+        content=note.getContent().substring(0, Math.min(note.getContent().length(), 100));
         this.like=like;
         this.isLike=isLike;
         this.look=look;
@@ -46,10 +46,12 @@ public class NoteVO {
         type=note.getType();
         tags=note.getTags();
     }
-    public NoteVO(Note note,long like,long look,long collect,Set<Comment> comments){
+
+    //游客笔记详情页使用
+    public NoteVO(Note note,long like,long look,long collect,Set<CommentVO> comments){
         id=note.getId();
         title=note.getTitle();
-        content=note.getContent();
+        content=note.getContent().substring(0, Math.min(note.getContent().length(), 100));
         this.like=like;
         this.isLike=false;
         this.look=look;
@@ -61,10 +63,12 @@ public class NoteVO {
         type=note.getType();
         tags=note.getTags();
     }
+
+    //笔记列表展示使用
     public NoteVO(Note note){
         id=note.getId();
         title=note.getTitle();
-        content=note.getContent();
+        content=note.getContent().substring(0, Math.min(note.getContent().length(), 100));
         createTime=note.getCreateTime();
         user=new UserVO(note.getUser());
         type=note.getType();

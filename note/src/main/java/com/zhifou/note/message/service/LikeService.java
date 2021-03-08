@@ -1,5 +1,10 @@
 package com.zhifou.note.message.service;
 
+import com.zhifou.note.bean.Constant;
+import com.zhifou.note.bean.NoteVO;
+import com.zhifou.note.exception.NoteException;
+import com.zhifou.note.note.entity.Note;
+import com.zhifou.note.note.service.NoteService;
 import com.zhifou.note.util.RedisKeyUtil;
 import org.springframework.dao.DataAccessException;
 import org.springframework.data.redis.core.RedisOperations;
@@ -9,6 +14,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * @author : li
@@ -17,10 +24,12 @@ import javax.annotation.Resource;
 
 @Service
 @Transactional
-public class LikeService {
+public class LikeService implements Constant {
 
     @Resource
-    private RedisTemplate<String,Object> redisTemplate;
+    private RedisTemplate redisTemplate;
+    @Resource
+    private NoteService noteService;
 
     /**
      * @param: userId
@@ -38,7 +47,8 @@ public class LikeService {
             @Override
             public Object execute(RedisOperations operations) throws DataAccessException {
                 String entityLikeKey = RedisKeyUtil.getEntityLikeKey(entityType, entityId);
-                String userLikeKey = RedisKeyUtil.getUserLikeKey(entityUserId);
+                String userLikeKey = RedisKeyUtil.getUserLikeKey(userId);
+                String userLikedKey = RedisKeyUtil.getUserLikedKey(userId);
 
                 boolean isMember = operations.opsForSet().isMember(entityLikeKey, userId);
 
@@ -46,9 +56,14 @@ public class LikeService {
 
                 if (isMember) {
                     operations.opsForSet().remove(entityLikeKey, userId);
+                    if (entityType==ENTITY_TYPE_NOTE)
+                        operations.opsForSet().remove(userLikedKey, entityId);
                     operations.opsForValue().decrement(userLikeKey);
+
                 } else {
                     operations.opsForSet().add(entityLikeKey, userId);
+                    if (entityType==ENTITY_TYPE_NOTE)
+                        operations.opsForZSet().add(userLikedKey, entityId,System.currentTimeMillis());
                     operations.opsForValue().increment(userLikeKey);
                 }
 
@@ -95,6 +110,21 @@ public class LikeService {
         String userLikeKey = RedisKeyUtil.getUserLikeKey(userId);
         Integer count = (Integer) redisTemplate.opsForValue().get(userLikeKey);
         return count == null ? 0 : count.intValue();
+    }
+
+
+    public Set<NoteVO> getUserLikedNote(int userId,int offset,int limit) throws NoteException {
+        Set<NoteVO> noteVOs = new HashSet<>();
+        String userLikedKey = RedisKeyUtil.getUserLikedKey(userId);
+        Set<Integer> notes = (Set<Integer>) redisTemplate.opsForZSet().reverseRange(userLikedKey, offset, offset + limit - 1);
+        if (notes != null) {
+            for (Integer noteId : notes) {
+                Note note = noteService.getNote(noteId);
+                NoteVO noteVO = new NoteVO(note);
+                noteVOs.add(noteVO);
+            }
+        }
+        return noteVOs;
     }
 
 }
