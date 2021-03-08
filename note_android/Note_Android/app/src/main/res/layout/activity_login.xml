@@ -33,16 +33,12 @@
             android:background="@drawable/custom_editext"
             android:orientation="horizontal">
 
-            <!--            <ImageView-->
-            <!--                android:layout_width="@dimen/dp_40"-->
-            <!--                android:layout_height="@dimen/dp_40"-->
-            <!--                android:background="@drawable/account_icon"/>-->
-
             <EditText
+                android:id="@+id/login_email"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/dp_40"
                 android:background="@null"
-                android:gravity="center"
+                android:textAlignment="center"
                 android:hint="请输入账号"
                 android:text="@{user.name}"
                 android:textColorHint="#bcbcbc"
@@ -60,19 +56,15 @@
             android:background="@drawable/custom_editext"
             android:orientation="horizontal">
 
-            <!--            <ImageView-->
-            <!--                android:layout_width="@dimen/dp_40"-->
-            <!--                android:layout_height="@dimen/dp_40"-->
-            <!--                android:background="@drawable/password_icon"/>-->
-
             <EditText
+                android:id="@+id/login_password"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/dp_40"
                 android:background="@null"
-                android:gravity="center"
+                android:textAlignment="center"
                 android:hint="请输入密码"
-                android:text="@{user.password}"
                 android:inputType="textPassword"
+                android:text="@{user.password}"
                 android:textColorHint="#bcbcbc"
                 android:textSize="@dimen/sp_15" />
 
@@ -88,13 +80,15 @@
             android:orientation="horizontal">
 
             <TextView
+                android:id="@+id/btn_to_register"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="手机号登陆"
+                android:text="立即注册"
                 android:textColor="@color/black"
                 android:textSize="@dimen/sp_13" />
 
             <TextView
+                android:id="@+id/btn_forget_password"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
@@ -106,6 +100,7 @@
 
         <com.xuexiang.xui.widget.button.roundbutton.RoundButton
             android:id="@+id/login_button"
+            style="@style/RoundButton.Blue"
             android:layout_width="@dimen/dp_180"
             android:layout_height="@dimen/dp_35"
             android:layout_below="@+id/login_select"
@@ -114,9 +109,8 @@
             android:text="登 陆"
             android:textColor="@color/white"
             android:textSize="@dimen/sp_14"
-            app:rb_isRadiusAdjustBounds="true"
             app:rb_backgroundColor="@color/orange"
-            style="@style/RoundButton.Blue"/>
+            app:rb_isRadiusAdjustBounds="true" />
 
         <LinearLayout
             android:id="@+id/tip"
@@ -160,7 +154,8 @@
                 android:id="@+id/icon_qq_login"
                 android:layout_width="@dimen/dp_30"
                 android:layout_height="@dimen/dp_30"
-                android:background="@drawable/ico_qq" />
+                android:background="@drawable/ico_qq"
+                android:visibility="invisible" />
         </LinearLayout>
     </RelativeLayout>
 </layout>

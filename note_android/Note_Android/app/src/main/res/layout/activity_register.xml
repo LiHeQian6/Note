@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fitsSystemWindows="true"
+        tools:context=".login.RegisterActivity">
+
+        <TextView
+            android:id="@+id/register_tip"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/dp_20"
+            android:text="欢迎注册："
+            android:textColor="@color/black"
+            android:textSize="@dimen/sp_25"
+            android:textStyle="bold"
+            app:layout_constraintHorizontal_bias="0.1"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/email_tip"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/dp_20"
+            android:text="输入你的邮箱:"
+            android:textColor="@color/deep_gray"
+            android:textSize="@dimen/sp_15"
+            android:textStyle="normal"
+            app:layout_constraintHorizontal_bias="0.1"
+            app:layout_constraintLeft_toLeftOf="@+id/register_tip"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/register_tip" />
+
+        <EditText
+            android:id="@+id/email"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/dp_40"
+            android:layout_marginTop="@dimen/dp_10"
+            android:background="@drawable/register_editext"
+            android:inputType="textEmailAddress"
+            android:textColorHint="#bcbcbc"
+            android:textSize="@dimen/sp_15"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintLeft_toLeftOf="@+id/email_tip"
+            app:layout_constraintTop_toBottomOf="@+id/email_tip"
+            app:layout_constraintWidth_percent="0.65" />
+
+        <TextView
+            android:id="@+id/password_tip"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/dp_15"
+            android:text="输入你的密码:"
+            android:textColor="@color/deep_gray"
+            android:textSize="@dimen/sp_15"
+            android:textStyle="normal"
+            app:layout_constraintHorizontal_bias="0.1"
+            app:layout_constraintLeft_toLeftOf="@+id/register_tip"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/email" />
+
+        <EditText
+            android:id="@+id/password"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/dp_40"
+            android:layout_marginTop="@dimen/dp_10"
+            android:background="@drawable/register_editext"
+            android:inputType="textPassword"
+            android:textColorHint="#bcbcbc"
+            android:textSize="@dimen/sp_15"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintLeft_toLeftOf="@+id/email"
+            app:layout_constraintTop_toBottomOf="@+id/password_tip"
+            app:layout_constraintWidth_percent="0.65" />
+
+        <TextView
+            android:id="@+id/verify_tip"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/dp_15"
+            android:text="验证你的邮箱:"
+            android:textColor="@color/deep_gray"
+            android:textSize="@dimen/sp_15"
+            android:textStyle="normal"
+            app:layout_constraintHorizontal_bias="0.1"
+            app:layout_constraintLeft_toLeftOf="@+id/register_tip"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/password" />
+
+        <EditText
+            android:id="@+id/verify_code"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/dp_40"
+            android:layout_marginTop="@dimen/dp_10"
+            android:background="@drawable/register_editext"
+            android:inputType="textEmailAddress"
+            android:textColorHint="#bcbcbc"
+            android:textSize="@dimen/sp_15"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintLeft_toLeftOf="@+id/email"
+            app:layout_constraintTop_toBottomOf="@+id/verify_tip"
+            app:layout_constraintWidth_percent="0.5" />
+
+        <Button
+            android:id="@+id/get_verify_code"
+            android:layout_width="@dimen/dp_0"
+            android:layout_height="@dimen/dp_40"
+            android:gravity="center"
+            android:background="@null"
+            android:text="获 取"
+            android:textColor="@color/blue"
+            android:textSize="@dimen/sp_12"
+            app:layout_constraintRight_toRightOf="@id/verify_code"
+            app:layout_constraintTop_toTopOf="@id/verify_code"
+            app:layout_constraintWidth_percent="0.15"/>
+
+        <com.xuexiang.xui.widget.button.roundbutton.RoundButton
+            android:id="@+id/register_button"
+            android:layout_width="@dimen/dp_120"
+            android:layout_height="@dimen/dp_40"
+            android:layout_marginTop="@dimen/dp_35"
+            android:text="注 册"
+            android:textColor="@color/white"
+            android:textSize="@dimen/sp_14"
+            app:rb_isRadiusAdjustBounds="true"
+            app:rb_backgroundColor="@color/orange"
+            style="@style/RoundButton.Blue"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/verify_code"/>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

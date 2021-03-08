@@ -12,22 +12,39 @@
         android:layout_height="match_parent"
         android:fitsSystemWindows="true">
 
-        <Toolbar
-            android:id="@+id/notice_tool_bar"
+        <androidx.cardview.widget.CardView
+            android:id="@+id/bar_card"
             android:layout_width="match_parent"
             android:layout_height="@dimen/dp_50"
-            android:background="@color/orange"
-            android:title="消息通知"
             app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            android:titleTextColor="@color/white">
-        </Toolbar>
+            app:layout_constraintTop_toTopOf="parent">
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recyclerView"
+            <Toolbar
+                android:id="@+id/notice_tool_bar"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/dp_50"
+                android:background="@color/white"
+                android:title="消息通知"
+                android:titleTextColor="@color/less_black"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintTop_toTopOf="parent"/>
+        </androidx.cardview.widget.CardView>
+
+        <com.scwang.smart.refresh.layout.SmartRefreshLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:overScrollMode="never"
-            app:layout_constraintTop_toBottomOf="@id/notice_tool_bar"/>
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/bar_card">
+            <com.scwang.smart.refresh.header.MaterialHeader
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:overScrollMode="never"
+                app:layout_constraintTop_toBottomOf="@id/bar_card" />
+        </com.scwang.smart.refresh.layout.SmartRefreshLayout>
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

@@ -14,7 +14,7 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.note_android.R
 import com.example.note_android.annotation.Page
-import com.example.note_android.fragment.RVItemOnClickListener
+import com.example.note_android.listener.OnItemClickListener
 import com.example.note_android.util.StateBarUtils
 import com.xuexiang.xui.widget.toast.XToast
 import kotlinx.android.synthetic.main.fragment_notice.view.*
@@ -34,13 +34,17 @@ class NoticeFragment : Fragment(),View.OnClickListener {
     ): View? {
         noticeViewModel =
             ViewModelProvider(this).get(NoticeViewModel::class.java)
-        StateBarUtils.initStatusBarStyle(requireActivity(),true,resources.getColor(R.color.orange))
         root = inflater.inflate(R.layout.fragment_notice, container, false)
         initToolBar()
         initData()
         initRVAdapter()
         initListener()
         return root
+    }
+
+    override fun onResume() {
+        super.onResume()
+        StateBarUtils.initStatusBarStyle(requireActivity(),false,resources.getColor(R.color.white))
     }
 
     private fun initToolBar() {
@@ -66,7 +70,8 @@ class NoticeFragment : Fragment(),View.OnClickListener {
     }
 
     private fun initListener() {
-        adapter.setOnItemClickListener(object : RVItemOnClickListener{
+        adapter.setOnItemClickListener(object :
+            OnItemClickListener {
             override fun onItemClick(position: Int) {
                 XToast.success(requireContext(),"这是第${position+1}个").show()
             }
@@ -78,6 +83,4 @@ class NoticeFragment : Fragment(),View.OnClickListener {
 
         }
     }
-
-
 }

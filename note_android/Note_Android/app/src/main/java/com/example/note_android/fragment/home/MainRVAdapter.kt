@@ -6,17 +6,17 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.note_android.R
-import com.example.note_android.fragment.RVItemOnClickListener
+import com.example.note_android.listener.OnItemClickListener
 
 class MainRVAdapter(var list: MutableList<Int>,
                     var context: Context,
                     var recyclerView: RecyclerView):
     RecyclerView.Adapter<MainRVAdapter.ViewHolder>(), View.OnClickListener {
 
-    private var onItemClickListener: RVItemOnClickListener? = null
+    private var itemClickListener: OnItemClickListener? = null
 
-    fun setOnItemClickListener(onItemClickListener: RVItemOnClickListener?) {
-        this.onItemClickListener = onItemClickListener
+    fun setOnItemClickListener(itemClickListener: OnItemClickListener?) {
+        this.itemClickListener = itemClickListener
     }
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -37,8 +37,8 @@ class MainRVAdapter(var list: MutableList<Int>,
 
     override fun onClick(v: View?) {
         val position: Int = recyclerView.getChildAdapterPosition(v!!)
-        if (onItemClickListener != null) {
-            onItemClickListener!!.onItemClick(position)
+        if (itemClickListener != null) {
+            itemClickListener!!.onItemClick(position)
         }
     }
 }

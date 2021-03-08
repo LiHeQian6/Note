@@ -1,43 +1,26 @@
 package com.example.note_android
 
-import android.animation.Animator
-import android.animation.TimeInterpolator
-import android.animation.ValueAnimator
+import android.content.Context
 import android.content.Intent
-import android.graphics.Color
+import android.content.res.ColorStateList
 import android.os.Build
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
-import android.view.WindowManager
-import android.view.animation.AccelerateDecelerateInterpolator
 import androidx.annotation.RequiresApi
-import com.google.android.material.bottomnavigation.BottomNavigationView
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.get
-import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentStatePagerAdapter
-import androidx.navigation.findNavController
-import androidx.navigation.ui.AppBarConfiguration
-import androidx.navigation.ui.setupActionBarWithNavController
-import androidx.navigation.ui.setupWithNavController
-import androidx.viewpager.widget.ViewPager
 import androidx.viewpager2.widget.ViewPager2
-import com.example.note_android.fragment.follow.FollowFragment
-import com.example.note_android.fragment.home.HomeFragment
-import com.example.note_android.fragment.notice.NoticeFragment
-import com.example.note_android.fragment.person.PersonFragment
 import com.example.note_android.login.QQLogin.MyIUiListener
-import com.example.note_android.login.bean.QQUserInfo
-import com.example.note_android.util.*
+import com.example.note_android.util.StateUtil
+import com.example.note_android.util.SystemCode
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.bottomnavigation.LabelVisibilityMode
 import com.tencent.connect.UserInfo
 import com.tencent.tauth.Tencent
-import com.tencent.tauth.UiError
-import com.xuexiang.xui.widget.toast.XToast
+import com.xuexiang.xui.XUI
+import io.github.inflationx.viewpump.ViewPumpContextWrapper
 import kotlinx.android.synthetic.main.activity_main.*
-import org.greenrobot.eventbus.EventBus
-import org.json.JSONObject
+
 
 class MainActivity : AppCompatActivity() {
 
@@ -48,13 +31,17 @@ class MainActivity : AppCompatActivity() {
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        XUI.init(application)
+//        XUI.initFontStyle("fonts/hwxk.ttf")
         setContentView(R.layout.activity_main)
         mTencent = Tencent.createInstance(resources.getString(R.string.APP_ID),applicationContext)
-        StateBarUtils.initStatusBarStyle(this,true,resources.getColor(R.color.orange))
         navView = findViewById(R.id.nav_view)
-//        val navController = findNavController(R.id.nav_host_fragment)
         initNavView()
         initViewPage()
+    }
+
+    override fun attachBaseContext(newBase: Context) {
+        super.attachBaseContext(ViewPumpContextWrapper.wrap(newBase))
     }
 
     private fun initNavView() {
@@ -99,7 +86,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if(requestCode == SystemCodeUtil.QQ_LOGIN_REQUEST){
+        if(requestCode == SystemCode.QQ_LOGIN_REQUEST && StateUtil.LOGIN_INFO!= null){
             mTencent.openId = StateUtil.LOGIN_INFO?.openid
             mTencent.setAccessToken(StateUtil.LOGIN_INFO?.access_token, StateUtil.LOGIN_INFO?.expires_in)
             var user = UserInfo(this,mTencent.qqToken)

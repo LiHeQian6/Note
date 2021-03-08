@@ -1,5 +1,6 @@
 package com.example.note_android.fragment.person
 
+import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -10,26 +11,21 @@ import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.example.note_android.R
+import com.example.note_android.about.AboutMeActivity
 import com.example.note_android.annotation.Page
 import com.example.note_android.login.LoginActivity
-import com.example.note_android.sql_lite.DataBaseHelper
 import com.example.note_android.util.*
 import com.tencent.tauth.Tencent
-import com.xuexiang.xui.widget.dialog.materialdialog.MaterialDialog
-import com.xuexiang.xui.widget.dialog.materialdialog.simplelist.MaterialSimpleListAdapter
-import com.xuexiang.xui.widget.dialog.materialdialog.simplelist.MaterialSimpleListItem
-import com.xuexiang.xui.widget.toast.XToast
+import kotlinx.android.synthetic.main.fragment_person.*
 import kotlinx.android.synthetic.main.fragment_person.view.*
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
-import java.util.*
 
 @Page(name = "个人信息页面")
 class PersonFragment : Fragment(),View.OnClickListener {
 
     private lateinit var personViewModel: PersonViewModel
-    private lateinit var settingAdapter : SettingAdapter
     private lateinit var root: View
     private lateinit var mTencent:Tencent
 
@@ -52,99 +48,59 @@ class PersonFragment : Fragment(),View.OnClickListener {
 
     override fun onResume() {
         super.onResume()
-        StateUtil.initInfo(requireContext())
-        if(StateUtil.IF_LOGIN) {
+        StateBarUtils.translucent(requireActivity())
+        if(StateUtil.IF_LOGIN && StateUtil.initInfo(requireContext())) {
             root.user_name?.setText(StateUtil.USER_INFO?.nickname)
-            root.logout_button.visibility = View.VISIBLE
             Glide.with(requireContext()).load(StateUtil.USER_INFO?.figureurl_qq_2)
-                    .error(R.drawable.head_1)
-                    .placeholder(R.drawable.head_1)
+                    .error(R.drawable.head_img)
+                    .placeholder(R.drawable.head_img)
                     .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
                     .dontAnimate()
                     .into(root.person_image)
         }else{
             root.user_name?.setText("立即登录")
-            root.logout_button.visibility = View.GONE
         }
     }
 
     override fun onDestroy() {
         super.onDestroy()
+        Log.i("注销","EventBus注销")
         EventBus.getDefault().unregister(this)
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public fun setInfoEvent(loginEvent: LoginEvent){
-        root.user_name?.setText(loginEvent.userInfo?.nickname)
+    public fun setInfoEvent(userEvent: UserEvent){
+        root.user_name?.setText(userEvent.userInfo?.nickname)
         Glide.with(requireContext()).load(StateUtil.USER_INFO?.figureurl_qq_1)
-                .error(R.drawable.head_1)
-                .placeholder(R.drawable.head_1)
+                .error(R.drawable.head_img)
+                .placeholder(R.drawable.head_img)
                 .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
                 .into(root.person_image)
         EventBus.getDefault().unregister(this)
     }
 
     private fun initListener() {
-        root.logout_button.setOnClickListener(this)
         root.user_name.setOnClickListener(this)
+        root.ico_settings.setOnClickListener(this)
+        root.user_bac_image.setOnClickListener(this)
+        root.my_note.setOnClickListener(this)
+        root.my_favourite.setOnClickListener(this)
+        root.my_click_up.setOnClickListener(this)
     }
 
     private fun checkLogin() {
         if(!StateUtil.IF_LOGIN){
             root.user_name?.setText("立即登录")
-            root.logout_button.visibility = View.GONE
         }else{
             root.user_name?.setText(StateUtil.USER_INFO?.nickname)
-            root.logout_button.visibility = View.VISIBLE
         }
     }
 
     private fun itemListener() {
-        root.setting_list?.setOnItemClickListener { parent, view, position, id ->
-            when(position){
-                0 -> {
-                    XToast.info(requireContext(),"正在开发").show()
-                }
-                1 -> {
-                    showSelectDialog()
-                }
-                2 -> {
-                    XToast.info(requireContext(),"正在开发").show()
-                }
-            }
-        }
-    }
 
-    private fun showSelectDialog() {
-        val list: MutableList<MaterialSimpleListItem> = ArrayList()
-        list.add(MaterialSimpleListItem.Builder(context)
-                .content(R.string.tip_richText)
-                .icon(R.drawable.ico_rich_text)
-                .build())
-        list.add(MaterialSimpleListItem.Builder(context)
-                .content(R.string.tip_markdown)
-                .icon(R.drawable.ico_markdown)
-                .build())
-        val adapter = MaterialSimpleListAdapter(list)
-        adapter.setOnItemClickListener { dialog, index, item ->
-            when(index) {
-                0 -> {
-                    Log.i("编辑器",SystemCodeUtil.RICH_TEXT)
-                    StateUtil.EDITOR = SystemCodeUtil.RICH_TEXT
-                }
-                1 -> {
-                    Log.i("编辑器",SystemCodeUtil.MARKDOWN)
-                    StateUtil.EDITOR = SystemCodeUtil.MARKDOWN
-                }
-            }
-        }
-        MaterialDialog.Builder(requireContext()).adapter(adapter, null).show()
     }
 
     private fun initView() {
-        val itemArray: Array<String> = resources.getStringArray(R.array.persion_setting)
-        settingAdapter = SettingAdapter(itemArray,requireContext(),R.layout.setting_item)
-        root.setting_list.adapter = settingAdapter
 
         root.person_image.isCircle = true
     }
@@ -152,27 +108,37 @@ class PersonFragment : Fragment(),View.OnClickListener {
     private fun logout(){
         if(!StateUtil.IF_LOGIN)
             return
-        var editor = Single.getShared(requireContext())?.edit()
+        var editor = requireContext().getSharedPreferences(resources.getString(R.string.LoginInfo),
+            Context.MODE_PRIVATE).edit()
         editor?.clear()
         editor?.apply()
         root.user_name?.setText("立即登录")
-        root.logout_button.visibility = View.GONE
         StateUtil.IF_LOGIN = false
         mTencent.logout(requireContext())
     }
 
     override fun onClick(v: View?) {
         when(v?.id){
-            R.id.logout_button -> {
-                logout()
-            }
             R.id.user_name -> {
                 if(StateUtil.IF_LOGIN)
                     return
                 else
-                    ActivityUtil.get()?.goActivityResult(requireActivity(),LoginActivity::class.java,SystemCodeUtil.QQ_LOGIN_REQUEST)
+                    ActivityUtil.get().goActivityResult(requireActivity(),LoginActivity::class.java,SystemCode.QQ_LOGIN_REQUEST)
+            }
+            R.id.ico_settings -> {
+
+            }
+            R.id.user_bac_image -> {
+            }
+            R.id.my_note -> {
+                ActivityUtil.get().goActivity(requireContext(),AboutMeActivity::class.java,MessageBean("Success","MyNote",null))
+            }
+            R.id.my_favourite -> {
+                ActivityUtil.get().goActivity(requireContext(),AboutMeActivity::class.java,MessageBean("Success","MyLike",null))
+            }
+            R.id.my_click_up -> {
+                ActivityUtil.get().goActivity(requireContext(),AboutMeActivity::class.java,MessageBean("Success","MyClickUp",null))
             }
         }
     }
-
 }

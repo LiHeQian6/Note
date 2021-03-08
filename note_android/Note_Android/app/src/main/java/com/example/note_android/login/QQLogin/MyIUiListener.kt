@@ -5,8 +5,10 @@ import com.example.note_android.R
 import com.example.note_android.login.bean.QQLoginInfo
 import com.example.note_android.login.bean.QQUserInfo
 import com.example.note_android.util.LoginEvent
-import com.example.note_android.util.Single
+import com.example.note_android.util.HttpAddressUtil
 import com.example.note_android.util.StateUtil
+import com.example.note_android.util.UserEvent
+import com.google.gson.Gson
 import com.tencent.tauth.IUiListener
 import com.tencent.tauth.UiError
 import com.xuexiang.xui.widget.toast.XToast
@@ -28,10 +30,10 @@ class MyIUiListener(var context: Context,var option: String) : IUiListener {
     }
 
     private fun login(p1: JSONObject){
-        var loginInfo = Single.getGson()?.fromJson(p1.toString(), QQLoginInfo::class.java)
+        var loginInfo = Gson().fromJson(p1.toString(), QQLoginInfo::class.java)
         if (loginInfo != null) {
             StateUtil.LOGIN_INFO = loginInfo
-            var shared = Single.getShared(context)?.edit()
+            var shared = context.getSharedPreferences(context.resources.getString(R.string.LoginInfo),Context.MODE_PRIVATE).edit()
             shared?.putString(context.resources.getString(R.string.Login_Type),context.resources.getString(R.string.LoginWithQQ))
             shared?.putString(context.resources.getString(R.string.QQLoginInfo),p1.toString())
             shared?.apply()
@@ -43,27 +45,24 @@ class MyIUiListener(var context: Context,var option: String) : IUiListener {
     }
 
     private fun getUserInfo(p1: JSONObject){
-        StateUtil.USER_INFO = Single.getGson()?.fromJson(p1.toString(), QQUserInfo::class.java)
+        StateUtil.USER_INFO = Gson().fromJson(p1.toString(), QQUserInfo::class.java)
         if(StateUtil.USER_INFO != null){
-            var shared = Single.getShared(context)?.edit()
+            var shared = context.getSharedPreferences(context.resources.getString(R.string.LoginInfo),Context.MODE_PRIVATE).edit()
             shared?.putString(context.resources.getString(R.string.QQUserInfo),p1.toString())
             shared?.apply()
-            EventBus.getDefault().post(LoginEvent(StateUtil.USER_INFO!!))
+            EventBus.getDefault().post(UserEvent(StateUtil.USER_INFO!!))
         }else {
             XToast.error(context,"用户信息获取失败").show()
         }
     }
 
     override fun onCancel() {
-        TODO("Not yet implemented")
     }
 
     override fun onWarning(p0: Int) {
-        TODO("Not yet implemented")
     }
 
     override fun onError(p0: UiError?) {
-        TODO("Not yet implemented")
     }
 
 }

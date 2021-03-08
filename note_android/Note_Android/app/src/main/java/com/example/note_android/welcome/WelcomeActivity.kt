@@ -1,29 +1,23 @@
 package com.example.note_android.welcome
 
+import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.os.AsyncTask
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.view.animation.AlphaAnimation
 import androidx.appcompat.app.AppCompatActivity
 import com.example.note_android.MainActivity
 import com.example.note_android.annotation.Page
 import com.example.note_android.R
-import com.example.note_android.login.QQLogin.MyIUiListener
-import com.example.note_android.login.bean.QQLoginInfo
-import com.example.note_android.login.bean.QQUserInfo
 import com.example.note_android.sql_lite.DataBaseHelper
-import com.example.note_android.sql_lite.QQLoginDbSchema
 import com.example.note_android.util.ActivityUtil
-import com.example.note_android.util.Single
+import com.example.note_android.util.HttpAddressUtil
 import com.example.note_android.util.StateUtil
-import com.tencent.connect.UserInfo
 import com.tencent.tauth.IUiListener
 import com.tencent.tauth.Tencent
 import com.tencent.tauth.UiError
 import com.xuexiang.xui.XUI
-import com.xuexiang.xui.widget.toast.XToast
 import kotlinx.android.synthetic.main.activity_welcome.*
 import org.json.JSONObject
 
@@ -31,13 +25,11 @@ import org.json.JSONObject
 class WelcomeActivity : AppCompatActivity() {
 
     private lateinit var mTencent: Tencent
-    private lateinit var dataBaseHelper: DataBaseHelper
-    private lateinit var sqLiteDatabase: SQLiteDatabase
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         XUI.init(application)
-        XUI.getInstance().initFontStyle("fonts/hwxk.ttf")
+//        XUI.initFontStyle("fonts/hwxk.ttf")
         setContentView(R.layout.activity_welcome)
         mTencent = Tencent.createInstance(resources.getString(R.string.APP_ID),applicationContext)
         initView()
@@ -45,28 +37,24 @@ class WelcomeActivity : AppCompatActivity() {
     }
 
     private fun initView(){
-
-        //初始化SQLite数据库
-        dataBaseHelper = DataBaseHelper(this,1)
-        sqLiteDatabase = dataBaseHelper.readableDatabase
-
         //设置欢迎页动画
         val ani = AlphaAnimation(0.2f,1.0f)
         ani.duration = 1000
         welcome_bac.startAnimation(ani)
 
+
         //启动欢迎页倒计时异步任务
         val a = CustomAsyncTask()
         a.execute()
         wel_close_button.setOnClickListener(View.OnClickListener {
-            ActivityUtil.get()?.goActivityKill(this@WelcomeActivity,MainActivity::class.java)
+            ActivityUtil.get().goActivityKill(this@WelcomeActivity,MainActivity::class.java)
             a.cancel(true)
         })
     }
 
     private fun checkLogin() {
-        var editor = Single.getShared(this)
-        var loginType = editor?.getString(resources.getString(R.string.Login_Type),"")
+        var shared = getSharedPreferences(resources.getString(R.string.Login_Type),Context.MODE_PRIVATE)
+        var loginType = shared?.getString(resources.getString(R.string.Login_Type),"")
         StateUtil.initInfo(this)
         if (loginType.equals("") ||
             StateUtil.LOGIN_INFO==null ||

@@ -18,13 +18,6 @@ import java.util.Calendar.getInstance
 
 class ViewPagerAdapter: FragmentStateAdapter {
 
-    constructor(fragment: Fragment) : super(fragment)
-
-    constructor(fragmentManager: FragmentManager, lifecycle: Lifecycle) : super(
-        fragmentManager,
-        lifecycle
-    )
-
     constructor(fragmentActivity: FragmentActivity) : super(fragmentActivity)
 
     private val fragments: SparseArray<Fragment> = SparseArray()

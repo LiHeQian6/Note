@@ -9,7 +9,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.note_android.R
-import com.example.note_android.fragment.RVItemOnClickListener
+import com.example.note_android.listener.OnItemClickListener
 import com.example.note_android.util.StateBarUtils
 import com.xuexiang.xui.widget.toast.XToast
 import kotlinx.android.synthetic.main.fragment_follow.view.*
@@ -27,7 +27,6 @@ class FollowFragment : Fragment() {
     ): View? {
         followViewModel =
             ViewModelProvider(this).get(FollowViewModel::class.java)
-        StateBarUtils.initStatusBarStyle(requireActivity(),true,resources.getColor(R.color.orange))
         root = inflater.inflate(R.layout.fragment_follow, container, false)
         initData()
         initRVAdapter()
@@ -35,12 +34,18 @@ class FollowFragment : Fragment() {
         return root
     }
 
+    override fun onResume() {
+        super.onResume()
+        StateBarUtils.initStatusBarStyle(requireActivity(),false,resources.getColor(R.color.white))
+    }
+
     private fun initRVAdapter() {
         var layoutManager = LinearLayoutManager(requireContext())
         var adapter = FollowRVAdapter(list,requireContext(),root.follow_recyclerView)
         root.follow_recyclerView.layoutManager = layoutManager
         root.follow_recyclerView.adapter = adapter
-        adapter.setOnItemClickListener(object : RVItemOnClickListener{
+        adapter.setOnItemClickListener(object :
+            OnItemClickListener {
             override fun onItemClick(position: Int) {
                 XToast.success(requireContext(),"这是第${position+1}个").show()
             }
