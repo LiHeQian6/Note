@@ -131,13 +131,13 @@ class PersonFragment : Fragment(),View.OnClickListener {
             R.id.user_bac_image -> {
             }
             R.id.my_note -> {
-                ActivityUtil.get().goActivity(requireContext(),AboutMeActivity::class.java,MessageBean("Success","MyNote",""))
+                ActivityUtil.get().goActivity(requireContext(),AboutMeActivity::class.java,MessageBean("Success","MyNote",null))
             }
             R.id.my_favourite -> {
-                ActivityUtil.get().goActivity(requireContext(),AboutMeActivity::class.java,MessageBean("Success","MyLike",""))
+                ActivityUtil.get().goActivity(requireContext(),AboutMeActivity::class.java,MessageBean("Success","MyLike",null))
             }
             R.id.my_click_up -> {
-                ActivityUtil.get().goActivity(requireContext(),AboutMeActivity::class.java,MessageBean("Success","MyClickUp",""))
+                ActivityUtil.get().goActivity(requireContext(),AboutMeActivity::class.java,MessageBean("Success","MyClickUp",null))
             }
         }
     }

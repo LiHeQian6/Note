@@ -14,8 +14,8 @@ class AboutMeActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_about_me)
         StateBarUtils.initStatusBarStyle(this,false,resources.getColor(R.color.white))
-        var page = intent.getParcelableExtra<MessageBean>("Option")
-        when(page?.message){
+        var page = intent.getSerializableExtra("Option") as MessageBean
+        when(page.message){
             "MyNote" -> {
                 supportFragmentManager.beginTransaction()
                     .replace(R.id.fragment_about_me,MyNoteFragment.newInstance())

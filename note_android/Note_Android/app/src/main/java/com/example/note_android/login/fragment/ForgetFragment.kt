@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.example.note_android.R
+import com.example.note_android.login.CountDownTimer
 import kotlinx.android.synthetic.main.activity_register.view.*
 import kotlinx.android.synthetic.main.fragment_forget_password.view.*
 import kotlinx.android.synthetic.main.fragment_forget_password.view.verify_code
@@ -58,6 +59,7 @@ class ForgetFragment: Fragment(),View.OnClickListener {
         when(v?.id){
             R.id.forget_button -> {
                 if(checkData(1)){
+                    CountDownTimer(rootView.get_forget_verify_code).run()
                     commit()
                 }
             }

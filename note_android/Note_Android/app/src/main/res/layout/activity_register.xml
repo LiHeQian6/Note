@@ -111,19 +111,18 @@
             app:layout_constraintTop_toBottomOf="@+id/verify_tip"
             app:layout_constraintWidth_percent="0.5" />
 
-        <com.xuexiang.xui.widget.button.CountDownButton
+        <Button
             android:id="@+id/get_verify_code"
             android:layout_width="@dimen/dp_0"
             android:layout_height="@dimen/dp_40"
             android:gravity="center"
             android:background="@null"
-            android:text="获取"
+            android:text="获 取"
             android:textColor="@color/blue"
             android:textSize="@dimen/sp_12"
-            android:layout_marginEnd="@dimen/dp_10"
             app:layout_constraintRight_toRightOf="@id/verify_code"
             app:layout_constraintTop_toTopOf="@id/verify_code"
-            app:layout_constraintWidth_percent="0.1"/>
+            app:layout_constraintWidth_percent="0.15"/>
 
         <com.xuexiang.xui.widget.button.roundbutton.RoundButton
             android:id="@+id/register_button"

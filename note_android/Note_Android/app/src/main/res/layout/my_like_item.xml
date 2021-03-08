@@ -11,7 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="@dimen/dp_130"
         android:gravity="center"
-        android:text="这是一个笔记Item"
+        android:text="这是一个收藏Item"
         android:textSize="@dimen/sp_18"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toTopOf="parent" />

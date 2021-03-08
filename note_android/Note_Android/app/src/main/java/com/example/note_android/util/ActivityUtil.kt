@@ -3,8 +3,8 @@ package com.example.note_android.util
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
-import android.os.Parcelable
 import com.example.note_android.annotation.Page
+import java.io.Serializable
 
 @Page(name = "Intent封装")
 class ActivityUtil{
@@ -36,11 +36,11 @@ class ActivityUtil{
      * @param <T>      泛型
      * @return
     </T> */
-    fun <T> getParcelableExtra(activity: Activity?): T? {
+    fun <T> getSerializableExtra(activity: Activity?): T? {
         var activity = activity
-        val parcelable = activity!!.intent.getParcelableExtra<Parcelable>(OPEN_ACTIVITY_KEY)
+        val serializable = activity!!.intent.getSerializableExtra(OPEN_ACTIVITY_KEY)
         activity = null
-        return parcelable as T?
+        return serializable as T?
     }
 
     /**
@@ -116,12 +116,12 @@ class ActivityUtil{
      *
      * @param context
      * @param _class
-     * @param parcelable
+     * @param serializable
      */
-    fun goActivity(context: Context?, _class: Class<out Activity?>?, parcelable: Parcelable?) {
+    fun goActivity(context: Context?, _class: Class<out Activity?>?, serializable: Serializable?) {
         var context = context
         intent!!.setClass(context!!, _class!!)
-        putParcelable(parcelable)
+        putSerializable(serializable)
         context.startActivity(intent)
         context = null
     }
@@ -132,66 +132,66 @@ class ActivityUtil{
      * @param context
      * @param _class
      * @param flags
-     * @param parcelable 传递的实体类
+     * @param serializable 传递的实体类
      */
-    fun goActivity(context: Context?, _class: Class<out Activity?>?, flags: Int, parcelable: Parcelable?) {
+    fun goActivity(context: Context?, _class: Class<out Activity?>?, flags: Int, serializable: Serializable?) {
         var context = context
         intent!!.setClass(context!!, _class!!)
         setFlags(flags)
-        putParcelable(parcelable)
+        putSerializable(serializable)
         context.startActivity(intent)
         context = null
     }
 
-    fun goActivityKill(context: Context?, _class: Class<out Activity?>?, parcelable: Parcelable?) {
+    fun goActivityKill(context: Context?, _class: Class<out Activity?>?, serializable: Serializable?) {
         var context = context
         intent!!.setClass(context!!, _class!!)
-        putParcelable(parcelable)
-        context.startActivity(intent)
-        (context as Activity?)!!.finish()
-        context = null
-    }
-
-    fun goActivityKill(context: Context?, _class: Class<out Activity?>?, flags: Int, parcelable: Parcelable?) {
-        var context = context
-        intent!!.setClass(context!!, _class!!)
-        setFlags(flags)
-        putParcelable(parcelable)
+        putSerializable(serializable)
         context.startActivity(intent)
         (context as Activity?)!!.finish()
         context = null
     }
 
-    fun goActivityResult(context: Activity?, _class: Class<out Activity?>?, parcelable: Parcelable?, requestCode: Int) {
+    fun goActivityKill(context: Context?, _class: Class<out Activity?>?, flags: Int, serializable: Serializable?) {
         var context = context
         intent!!.setClass(context!!, _class!!)
-        putParcelable(parcelable)
+        setFlags(flags)
+        putSerializable(serializable)
+        context.startActivity(intent)
+        (context as Activity?)!!.finish()
+        context = null
+    }
+
+    fun goActivityResult(context: Activity?, _class: Class<out Activity?>?, serializable: Serializable?, requestCode: Int) {
+        var context = context
+        intent!!.setClass(context!!, _class!!)
+        putSerializable(serializable)
         context.startActivityForResult(intent, requestCode)
         context = null
     }
 
-    fun goActivityResult(context: Activity?, _class: Class<out Activity?>?, flags: Int, parcelable: Parcelable?, requestCode: Int) {
+    fun goActivityResult(context: Activity?, _class: Class<out Activity?>?, flags: Int, serializable: Serializable?, requestCode: Int) {
         var context = context
         intent!!.setClass(context!!, _class!!)
-        putParcelable(parcelable)
+        putSerializable(serializable)
         setFlags(flags)
         context.startActivityForResult(intent, requestCode)
         context = null
     }
 
-    fun goActivityResultKill(context: Activity?, _class: Class<out Activity?>?, parcelable: Parcelable?, requestCode: Int) {
+    fun goActivityResultKill(context: Activity?, _class: Class<out Activity?>?, serializable: Serializable?, requestCode: Int) {
         var context = context
         intent!!.setClass(context!!, _class!!)
-        putParcelable(parcelable)
+        putSerializable(serializable)
         context.startActivityForResult(intent, requestCode)
         context.finish()
         context = null
     }
 
-    fun goActivityResultKill(context: Activity?, _class: Class<out Activity?>?, flags: Int, parcelable: Parcelable?, requestCode: Int) {
+    fun goActivityResultKill(context: Activity?, _class: Class<out Activity?>?, flags: Int, serializable: Serializable?, requestCode: Int) {
         var context = context
         intent!!.setClass(context!!, _class!!)
-        putParcelable(parcelable)
+        putSerializable(serializable)
         setFlags(flags)
         context.startActivityForResult(intent, requestCode)
         context.finish()
@@ -203,8 +203,9 @@ class ActivityUtil{
         intent!!.flags = flags
     }
 
-    private fun putParcelable(parcelable: Parcelable?) {
-        if (parcelable == null) return
-        intent!!.putExtra(OPEN_ACTIVITY_KEY, parcelable)
+    private fun putSerializable(serializable: Serializable?) {
+        if (serializable == null) return
+        intent!!.putExtra(OPEN_ACTIVITY_KEY, serializable)
+
     }
 }

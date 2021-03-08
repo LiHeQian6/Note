@@ -19,9 +19,6 @@
         android:theme="@style/Theme.Note_Android"
         android:usesCleartextTraffic="true">
         <activity android:name=".about.AboutMeActivity"></activity>
-        <activity
-            android:name=".setting.SettingsActivity"
-            android:label="@string/title_activity_settings" />
         <activity android:name=".login.ForgetPassActivity" />
         <activity android:name=".login.RegisterActivity" />
         <activity android:name=".note.ShowActivity" />
@@ -30,14 +27,16 @@
             android:name=".edit.EditActivity"
             android:windowSoftInputMode="adjustPan" />
         <activity android:name=".MainActivity">
+
+        </activity>
+        <activity android:name=".login.LoginActivity" />
+        <activity android:name=".welcome.WelcomeActivity" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".login.LoginActivity" />
-        <activity android:name=".welcome.WelcomeActivity" />
         <activity
             android:name="com.tencent.tauth.AuthActivity"
             android:launchMode="singleTask"

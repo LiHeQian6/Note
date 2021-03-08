@@ -96,4 +96,9 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
             }
         }
     }
+
+    override fun onDestroy() {
+        EventBus.getDefault().unregister(this)
+        super.onDestroy()
+    }
 }

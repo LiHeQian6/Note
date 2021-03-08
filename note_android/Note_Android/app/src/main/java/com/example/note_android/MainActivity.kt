@@ -32,7 +32,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         XUI.init(application)
-        XUI.initFontStyle("fonts/hwxk.ttf")
+//        XUI.initFontStyle("fonts/hwxk.ttf")
         setContentView(R.layout.activity_main)
         mTencent = Tencent.createInstance(resources.getString(R.string.APP_ID),applicationContext)
         navView = findViewById(R.id.nav_view)

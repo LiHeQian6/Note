@@ -24,7 +24,6 @@
                 android:layout_height="wrap_content"
                 android:text="我的笔记"
                 android:layout_gravity="center"
-                android:textColor="@color/deep_gray"
                 android:textSize="@dimen/sp_17"/>
         </androidx.cardview.widget.CardView>
 

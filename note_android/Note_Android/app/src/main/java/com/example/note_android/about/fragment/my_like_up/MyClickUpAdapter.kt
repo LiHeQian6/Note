@@ -1,4 +1,4 @@
-package com.example.note_android.about.fragment.my_favourite
+package com.example.note_android.about.fragment.my_like_up
 
 import android.view.LayoutInflater
 import android.view.View
@@ -9,9 +9,10 @@ import com.example.note_android.listener.OnItemClickListener
 import com.example.note_android.listener.OnItemLongClickListener
 import com.example.note_android.listener.ViewListener
 
-class MyLikeRVAdapter(private var list: MutableList<Int>,
-                      private var recyclerView: RecyclerView) :
-    RecyclerView.Adapter<MyLikeRVAdapter.ViewHolder>(), ViewListener {
+class MyClickUpAdapter(private var list: MutableList<Int>,
+                       private var recyclerView: RecyclerView):
+    RecyclerView.Adapter<MyClickUpAdapter.ViewHolder>(),
+    ViewListener{
 
     private  var setLongClickListener: OnItemLongClickListener? = null
     private  var setClickListener: OnItemClickListener? = null
@@ -25,7 +26,7 @@ class MyLikeRVAdapter(private var list: MutableList<Int>,
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        var view = LayoutInflater.from(parent.context).inflate(R.layout.my_like_item,parent,false)
+        var view = LayoutInflater.from(parent.context).inflate(R.layout.my_click_item,parent,false)
         view.setOnClickListener(this)
         view.setOnLongClickListener(this)
         return ViewHolder(view)
@@ -36,6 +37,7 @@ class MyLikeRVAdapter(private var list: MutableList<Int>,
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+
     }
 
     override fun onClick(v: View?) {

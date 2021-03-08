@@ -28,13 +28,11 @@ class RegisterActivity : AppCompatActivity(),View.OnClickListener {
     }
 
     private fun initView() {
-        dataBinding.getVerifyCode.setCountDownTime(30 * 1000)
     }
 
     private fun initListener() {
         dataBinding.getVerifyCode.setOnClickListener(this)
         dataBinding.registerButton.setOnClickListener(this)
-        dataBinding.getVerifyCode.setOnClickListener(this)
         registerVM.setHttpListener(object :
             HttpListener {
             override fun complete(dataType: String, data: String) {
@@ -46,6 +44,7 @@ class RegisterActivity : AppCompatActivity(),View.OnClickListener {
                     finish()
                 }else{
                     intent.putExtra("result","Fail")
+                    setResult(SystemCode.REGISTER,intent)
                 }
             }
         })
@@ -71,6 +70,7 @@ class RegisterActivity : AppCompatActivity(),View.OnClickListener {
         when(v?.id){
             R.id.get_verify_code -> {
                 if(checkData(0)) {
+                    CountDownTimer(dataBinding.getVerifyCode).run()
                     registerVM.getVerifyCode(dataBinding.email.text.toString())
                 }
             }
@@ -83,5 +83,11 @@ class RegisterActivity : AppCompatActivity(),View.OnClickListener {
                     )
             }
         }
+    }
+
+    override fun onDestroy() {
+        intent.putExtra("result","Fail")
+        setResult(SystemCode.REGISTER,intent)
+        super.onDestroy()
     }
 }
