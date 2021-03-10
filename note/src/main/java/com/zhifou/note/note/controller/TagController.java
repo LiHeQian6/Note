@@ -4,6 +4,9 @@ import com.zhifou.note.exception.TagException;
 import com.zhifou.note.note.entity.Tag;
 import com.zhifou.note.note.service.TagService;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+import org.springframework.data.domain.Page;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -11,22 +14,24 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
 import javax.validation.Valid;
-import java.util.Set;
+import javax.validation.constraints.Min;
 
 /**
  * @author : li
  * @Date: 2021-03-01 22:12
  */
 @RestController
-public class TagController {//todo 添加查询分页
+@Validated
+public class TagController {//todo 添加查询分页,分页返回所有类别并增加类别管理、用户；添加认证表、友链表；完成网站数据统计,笔记价值评估和排行
     @Resource
     private TagService tagService;
 
 
     @ApiOperation("获取所有笔记标签")
     @GetMapping("/tags")
-    public Set<Tag> getTags(int current,int pageSize){
-        return tagService.getAllTags();
+    public Page<Tag> getTags(@ApiParam("第几页") @Min(value = 0,message = "页数最小为0") int page,
+                             @ApiParam("页大小") @Min(value = 1,message = "页尺寸最小为1") int size){
+        return tagService.getAllTags(page,size);
     }
 
     @ApiOperation("创建一个标签")

@@ -1,17 +1,23 @@
 package com.zhifou.note.message.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.zhifou.note.bean.Constant;
 import com.zhifou.note.bean.NoteVO;
 import com.zhifou.note.exception.NoteException;
+import com.zhifou.note.message.event.EventProducer;
+import com.zhifou.note.message.event.MessageEvent;
 import com.zhifou.note.message.service.LikeService;
 import com.zhifou.note.user.entity.User;
 import com.zhifou.note.util.JwtUtils;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
+import javax.validation.constraints.Min;
 import java.util.Set;
 
 /**
@@ -19,26 +25,40 @@ import java.util.Set;
  * @Date: 2021-02-28 22:04
  */
 @RestController
-public class LikeController {    //todo 系统通知，/*私信*/，类别，标签删改(管理模块实现)
+@Validated
+public class LikeController implements Constant {    //todo 系统通知，/*私信*/，类别，标签删改(管理模块实现)
 
     @Resource
     private JwtUtils jwtUtils;
     @Resource
     private LikeService likeService;
+    @Resource
+    private EventProducer eventProducer;
 
 
     @ApiOperation("点赞,再次发送取消")
     @PostMapping("/like")
-    public void like(@ApiParam("note:1;comment:2;")int entityType, int entityId, int entityUserId){
+    public void like(@ApiParam("note:1;comment:2;")int entityType, int entityId, int entityUserId) throws JsonProcessingException {
         Integer id = jwtUtils.getUserInfo().getId();
         likeService.like(id,entityType,entityId,entityUserId);
+        boolean likeStatus = likeService.findEntityLikeStatus(id, entityType, entityId);
+        if (likeStatus) {
+            MessageEvent likeEvent = new MessageEvent();
+            likeEvent.setUserId(id);
+            likeEvent.setEntityType(entityType);
+            likeEvent.setEntityId(entityId);
+            likeEvent.setEntityUserId(entityUserId);
+            likeEvent.setTopic(TOPIC_LIKE);
+            eventProducer.fireMessageEvent(likeEvent);
+        }
     }
 
     @ApiOperation("获取用户点赞记录")
     @GetMapping("/like")
-    public Set<NoteVO> getLiked(int offset,int limit) throws NoteException {
+    public Set<NoteVO> getLiked(@ApiParam("第几页") @Min(value = 0,message = "页数最小为0") int page,
+                                @ApiParam("页大小")@Min(value = 1,message = "页尺寸最小为1") int size) throws NoteException {
         User userInfo = jwtUtils.getUserInfo();
-        return likeService.getUserLikedNote(userInfo.getId(),offset,limit);
+        return likeService.getUserLikedNote(userInfo.getId(),page,size);
     }
 
 

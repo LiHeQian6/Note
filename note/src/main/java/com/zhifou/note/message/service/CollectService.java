@@ -96,9 +96,10 @@ public class CollectService {
      * @author li
      * @Date 2021/3/3 20:05
      */
-    public List<Map<String, Object>> getCollects(int userId, int offset, int limit) throws NoteException {
+    public List<Map<String, Object>> getCollects(int userId, int page, int size) throws NoteException {
+        int offset=(page-1)*size;
         String userCollectKey = RedisKeyUtil.getUserCollectKey(userId);
-        Set<Integer> targetIds = redisTemplate.opsForZSet().reverseRange(userCollectKey, offset, offset + limit - 1);
+        Set<Integer> targetIds = redisTemplate.opsForZSet().reverseRange(userCollectKey, offset, offset + size - 1);
 
         if (targetIds == null) {
             return null;
@@ -128,9 +129,10 @@ public class CollectService {
      * @author li
      * @Date 2021/3/3 21:35
      */
-    public List<Map<String, Object>> getNoteCollect(int noteId, int offset, int limit) throws NoteException {
+    public List<Map<String, Object>> getNoteCollect(int noteId, int page, int size) throws NoteException {
+        int offset=(page-1)*size;
         String noteCollectKey = RedisKeyUtil.getNoteCollectKey(noteId);
-        Set<Integer> targetIds = redisTemplate.opsForZSet().reverseRange(noteCollectKey, offset, offset + limit - 1);
+        Set<Integer> targetIds = redisTemplate.opsForZSet().reverseRange(noteCollectKey, offset, offset + size - 1);
 
         if (targetIds == null) {
             return null;

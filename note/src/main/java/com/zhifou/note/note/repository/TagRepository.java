@@ -1,10 +1,10 @@
 package com.zhifou.note.note.repository;
 
 import com.zhifou.note.note.entity.Tag;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-
-import java.util.Set;
 
 /**
  * @author : li
@@ -12,7 +12,7 @@ import java.util.Set;
  */
 @Repository
 public interface TagRepository extends JpaRepository<Tag,Integer> {
-    Set<Tag> findTagsByStatus(int status);
+    Page<Tag> findTagsByStatus(int status, Pageable pageable);
 
     boolean existsByName(String name);
 }

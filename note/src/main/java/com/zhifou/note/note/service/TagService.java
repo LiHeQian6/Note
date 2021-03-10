@@ -4,11 +4,12 @@ import com.zhifou.note.bean.Status;
 import com.zhifou.note.exception.TagException;
 import com.zhifou.note.note.entity.Tag;
 import com.zhifou.note.note.repository.TagRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
-import java.util.Set;
 
 /**
  * @author : li
@@ -20,8 +21,9 @@ public class TagService {
     @Resource
     private TagRepository tagRepository;
 
-    public Set<Tag> getAllTags(){
-        return tagRepository.findTagsByStatus(0);
+    public Page<Tag> getAllTags(int page, int size){
+        PageRequest pageRequest = PageRequest.of(page, size);
+        return tagRepository.findTagsByStatus(0,pageRequest);
     }
 
     public void createTag(Tag tag) throws TagException {

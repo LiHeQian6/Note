@@ -67,4 +67,14 @@ public interface Constant {
     String[] TAG_INIT_DATA={"C语言","LINUX","CENTOS","PYTHON","NGINX","SHELL","神经网络","算法","机器学习","人工智能"};
 
 
+    /**
+     * 可用
+     */
+    int ENABLE=0;
+    /**
+     * 禁用
+     */
+    int DISABLE=1;
+
+
 }

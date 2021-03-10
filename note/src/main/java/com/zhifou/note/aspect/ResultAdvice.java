@@ -19,7 +19,7 @@ import java.io.File;
  * @Date: 2021-02-06 22:26
  */
 @Component
-@ControllerAdvice("com.zhifou.note")
+@ControllerAdvice({"com.zhifou.note.note","com.zhifou.note.user","com.zhifou.note.message"})
 public class ResultAdvice implements ResponseBodyAdvice<Object> {
 
     @Override

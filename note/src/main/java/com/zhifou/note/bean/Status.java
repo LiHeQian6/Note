@@ -14,7 +14,9 @@ public enum  Status {
     PARAM_NOT_VALID(1001, "参数无效"),
     NOT_FOUND_NOTE(1002, "未找到指定笔记"),
     NOT_FOUND_COMMENT(1003, "未找到指定评论"),
-    TAG_ALREADY_EXIST(1004, "标签已经存在"),
+    NOT_FOUND_TYPE(1004, "未找到指定类型"),
+    TAG_ALREADY_EXIST(1005, "标签已经存在"),
+    TYPE_ALREADY_EXIST(1006, "类型已经存在"),
 
     /* 用户错误 */
     USER_NOT_LOGIN(2001, "用户未登录"),
