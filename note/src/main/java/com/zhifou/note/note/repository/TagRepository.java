@@ -15,4 +15,6 @@ public interface TagRepository extends JpaRepository<Tag,Integer> {
     Page<Tag> findTagsByStatus(int status, Pageable pageable);
 
     boolean existsByName(String name);
+
+    Tag findTagByName(String name);
 }

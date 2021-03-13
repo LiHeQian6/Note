@@ -3,6 +3,7 @@ package com.zhifou.note.message.service;
 import com.zhifou.note.bean.NoteVO;
 import com.zhifou.note.bean.UserVO;
 import com.zhifou.note.exception.NoteException;
+import com.zhifou.note.exception.UserException;
 import com.zhifou.note.note.entity.Note;
 import com.zhifou.note.note.service.NoteService;
 import com.zhifou.note.user.entity.User;
@@ -129,7 +130,7 @@ public class CollectService {
      * @author li
      * @Date 2021/3/3 21:35
      */
-    public List<Map<String, Object>> getNoteCollect(int noteId, int page, int size) throws NoteException {
+    public List<Map<String, Object>> getNoteCollect(int noteId, int page, int size) throws NoteException, UserException {
         int offset=(page-1)*size;
         String noteCollectKey = RedisKeyUtil.getNoteCollectKey(noteId);
         Set<Integer> targetIds = redisTemplate.opsForZSet().reverseRange(noteCollectKey, offset, offset + size - 1);
@@ -141,7 +142,7 @@ public class CollectService {
         List<Map<String, Object>> list = new ArrayList<>();
         for (Integer targetId : targetIds) {
             Map<String, Object> map = new HashMap<>();
-            User user = userService.loadUserById(targetId);
+            User user = userService.findUserById(targetId);
             UserVO userVO = new UserVO(user,followService.hasFollowed(noteService.getNote(noteId).getUser().getId(),targetId));
             map.put("user", userVO);
             Double score = redisTemplate.opsForZSet().score(noteCollectKey, targetId);

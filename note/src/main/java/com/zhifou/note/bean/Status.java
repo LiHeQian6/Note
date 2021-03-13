@@ -15,8 +15,13 @@ public enum  Status {
     NOT_FOUND_NOTE(1002, "未找到指定笔记"),
     NOT_FOUND_COMMENT(1003, "未找到指定评论"),
     NOT_FOUND_TYPE(1004, "未找到指定类型"),
-    TAG_ALREADY_EXIST(1005, "标签已经存在"),
-    TYPE_ALREADY_EXIST(1006, "类型已经存在"),
+    NOT_FOUND_TAG(1005, "未找到指定标签"),
+    NOT_FOUND_ROLE(1006, "未找到指定角色"),
+    NOT_FOUND_PRIVILEGE(1007, "未找到指定权限"),
+    TAG_ALREADY_EXIST(1008, "标签已经存在"),
+    TYPE_ALREADY_EXIST(1009, "类型已经存在"),
+    ROLE_ALREADY_EXIST(1010, "角色已经存在"),
+    PRIVILEGE_ALREADY_EXIST(1011, "权限已经存在"),
 
     /* 用户错误 */
     USER_NOT_LOGIN(2001, "用户未登录"),

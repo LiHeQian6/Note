@@ -3,6 +3,7 @@ package com.zhifou.note.message.service;
 
 import com.zhifou.note.bean.Constant;
 import com.zhifou.note.bean.UserVO;
+import com.zhifou.note.exception.UserException;
 import com.zhifou.note.user.entity.User;
 import com.zhifou.note.user.service.UserDetailsServiceImp;
 import com.zhifou.note.util.RedisKeyUtil;
@@ -129,7 +130,7 @@ public class FollowService implements Constant {
      * @author li
      * @Date 2021/3/3 17:03
      */
-    public List<Map<String, Object>> getFollowee(int userId, int offset, int limit) {
+    public List<Map<String, Object>> getFollowee(int userId, int offset, int limit) throws UserException {
         String followeeKey = RedisKeyUtil.getFolloweeKey(userId);
         Set<Integer> targetIds = redisTemplate.opsForZSet().reverseRange(followeeKey, offset, offset + limit - 1);
 
@@ -140,7 +141,7 @@ public class FollowService implements Constant {
         List<Map<String, Object>> list = new ArrayList<>();
         for (Integer targetId : targetIds) {
             Map<String, Object> map = new HashMap<>();
-            User user = userService.loadUserById(targetId);
+            User user = userService.findUserById(targetId);
             UserVO userVO = new UserVO(user,true);
             map.put("user", userVO);
             Double score = redisTemplate.opsForZSet().score(followeeKey, targetId);
@@ -160,7 +161,7 @@ public class FollowService implements Constant {
      * @author li
      * @Date 2021/3/3 17:03
      */
-    public List<Map<String, Object>> getFollowers(int userId, int offset, int limit) {
+    public List<Map<String, Object>> getFollowers(int userId, int offset, int limit) throws UserException {
         String followerKey = RedisKeyUtil.getFollowerKey(userId);
         Set<Integer> targetIds = redisTemplate.opsForZSet().reverseRange(followerKey, offset, offset + limit - 1);
 
@@ -171,7 +172,7 @@ public class FollowService implements Constant {
         List<Map<String, Object>> list = new ArrayList<>();
         for (Integer targetId : targetIds) {
             Map<String, Object> map = new HashMap<>();
-            User user = userService.loadUserById(targetId);
+            User user = userService.findUserById(targetId);
             UserVO userVO = new UserVO(user,hasFollowed(userId,targetId));
             map.put("user", userVO);
             Double score = redisTemplate.opsForZSet().score(followerKey, targetId);

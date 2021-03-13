@@ -15,4 +15,6 @@ public interface TypeRepository extends JpaRepository<Type, Integer> {
     Type getById(int id);
 
     Set<Type> findTypeByParentIsNullAndStatus(int status);
+
+    Type findTypeByName(String name);
 }

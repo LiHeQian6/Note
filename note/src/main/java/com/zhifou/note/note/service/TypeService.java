@@ -47,4 +47,14 @@ public class TypeService implements Constant {
             throw new TypeException("没有找到指定类型！", Status.NOT_FOUND_TYPE);
         }
     }
+
+    public void updateType(Type type) throws TypeException {
+        getType(type.getId());
+        if (typeRepository.findTypeByName(type.getName())==null) {
+            typeRepository.save(type);
+        }else {
+            throw new TypeException("类别已经存在！", Status.TYPE_ALREADY_EXIST);
+        }
+    }
+
 }

@@ -22,7 +22,7 @@ import javax.validation.constraints.Min;
  */
 @RestController
 @Validated
-public class TagController {//todo 添加查询分页,分页返回所有类别并增加类别管理、用户；添加认证表、友链表；完成网站数据统计,笔记价值评估和排行
+public class TagController {//todo 添加认证表、友链表；完成网站数据统计,笔记价值评估和排行
     @Resource
     private TagService tagService;
 

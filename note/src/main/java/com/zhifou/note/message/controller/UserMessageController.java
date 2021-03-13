@@ -7,6 +7,6 @@ import org.springframework.stereotype.Controller;
  * @author : li
  * @Date: 2021-02-08 17:25
  */
-@Controller
+@Controller //待定实现
 public class UserMessageController {
 }

@@ -3,6 +3,7 @@ package com.zhifou.note.message.controller;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.zhifou.note.bean.Constant;
 import com.zhifou.note.exception.NoteException;
+import com.zhifou.note.exception.UserException;
 import com.zhifou.note.message.event.EventProducer;
 import com.zhifou.note.message.event.MessageEvent;
 import com.zhifou.note.message.service.CollectService;
@@ -61,7 +62,7 @@ public class CollectController implements Constant {
     @GetMapping("/collector/{noteId}")
     public List<Map<String, Object>> getFollowers(@ApiParam("第几页") @Min(value = 0,message = "页数最小为0") int page,
                                                   @ApiParam("页大小")@Min(value = 1,message = "页尺寸最小为1") int size,
-                                                  @PathVariable int noteId) throws NoteException {
+                                                  @PathVariable int noteId) throws NoteException, UserException {
         User userInfo = jwtUtils.getUserInfo();
         if (noteService.getNote(noteId,userInfo.getUsername())!=null) {
             return collectService.getNoteCollect(noteId,page,size);

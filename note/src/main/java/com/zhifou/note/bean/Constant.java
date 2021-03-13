@@ -37,9 +37,9 @@ public interface Constant {
     String TOPIC_COLLECT = "collect";
 
     /**
-     * 主题: 关注的人发布笔记
+     * 主题: 自定义系统通知
      */
-    String TOPIC_FOLLOWER_PUBLISH = "follower_publish";
+    String TOPIC_SYSTEM = "system";
 
     /**
      * 系统用户ID

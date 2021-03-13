@@ -2,6 +2,7 @@ package com.zhifou.note.message.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.zhifou.note.bean.Constant;
+import com.zhifou.note.exception.UserException;
 import com.zhifou.note.message.event.EventProducer;
 import com.zhifou.note.message.event.MessageEvent;
 import com.zhifou.note.message.service.FollowService;
@@ -58,7 +59,7 @@ public class FollowController implements Constant {
     @ApiOperation("获取自己的关注列表")
     @GetMapping("/followee")
     public List<Map<String, Object>> getFollowee(@ApiParam("第几页") @Min(value = 0,message = "页数最小为0") int page,
-                                                 @ApiParam("页大小")@Min(value = 1,message = "页尺寸最小为1") int size){
+                                                 @ApiParam("页大小")@Min(value = 1,message = "页尺寸最小为1") int size) throws UserException {
         int offset=(page-1)*size;
         User userInfo = jwtUtils.getUserInfo();
         return followService.getFollowee(userInfo.getId(),offset,size);
@@ -66,7 +67,7 @@ public class FollowController implements Constant {
     @ApiOperation("获取自己的粉丝列表")
     @GetMapping("/follower")
     public List<Map<String, Object>> getFollowers(@ApiParam("第几页") @Min(value = 0,message = "页数最小为0") int page,
-                                                  @ApiParam("页大小")@Min(value = 1,message = "页尺寸最小为1") int size){
+                                                  @ApiParam("页大小")@Min(value = 1,message = "页尺寸最小为1") int size) throws UserException {
         int offset=(page-1)*size;
         User userInfo = jwtUtils.getUserInfo();
         return followService.getFollowers(userInfo.getId(),offset,size);

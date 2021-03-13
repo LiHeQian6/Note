@@ -1,5 +1,6 @@
 package com.zhifou.note.user.service;
 
+import com.zhifou.note.note.service.NoteService;
 import com.zhifou.note.util.RedisKeyUtil;
 import org.springframework.data.redis.connection.RedisStringCommands;
 import org.springframework.data.redis.core.RedisCallback;
@@ -8,15 +9,15 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.math.BigInteger;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 @Service
 @Transactional
 public class DataService {
+    @Resource
+    private NoteService noteService;
 
     @Resource
     private RedisTemplate<String,Object> redisTemplate;
@@ -55,6 +56,13 @@ public class DataService {
         return redisTemplate.opsForHyperLogLog().size(redisKey);
     }
 
+    //获取当天的UV
+    public long getTodayUA(){
+        String date = df.format(Calendar.getInstance().getTime());
+        String uaKey = RedisKeyUtil.getUVKey(date);
+        return redisTemplate.opsForHyperLogLog().size(uaKey);
+    }
+
     // 将指定用户计入DAU
     public void recordDAU(int userId) {
         String redisKey = RedisKeyUtil.getDAUKey(df.format(new Date()));
@@ -85,5 +93,25 @@ public class DataService {
             return connection.bitCount(redisKey.getBytes());
         });
     }
+
+    //获取7天的DAU
+    public List<Long> getWeekDAU(){
+        List<Long> weekDAU=new ArrayList<>();
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.DATE,-6);
+        while (!calendar.getTime().after(Calendar.getInstance().getTime())) {
+            String key = RedisKeyUtil.getDAUKey(df.format(calendar.getTime()));
+            long dau=redisTemplate.execute((RedisCallback<Long>)  conn -> conn.bitCount(key.getBytes()));
+            weekDAU.add(dau);
+            calendar.add(Calendar.DATE, 1);
+        }
+        return weekDAU;
+    }
+
+    //得到笔记数量前5的标签及笔记数量
+    public HashMap<String, BigInteger> getTagNoteCount() {
+        return noteService.getTagNoteCount();
+    }
+
 
 }

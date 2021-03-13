@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.zhifou.note.bean.Constant;
 import com.zhifou.note.exception.CommentException;
 import com.zhifou.note.exception.NoteException;
+import com.zhifou.note.exception.UserException;
 import com.zhifou.note.message.entity.Message;
 import com.zhifou.note.message.service.MessageService;
 import com.zhifou.note.note.entity.Comment;
@@ -46,7 +47,7 @@ public class EventConsumer implements Constant {
      * @Date 2021/2/28 21:05
      */
     @KafkaListener(topics = {TOPIC_LIKE,TOPIC_COLLECT,TOPIC_COMMENT,TOPIC_FOLLOW})
-    public void messageListen(ConsumerRecord record) throws NoteException, CommentException {
+    public void messageListen(ConsumerRecord record) throws NoteException, CommentException, UserException {
         if (record==null) {
             log.error("消息内容为空！");
             return;
@@ -64,13 +65,13 @@ public class EventConsumer implements Constant {
             return;
         }
         Message message = new Message();
-        message.setFrom(userDetailsServiceImp.loadUserById(SYSTEM_USER_ID));
-        message.setTo(userDetailsServiceImp.loadUserById(event.getEntityUserId()));
+        message.setFrom(userDetailsServiceImp.findUserById(SYSTEM_USER_ID));
+        message.setTo(userDetailsServiceImp.findUserById(event.getEntityUserId()));
         message.setCreateTime(new Date());
         message.setMsType(event.getTopic());
         HashMap<String, Object> content = new HashMap<>();
         content.put("userId",event.getUserId());
-        content.put("userNickName",userDetailsServiceImp.loadUserById(event.getUserId()).getNickName());
+        content.put("userNickName",userDetailsServiceImp.findUserById(event.getUserId()).getNickName());
         content.put("entityId",event.getEntityId());
         content.put("entityType",event.getEntityType());
         if (event.getEntityType()==ENTITY_TYPE_NOTE){
@@ -80,6 +81,45 @@ public class EventConsumer implements Constant {
             content.put("entityInfo", comment.getContent()
                     .substring(0, Math.min(comment.getContent().length(), 20)));
         }
+        if (!event.getExtra().isEmpty()) {
+            for (Map.Entry<String, Object> entry : event.getExtra().entrySet()) {
+                content.put(entry.getKey(),entry.getValue());
+            }
+        }
+        try {
+            message.setContent(mapper.writeValueAsString(content));
+        } catch (JsonProcessingException e) {
+            log.error("message.content JSON解析异常");
+            return;
+        }
+        messageService.sendMessage(message);
+    }
+
+    @KafkaListener(topics = {TOPIC_SYSTEM})
+    public void customerSystemMessage(ConsumerRecord record) throws UserException {
+        if (record==null) {
+            log.error("消息内容为空！");
+            return;
+        }
+        MessageEvent event;
+        ObjectMapper mapper = new ObjectMapper();
+        try {
+            event = mapper.reader().readValue(record.value().toString(), MessageEvent.class);
+        } catch (IOException e) {
+            log.error(e.getMessage());
+            return;
+        }
+        if (event==null) {
+            log.error("消息格式错误！");
+            return;
+        }
+        Message message = new Message();
+        message.setFrom(userDetailsServiceImp.findUserById(event.getUserId()));
+        message.setCreateTime(new Date());
+        message.setMsType(event.getTopic());
+        HashMap<String, Object> content = new HashMap<>();
+        content.put("userId",event.getUserId());
+        content.put("userNickName",userDetailsServiceImp.findUserById(SYSTEM_USER_ID).getNickName());
         if (!event.getExtra().isEmpty()) {
             for (Map.Entry<String, Object> entry : event.getExtra().entrySet()) {
                 content.put(entry.getKey(),entry.getValue());

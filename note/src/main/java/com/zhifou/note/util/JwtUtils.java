@@ -2,6 +2,7 @@ package com.zhifou.note.util;
 
 import com.zhifou.note.user.entity.User;
 import com.zhifou.note.user.repository.UserRepository;
+import com.zhifou.note.user.service.DataService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -43,6 +44,8 @@ public class JwtUtils implements Serializable {
     private Long expiration;
     @Resource
     private UserRepository userRepository;
+    @Resource
+    private DataService dataService;
 
     /**
      * @param: user
@@ -300,7 +303,8 @@ public class JwtUtils implements Serializable {
         }
         if ((principal instanceof String)) {
             String username = getUserNameFromToken(principal.toString());
-            UserDetails userDetails = userRepository.findUserByUsername(username);
+            User userDetails = userRepository.findUserByUsername(username);
+            dataService.recordDAU(userDetails.getId());
             UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(userDetails,authentication.getCredentials(),userDetails.getAuthorities());
             SecurityContextHolder.getContext().setAuthentication(authenticationToken);
         }

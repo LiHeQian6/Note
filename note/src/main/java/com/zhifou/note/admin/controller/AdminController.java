@@ -1,19 +1,28 @@
 package com.zhifou.note.admin.controller;
 
+import com.zhifou.note.bean.NoteVO;
+import com.zhifou.note.exception.PrivilegeException;
+import com.zhifou.note.exception.RoleException;
+import com.zhifou.note.exception.UserException;
+import com.zhifou.note.note.service.NoteService;
 import com.zhifou.note.user.entity.Privilege;
 import com.zhifou.note.user.entity.Role;
 import com.zhifou.note.user.entity.User;
-import com.zhifou.note.user.service.DataService;
+import com.zhifou.note.user.service.PrivilegeService;
+import com.zhifou.note.user.service.RoleService;
+import com.zhifou.note.user.service.UserDetailsServiceImp;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.springframework.data.domain.Page;
+import org.springframework.data.jpa.datatables.mapping.DataTablesInput;
+import org.springframework.data.jpa.datatables.mapping.DataTablesOutput;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.Set;
+import javax.validation.Valid;
+import java.util.List;
 
 /**
  * @author : li
@@ -21,89 +30,78 @@ import java.util.Set;
  */
 @Api("管理系统api")
 @Controller
+@Validated
 @RequestMapping("/admin")
 public class AdminController {
-
     @Resource
-    private DataService dataService;
+    private UserDetailsServiceImp userService;
+    @Resource
+    private RoleService roleService;
+    @Resource
+    private NoteService noteService;
+    @Resource
+    private PrivilegeService privilegeService;
 
     @ApiOperation("分页获取所有用户")
     @GetMapping("/user")
-    public Set<User> getUsers(int page,int size){
-        return null;
+    public Page<User> getUsers(int page, int size){
+        return userService.getUsers(page,size);
+    }
+
+    @ApiOperation("分页获取所有笔记")
+    @GetMapping("/notes")
+    @ResponseBody
+    public DataTablesOutput<NoteVO> getNotes(@Valid DataTablesInput input){
+        input.getColumns().remove(input.getColumns().size()-1);
+        return noteService.getNotes(input);
     }
 
     @ApiOperation("禁用用户")
     @DeleteMapping("/user/{id}")
-    public void disableUser(@PathVariable int id){
-
+    public void disableUser(@PathVariable int id) throws UserException {
+        userService.disableUser(id);
     }
 
-    @ApiOperation("添加管理员并分配角色")
-    @PostMapping("/add")
-    public void addAdmin(int userId,int roleId){
-
-    }
-    @ApiOperation("删除管理员")
-    @DeleteMapping("/delete/{id}")
-    public void deleteAdmin(@PathVariable int id){
-
-    }
-
-    @ApiOperation("修改管理员角色")
+    @ApiOperation("修改用户角色")
     @PutMapping("/changeRole")
-    public void changeRole(int userId,int roleId){
-
+    public void changeRole(int userId,List<Role> roles){
+        //todo 修改用户角色
     }
 
     @ApiOperation("获取所有角色")
     @GetMapping("/roles")
-    public Set<Role> getRoles(){
-        return null;
+    public List<Role> getRoles(){
+        return roleService.getRoles();
     }
 
     @ApiOperation("创建角色并赋予权限")
     @PostMapping("/role")
-    public void createRole(Role role){
-
+    public void createRole(Role role) throws RoleException {
+        roleService.createRole(role);
     }
 
-    @ApiOperation("修改角色权限")
+    @ApiOperation("修改角色名及角色权限")
     @PutMapping("/role")
-    public void changeRole(Role role){
-
+    public void updateRole(Role role) throws RoleException {
+        roleService.updatePrivilege(role);
     }
 
     @ApiOperation("获取所有权限")
     @GetMapping("/privileges")
-    public Set<Privilege> getPrivileges(){
-        return null;
+    public List<Privilege> getPrivileges(){
+        return privilegeService.getPrivileges();
     }
 
     @ApiOperation("创建新权限")
     @PostMapping("/privilege")
-    public void createPrivilege(Privilege privilege){
-
+    public void createPrivilege(Privilege privilege) throws PrivilegeException {
+        privilegeService.createPrivilege(privilege);
     }
 
-
-
-
-    @RequestMapping("/{page}")
-    public String toPage(@PathVariable String page) {
-        return page;
+    @ApiOperation("修改权限名")
+    @PutMapping("/privilege")
+    public void updatePrivilege(Privilege privilege) throws PrivilegeException {
+        privilegeService.updatePrivilege(privilege);
     }
 
-
-    @ApiOperation("首页")
-    @RequestMapping("/")
-    public String index(HttpServletRequest request){
-        Calendar calendar = Calendar.getInstance();
-        Date time = calendar.getTime();
-        calendar.after(time);
-        dataService.recordUV(request.getRemoteAddr());
-        long l = dataService.calculateUV(time,calendar.getTime());
-        request.setAttribute("uv",l);
-        return "admin-index";
-    }
 }

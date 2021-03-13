@@ -12,6 +12,7 @@ import com.zhifou.note.note.entity.Note;
 import com.zhifou.note.note.service.CommentService;
 import com.zhifou.note.note.service.NoteService;
 import com.zhifou.note.user.entity.User;
+import com.zhifou.note.user.service.DataService;
 import com.zhifou.note.util.JwtUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -44,6 +45,8 @@ public class NoteController implements Constant {
     private JwtUtils jwtUtils;
     @Resource
     private CollectService collectService;
+    @Resource
+    private DataService dataService;
 
     @ApiOperation("浏览笔记")
     @GetMapping("/note/{id}")
@@ -57,6 +60,7 @@ public class NoteController implements Constant {
         Note note = noteService.getNote(id);
         NoteVO noteVO = new NoteVO(note, like, look, collect, comments);
         if (userInfo !=null) {
+            dataService.recordDAU(userInfo.getId());
             boolean followed = followService.hasFollowed(userInfo.getId(), note.getUser().getId());
             noteVO.getUser().setFollow(followed);
             noteVO.setIsLike(likeService.findEntityLikeStatus(userInfo.getId(),ENTITY_TYPE_NOTE, id));

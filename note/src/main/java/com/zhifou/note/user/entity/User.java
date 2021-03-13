@@ -61,7 +61,7 @@ public class User extends org.springframework.security.core.userdetails.User {
     private Collection<? extends GrantedAuthority> authorities;
 
     public User() {
-        super("admin1","admin",new ArrayList<>());
+        super("user", "user",new ArrayList<>());
     }
 
     public User(String username, String password, List<Role> roles, Collection<? extends GrantedAuthority> authorities) {
@@ -99,7 +99,6 @@ public class User extends org.springframework.security.core.userdetails.User {
                 ", accountNonLocked=" + accountNonLocked +
                 ", credentialsNonExpired=" + credentialsNonExpired +
                 ", enabled=" + enabled +
-                ", roles=" + roles +
                 ", authorities=" + authorities +
                 '}';
     }

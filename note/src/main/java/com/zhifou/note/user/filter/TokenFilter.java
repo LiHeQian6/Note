@@ -3,6 +3,7 @@ package com.zhifou.note.user.filter;
 import cn.hutool.core.util.StrUtil;
 import com.zhifou.note.bean.Status;
 import com.zhifou.note.exception.TokenException;
+import com.zhifou.note.user.service.DataService;
 import com.zhifou.note.util.JwtUtils;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -25,12 +26,15 @@ public class TokenFilter extends OncePerRequestFilter{
     @Resource
     private JwtUtils jwtUtils;
     @Resource
+    private DataService dataService;
+    @Resource
     @Qualifier("handlerExceptionResolver")
     private HandlerExceptionResolver resolver;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
+        dataService.recordUV(request.getRemoteAddr());
         if (SecurityContextHolder.getContext().getAuthentication() == null) {
             String token=resolveToken(request);
             if (StrUtil.isNotBlank(token)) {

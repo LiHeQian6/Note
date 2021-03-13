@@ -26,7 +26,7 @@ import java.util.Set;
  */
 @RestController
 @Validated
-public class LikeController implements Constant {    //todo 系统通知，/*私信*/，类别，标签删改(管理模块实现)
+public class LikeController implements Constant {
 
     @Resource
     private JwtUtils jwtUtils;

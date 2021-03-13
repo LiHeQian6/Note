@@ -20,7 +20,7 @@ public class Tag {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-    @NotBlank
+    @NotBlank(message = "标签名称不能为空")
     private String name;
     @JsonIgnore
     @ManyToMany(mappedBy = "tags")

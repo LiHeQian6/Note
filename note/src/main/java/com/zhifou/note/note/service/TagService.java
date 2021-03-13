@@ -1,5 +1,6 @@
 package com.zhifou.note.note.service;
 
+import com.zhifou.note.bean.Constant;
 import com.zhifou.note.bean.Status;
 import com.zhifou.note.exception.TagException;
 import com.zhifou.note.note.entity.Tag;
@@ -17,7 +18,7 @@ import javax.annotation.Resource;
  */
 @Service
 @Transactional
-public class TagService {
+public class TagService implements Constant {
     @Resource
     private TagRepository tagRepository;
 
@@ -28,6 +29,25 @@ public class TagService {
 
     public void createTag(Tag tag) throws TagException {
         if (!tagRepository.existsByName(tag.getName())) {
+            tagRepository.save(tag);
+        }else {
+            throw new TagException("标签已经存在！", Status.TAG_ALREADY_EXIST);
+        }
+    }
+
+    public void disableTag(int id) throws TagException {
+        Tag tag = tagRepository.getOne(id);
+        tag.setStatus(DISABLE);
+        tagRepository.save(tag);
+    }
+
+    public Tag findTagByName(String name) {
+        return tagRepository.findTagByName(name);
+    }
+
+    public void updateTag(Tag tag) throws TagException {
+        tagRepository.getOne(tag.getId());
+        if (findTagByName(tag.getName())==null) {
             tagRepository.save(tag);
         }else {
             throw new TagException("标签已经存在！", Status.TAG_ALREADY_EXIST);

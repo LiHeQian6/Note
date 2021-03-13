@@ -6,6 +6,8 @@ import com.zhifou.note.user.entity.Role;
 import com.zhifou.note.user.entity.User;
 import com.zhifou.note.user.repository.RoleRepository;
 import com.zhifou.note.user.repository.UserRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.security.authentication.InternalAuthenticationServiceException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -52,14 +54,19 @@ public class UserDetailsServiceImp implements UserDetailsService {
         userRepository.save(user);
     }
 
-
-
-
-
-
-    public User loadUserById(int userId) {
-        return userRepository.findUserById(userId);
+    public Page<User> getUsers(int page, int size) {
+        PageRequest pageRequest = PageRequest.of(page, size);
+        return userRepository.findAll(pageRequest);
     }
+
+    public User findUserById(int userId) throws UserException {
+        User user = userRepository.findUserById(userId);
+        if (user==null) {
+            throw new UserException("未找到该用户！",Status.USER_ACCOUNT_NOT_EXIST);
+        }
+        return user;
+    }
+
     public User findUserByUsername(String username) throws UserException {
         User user = userRepository.findUserByUsername(username);
         if (user == null) {
@@ -74,11 +81,24 @@ public class UserDetailsServiceImp implements UserDetailsService {
         if (user == null) {
             throw new InternalAuthenticationServiceException("用户名或密码错误！");
         }
+        if (!user.isEnabled()){
+            throw new InternalAuthenticationServiceException("该账号已封停！");
+        }
         return new User(user.getUsername(), user.getPassword(),user.getRoles(),user.getAuthorities());
     }
 
     public void updateUserInfo(User user) {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         userRepository.save(user);
+    }
+
+    public void disableUser(int id) throws UserException {
+        User user = findUserById(id);
+        user.setEnabled(false);
+        userRepository.save(user);
+    }
+
+    public long getUserCount(){
+        return userRepository.count();
     }
 }
