@@ -1,11 +1,16 @@
 package com.example.note_android.fragment.home
 
+import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowInsets
+import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.note_android.R
 import com.example.note_android.annotation.Page
@@ -33,6 +38,7 @@ class HomeFragment : Fragment(),View.OnClickListener {
         homeViewModel =
             ViewModelProvider(this).get(NoticeViewModel::class.java)
         root = inflater.inflate(R.layout.fragment_home, container, false)
+
         initData()
         initRVAdapter()
         initListener()
@@ -54,15 +60,16 @@ class HomeFragment : Fragment(),View.OnClickListener {
 
     override fun onResume() {
         super.onResume()
-        StateBarUtils.initStatusBarStyle(requireActivity(),false,resources.getColor(R.color.white))
+        StateBarUtils.setStatusBarLightMode(requireActivity())
     }
 
     private fun initRVAdapter() {
         var layoutManager = LinearLayoutManager(requireContext())
         var adapter = MainRVAdapter(list,requireContext(),root.home_recyclerView)
+        var divider = DividerItemDecoration(requireContext(),LinearLayoutManager.VERTICAL)
+        divider.setDrawable(resources.getDrawable(R.drawable.rv_divider,null))
         root.home_recyclerView.layoutManager = layoutManager
-//        root.home_recyclerView.addItemDecoration(DividerItemDecoration(requireContext(),LinearLayoutManager.VERTICAL))
-
+        root.home_recyclerView.addItemDecoration(divider)
         root.home_recyclerView.adapter = adapter
         adapter.setOnItemClickListener(object :
             OnItemClickListener {
@@ -77,6 +84,7 @@ class HomeFragment : Fragment(),View.OnClickListener {
         for (i in 1..10){
             list.add(i)
         }
+        Log.e("状态栏高度",StateBarUtils.getStatusBarHeight(requireContext()).toString())
     }
 
     private fun initListener() {

@@ -46,9 +46,13 @@ class PersonFragment : Fragment(),View.OnClickListener {
         return root
     }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+    }
+
     override fun onResume() {
         super.onResume()
-        StateBarUtils.translucent(requireActivity())
+        StateBarUtils.customFullScreen(requireActivity())
         if(StateUtil.IF_LOGIN && StateUtil.initInfo(requireContext())) {
             root.user_name?.setText(StateUtil.USER_INFO?.nickname)
             Glide.with(requireContext()).load(StateUtil.USER_INFO?.figureurl_qq_2)
