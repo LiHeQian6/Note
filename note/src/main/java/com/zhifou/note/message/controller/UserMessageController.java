@@ -9,6 +9,4 @@ import org.springframework.stereotype.Controller;
  */
 @Controller
 public class UserMessageController {
-
-    //TODO 点赞，评论，关注，收藏接口实现
 }

@@ -1,9 +1,11 @@
-package com.zhifou.note.exception.handler;
+package com.zhifou.note.handler;
 
 import com.zhifou.note.bean.ResponseBean;
 import com.zhifou.note.bean.Status;
-import com.zhifou.note.exception.bean.TokenException;
-import com.zhifou.note.exception.bean.UserException;
+import com.zhifou.note.exception.CustomException;
+import com.zhifou.note.exception.NoteException;
+import com.zhifou.note.exception.TokenException;
+import com.zhifou.note.exception.UserException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -20,16 +22,8 @@ import org.springframework.web.servlet.NoHandlerFoundException;
 @RestControllerAdvice
 public class GlobalExceptionHandler{
 
-    @ExceptionHandler(UserException.class)
-    public ResponseBean UserException(UserException e){
-        ResponseBean responseBean = new ResponseBean();
-        responseBean.setStatus(e.getStatus());
-        responseBean.setMessage(e.getMessage());
-        return responseBean;
-    }
-
-    @ExceptionHandler(TokenException.class)
-    public ResponseBean TokenException(TokenException e){
+    @ExceptionHandler({TokenException.class,UserException.class, NoteException.class,CustomException.class})
+    public ResponseBean CustomException(CustomException e){
         ResponseBean responseBean = new ResponseBean();
         responseBean.setStatus(e.getStatus());
         responseBean.setMessage(e.getMessage());

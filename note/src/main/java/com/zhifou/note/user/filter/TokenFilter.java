@@ -2,7 +2,7 @@ package com.zhifou.note.user.filter;
 
 import cn.hutool.core.util.StrUtil;
 import com.zhifou.note.bean.Status;
-import com.zhifou.note.exception.bean.TokenException;
+import com.zhifou.note.exception.TokenException;
 import com.zhifou.note.util.JwtUtils;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;

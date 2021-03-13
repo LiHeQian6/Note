@@ -1,4 +1,4 @@
-package com.zhifou.note.exception.bean;
+package com.zhifou.note.exception;
 
 import com.zhifou.note.bean.Status;
 import lombok.Getter;
@@ -6,13 +6,13 @@ import lombok.Setter;
 
 /**
  * @author : li
- * @Date: 2021-02-25 20:48
+ * @Date: 2021-03-02 16:36
  */
 @Getter
 @Setter
-public class TokenException extends Exception {
+public class CustomException extends Exception {
     private Status status;
-    public TokenException(String message,Status status) {
+    public CustomException(String message,Status status) {
         super(message);
         this.status=status;
     }

@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
 import java.util.Set;
 
 /**
@@ -14,14 +15,17 @@ import java.util.Set;
 @Entity
 @Getter
 @Setter
+@Table(uniqueConstraints= @UniqueConstraint(columnNames="name"))
 public class Tag {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
+    @NotBlank
     private String name;
     @JsonIgnore
     @ManyToMany(mappedBy = "tags")
     private Set<Note> notes;
+    @JsonIgnore
     private int status;
 
     @Override

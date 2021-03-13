@@ -1,10 +1,13 @@
 package com.zhifou.note.note.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.zhifou.note.user.entity.User;
 import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.util.Date;
 import java.util.Set;
 
@@ -19,17 +22,28 @@ public class Comment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
+    @NotBlank(message = "评论内容不能为空")
     private String content;
+    @Transient
     private int likeNum;
     private Date createTime=new Date();
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
+    @NotNull(message = "评论所属笔记不能为空")
     private Note note;
-    @ManyToOne(cascade = CascadeType.ALL)
-//    @JoinColumn(name = "parent_id")
+    @JsonIgnore
+    @ManyToOne
     private Comment parent;
     @OneToMany(mappedBy = "parent")
     private Set<Comment> child;
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     private User user;
     private int status;
+
+    public boolean update(Comment newComment) {
+        if (newComment.getContent()!=null) {
+            content= newComment.getContent();
+            return true;
+        }
+        return false;
+    }
 }

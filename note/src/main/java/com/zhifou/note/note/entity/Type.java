@@ -28,6 +28,7 @@ public class Type {
     @JsonIgnore
     @OneToMany(mappedBy = "type")
     private Set<Note> notes;
+    @JsonIgnore
     private int status=0;
 
     @Override
@@ -35,7 +36,6 @@ public class Type {
         return "Type{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
-                ", parent=" + parent +
                 ", child=" + child +
                 ", status=" + status +
                 '}';

@@ -3,7 +3,7 @@ spring:
     #    driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://localhost:3306/note?useUnicode=true&characterEncoding=utf-8
     username: root
-    password: "040011"
+    password: "zhifou@001"
     type: com.alibaba.druid.pool.DruidDataSource
     druid:
       #最大活跃数
@@ -47,7 +47,7 @@ spring:
         login-username: admin #监控页面登录的用户名
         login-password: admin #监控页面登录的密码
         #IP白名单(没有配置或者为空，则允许所有访问)
-        allow: 127.0.0.1
+        allow:
         #IP黑名单 (存在共同时，deny优先于allow)
         deny:
       #Spring监控配置，说明请参考Druid Github Wiki，配置_Druid和Spring关联监控配置
@@ -56,7 +56,7 @@ spring:
     hibernate:
       ddl-auto: update
     database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
-    show-sql: true
+    show-sql: false
     database: MySQL
     properties:
       hibernate:
@@ -69,9 +69,15 @@ spring:
     database: 11
     port: 6379
     host: localhost
+  kafka:
+    bootstrap-servers: localhost:9092
+    consumer:
+      group-id: note-consumer-group
+      enable-auto-commit: true
+      auto-commit-interval: 3000
 logging:
   level:
-    root: info
-    com.li.project.blog: debug
+    root: warn
+    com.li.project.blog: error
   file:
     name: log/note-pro.log

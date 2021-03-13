@@ -5,6 +5,7 @@ public class RedisKeyUtil {
     private static final String SPLIT = ":";
     private static final String PREFIX_ENTITY_LIKE = "like:entity";
     private static final String PREFIX_USER_LIKE = "like:user";
+    private static final String PREFIX_USER_LIKED = "user:liked";
     private static final String PREFIX_FOLLOWEE = "followee";
     private static final String PREFIX_FOLLOWER = "follower";
     private static final String PREFIX_VERIFY_CODE = "verifyCode";
@@ -12,7 +13,9 @@ public class RedisKeyUtil {
     private static final String PREFIX_USER = "user";
     private static final String PREFIX_UV = "uv";
     private static final String PREFIX_DAU = "dau";
-    private static final String PREFIX_POST = "post";
+    private static final String PREFIX_LOOK = "look";
+    private static final String PREFIX_USER_COLLECT = "collect:user";
+    private static final String PREFIX_NOTE_COLLECT = "collect:note";
 
     // 某个实体的赞
     // like:entity:entityType:entityId -> set(userId) //entity 指笔记和评论
@@ -20,22 +23,22 @@ public class RedisKeyUtil {
         return PREFIX_ENTITY_LIKE + SPLIT + entityType + SPLIT + entityId;
     }
 
-    // 某个用户的赞
+    // 某个用户的笔记总赞数
     // like:user:userId -> int
     public static String getUserLikeKey(int userId) {
         return PREFIX_USER_LIKE + SPLIT + userId;
     }
 
-    // 某个用户关注的实体
-    // followee:userId:entityType -> zset(entityId,now) //entity 笔记或用户
-    public static String getFolloweeKey(int userId, int entityType) {
-        return PREFIX_FOLLOWEE + SPLIT + userId + SPLIT + entityType;
+    // 某个用户关注的用户
+    // followee:userId:entityType -> zset(entityId,now) //entity 用户
+    public static String getFolloweeKey(int userId) {
+        return PREFIX_FOLLOWEE + SPLIT + userId;
     }
 
     // 某个实体拥有的粉丝
-    // follower:entityType:entityId -> zset(userId,now) //entity 笔记或用户
-    public static String getFollowerKey(int entityType, int entityId) {
-        return PREFIX_FOLLOWER + SPLIT + entityType + SPLIT + entityId;
+    // follower:entityType:entityId -> zset(userId,now) //entity 用户
+    public static String getFollowerKey(int userId) {
+        return PREFIX_FOLLOWER + SPLIT + userId;
     }
 
     // 验证码
@@ -48,10 +51,10 @@ public class RedisKeyUtil {
         return PREFIX_TOKEN + SPLIT + token;
     }
 
-    // 用户
-    public static String getUserKey(int userId) {
-        return PREFIX_USER + SPLIT + userId;
-    }
+//    // 用户
+//    public static String getUserKey(int userId) {
+//        return PREFIX_USER + SPLIT + userId;
+//    }
 
     // 单日UV
     public static String getUVKey(String date) {
@@ -73,4 +76,23 @@ public class RedisKeyUtil {
         return PREFIX_DAU + SPLIT + startDate + SPLIT + endDate;
     }
 
+    //笔记的浏览量
+    public static String getNoteLookKey(int noteId) {
+        return PREFIX_LOOK+SPLIT+noteId;
+    }
+
+    //用户收藏列表
+    public static String getUserCollectKey(int userId) {
+        return PREFIX_USER_COLLECT+SPLIT+userId;
+    }
+
+    //收藏该笔记的用户列表
+    public static String getNoteCollectKey(int noteId) {
+        return PREFIX_NOTE_COLLECT+SPLIT+noteId;
+    }
+
+    //获取用户点赞历史
+    public static String getUserLikedKey(int userId) {
+        return PREFIX_USER_LIKED+SPLIT+userId;
+    }
 }

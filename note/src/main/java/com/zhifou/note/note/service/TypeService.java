@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.util.Set;
 
 /**
  * @author : li
@@ -18,6 +19,10 @@ public class TypeService {
     private TypeRepository typeRepository;
 
     public Type getType(int id){
-        return typeRepository.findTypeById(id);
+        return typeRepository.getById(id);
+    }
+
+    public Set<Type> getTypes() {
+        return typeRepository.findTypeByParentIsNullAndStatus(0);
     }
 }
