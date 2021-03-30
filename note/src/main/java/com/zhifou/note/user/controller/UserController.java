@@ -4,9 +4,12 @@ import cn.hutool.captcha.CaptchaUtil;
 import cn.hutool.captcha.CircleCaptcha;
 import cn.hutool.captcha.LineCaptcha;
 import com.zhifou.note.bean.RegisterValid;
+import com.zhifou.note.exception.CertificationException;
 import com.zhifou.note.exception.UserException;
 import com.zhifou.note.exception.ValidateCodeException;
+import com.zhifou.note.user.entity.Certification;
 import com.zhifou.note.user.entity.User;
+import com.zhifou.note.user.service.CertificationService;
 import com.zhifou.note.user.service.UserDetailsServiceImp;
 import com.zhifou.note.util.JwtUtils;
 import com.zhifou.note.util.MailUtil;
@@ -37,7 +40,7 @@ import java.util.concurrent.TimeUnit;
 @Api("用户模块")
 @RestController
 @Validated
-public class UserController {//todo 修改用户角色，添加、修改用户认证，认证管理改认证中心，管理员认证改管理员管理（添加修改管理员角色）
+public class UserController {//todo 修改用户认证，认证管理改认证中心，管理员认证改管理员管理（添加修改管理员角色）
 
     @Resource
     private RedisTemplate<String,Object> redisTemplate;
@@ -46,6 +49,8 @@ public class UserController {//todo 修改用户角色，添加、修改用户�
     private MailUtil mailUtil;
     @Resource
     private UserDetailsServiceImp userService;
+    @Resource
+    private CertificationService certificationService;
     @Resource
     private JwtUtils jwtUtils;
 
@@ -113,5 +118,14 @@ public class UserController {//todo 修改用户角色，添加、修改用户�
             userService.updateUserInfo(userInfo);
         }
     }
+
+    @ApiOperation("用户认证")
+    @PostMapping("/certification")
+    public void certification(@Valid Certification certification) throws CertificationException {
+        User userInfo = jwtUtils.getUserInfo();
+        certificationService.certification(userInfo,certification);
+    }
+
+
 
 }

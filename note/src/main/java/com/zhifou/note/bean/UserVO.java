@@ -27,7 +27,7 @@ public class UserVO  {
         introduction=user.getIntroduction();
         nickName=user.getNickName();
         photo=user.getPhoto();
-        certification=user.getCertification();
+        certification=user.getCertification().toString();
         this.like=like;
         this.isFollow=isFollow;
     }
@@ -37,7 +37,7 @@ public class UserVO  {
         introduction=user.getIntroduction();
         nickName=user.getNickName();
         photo=user.getPhoto();
-        certification=user.getCertification();
+        certification=user.getCertification().toString();
         this.isFollow=isFollow;
     }
     public UserVO(User user){
@@ -46,7 +46,7 @@ public class UserVO  {
         introduction=user.getIntroduction();
         nickName=user.getNickName();
         photo=user.getPhoto();
-        certification=user.getCertification();
+        certification=user.getCertification()!=null?user.getCertification().getName():null;
         this.isFollow=false;
     }
 }

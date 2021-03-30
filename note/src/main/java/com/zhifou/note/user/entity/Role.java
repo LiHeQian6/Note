@@ -22,6 +22,7 @@ public class Role implements GrantedAuthority {
     @JsonIgnore
     @ManyToMany(mappedBy = "roles",targetEntity = User.class)
     private Collection<org.springframework.security.core.userdetails.User> users;
+    @JsonIgnore
     @ManyToMany
     @JoinTable(
             name = "roles_privileges",

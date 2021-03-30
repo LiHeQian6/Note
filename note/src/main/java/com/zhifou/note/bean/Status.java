@@ -18,10 +18,12 @@ public enum  Status {
     NOT_FOUND_TAG(1005, "未找到指定标签"),
     NOT_FOUND_ROLE(1006, "未找到指定角色"),
     NOT_FOUND_PRIVILEGE(1007, "未找到指定权限"),
-    TAG_ALREADY_EXIST(1008, "标签已经存在"),
-    TYPE_ALREADY_EXIST(1009, "类型已经存在"),
-    ROLE_ALREADY_EXIST(1010, "角色已经存在"),
-    PRIVILEGE_ALREADY_EXIST(1011, "权限已经存在"),
+    NOT_FOUND_CERTIFICATION(1008, "未找到认证信息"),
+    TAG_ALREADY_EXIST(1009, "标签已经存在"),
+    TYPE_ALREADY_EXIST(1010, "类型已经存在"),
+    ROLE_ALREADY_EXIST(1011, "角色已经存在"),
+    PRIVILEGE_ALREADY_EXIST(1012, "权限已经存在"),
+    CERTIFICATION_ALREADY_EXIST(1013, "认证已经存在"),
 
     /* 用户错误 */
     USER_NOT_LOGIN(2001, "用户未登录"),

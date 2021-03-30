@@ -17,11 +17,13 @@ import com.zhifou.note.util.JwtUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+import javax.validation.constraints.Min;
 import java.util.Set;
 
 /**
@@ -42,11 +44,11 @@ public class NoteController implements Constant {
     @Resource
     private FollowService followService;
     @Resource
-    private JwtUtils jwtUtils;
-    @Resource
     private CollectService collectService;
     @Resource
     private DataService dataService;
+    @Resource
+    private JwtUtils jwtUtils;
 
     @ApiOperation("浏览笔记")
     @GetMapping("/note/{id}")
@@ -92,6 +94,23 @@ public class NoteController implements Constant {
     public void deleteNote(@PathVariable int id) throws NoteException {
         User userInfo = jwtUtils.getUserInfo();
         noteService.deleteNote(id,userInfo.getUsername());
+    }
+
+
+    @ApiOperation("根据类型分页获取笔记")
+    @GetMapping("/notes/type/{typeId}")
+    public Page<NoteVO> getNoteByType(@ApiParam("第几页") @Min(value = 0, message = "页数最小为0") int page,
+                                      @ApiParam("页大小") @Min(value = 1, message = "页尺寸最小为1") int size,
+                                      @PathVariable int typeId){
+        return noteService.getNotesByType(page,size,typeId);
+    }
+
+    @ApiOperation("根据标签分页获取笔记")
+    @GetMapping("/notes/tag/{tagId}")
+    public Page<NoteVO> getNoteByTag(@ApiParam("第几页") @Min(value = 0, message = "页数最小为0") int page,
+                                      @ApiParam("页大小") @Min(value = 1, message = "页尺寸最小为1") int size,
+                                      @PathVariable int tagId){
+        return noteService.getNotesByTag(page,size,tagId);
     }
 
 }

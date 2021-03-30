@@ -1,5 +1,6 @@
 package com.zhifou.note.bean;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.zhifou.note.note.entity.Note;
 import com.zhifou.note.note.entity.Tag;
 import com.zhifou.note.note.entity.Type;
@@ -28,6 +29,7 @@ public class NoteVO {
     private Date createTime;
     private UserVO user;
     private Type type;
+    @JsonIgnoreProperties({"hibernateLazyInitializer","handler"})
     private Set<Tag> tags;
 
     //笔记详情页使用

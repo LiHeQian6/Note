@@ -1,5 +1,6 @@
 package com.zhifou.note.config;
 
+import com.zhifou.note.user.entity.Certification;
 import com.zhifou.note.user.entity.Privilege;
 import com.zhifou.note.user.entity.Role;
 import com.zhifou.note.user.entity.User;
@@ -58,6 +59,7 @@ public class InitialPrivilegeDataLoader implements ApplicationListener<ContextRe
             ArrayList<Role> roles = new ArrayList<>();
             roles.add(admin);
             User user = new User("SYSTEM@zhifou.com",passwordEncoder.encode("admin123."),roles,authorities);
+            user.setCertification(new Certification("0000000000","系统用户"));
             userRepository.save(user);
         }
 

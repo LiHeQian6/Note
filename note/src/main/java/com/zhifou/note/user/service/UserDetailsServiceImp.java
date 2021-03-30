@@ -98,6 +98,23 @@ public class UserDetailsServiceImp implements UserDetailsService {
         userRepository.save(user);
     }
 
+    public void addRole(int userId,int roleId) throws UserException {
+        User user = findUserById(userId);
+        Role role = roleRepository.getOne(roleId);
+        if (!user.getRoles().contains(role)) {
+            user.getRoles().add(role);
+            userRepository.save(user);
+        }
+    }
+
+    public void removeRole(int userId, int roleId) throws UserException {
+        User user = findUserById(userId);
+        Role role = roleRepository.getOne(roleId);
+        user.getRoles().remove(role);
+        userRepository.save(user);
+    }
+
+
     public long getUserCount(){
         return userRepository.count();
     }

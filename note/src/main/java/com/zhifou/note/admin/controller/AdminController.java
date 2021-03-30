@@ -5,9 +5,11 @@ import com.zhifou.note.exception.PrivilegeException;
 import com.zhifou.note.exception.RoleException;
 import com.zhifou.note.exception.UserException;
 import com.zhifou.note.note.service.NoteService;
+import com.zhifou.note.user.entity.Certification;
 import com.zhifou.note.user.entity.Privilege;
 import com.zhifou.note.user.entity.Role;
 import com.zhifou.note.user.entity.User;
+import com.zhifou.note.user.service.CertificationService;
 import com.zhifou.note.user.service.PrivilegeService;
 import com.zhifou.note.user.service.RoleService;
 import com.zhifou.note.user.service.UserDetailsServiceImp;
@@ -16,7 +18,6 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.data.domain.Page;
 import org.springframework.data.jpa.datatables.mapping.DataTablesInput;
 import org.springframework.data.jpa.datatables.mapping.DataTablesOutput;
-import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -29,7 +30,7 @@ import java.util.List;
  * @Date: 2021-02-08 18:28
  */
 @Api("管理系统api")
-@Controller
+@RestController
 @Validated
 @RequestMapping("/admin")
 public class AdminController {
@@ -41,16 +42,17 @@ public class AdminController {
     private NoteService noteService;
     @Resource
     private PrivilegeService privilegeService;
+    @Resource
+    private CertificationService certificationService;
 
     @ApiOperation("分页获取所有用户")
-    @GetMapping("/user")
+    @GetMapping("/users")
     public Page<User> getUsers(int page, int size){
         return userService.getUsers(page,size);
     }
 
     @ApiOperation("分页获取所有笔记")
     @GetMapping("/notes")
-    @ResponseBody
     public DataTablesOutput<NoteVO> getNotes(@Valid DataTablesInput input){
         input.getColumns().remove(input.getColumns().size()-1);
         return noteService.getNotes(input);
@@ -58,14 +60,9 @@ public class AdminController {
 
     @ApiOperation("禁用用户")
     @DeleteMapping("/user/{id}")
+    @ResponseBody
     public void disableUser(@PathVariable int id) throws UserException {
         userService.disableUser(id);
-    }
-
-    @ApiOperation("修改用户角色")
-    @PutMapping("/changeRole")
-    public void changeRole(int userId,List<Role> roles){
-        //todo 修改用户角色
     }
 
     @ApiOperation("获取所有角色")
@@ -78,6 +75,18 @@ public class AdminController {
     @PostMapping("/role")
     public void createRole(Role role) throws RoleException {
         roleService.createRole(role);
+    }
+
+    @ApiOperation("为用户新增角色")
+    @PostMapping("/role/{userId}/{roleId}")
+    public void addRole(@PathVariable int userId,@PathVariable int roleId) throws UserException {
+        //todo 管理员批量添加认证
+        userService.addRole(userId,roleId);
+    }
+    @ApiOperation("为用户移除角色")
+    @DeleteMapping("/role/{userId}/{roleId}")
+    public void removeRole(@PathVariable int userId,@PathVariable int roleId) throws UserException {
+        userService.removeRole(userId,roleId);
     }
 
     @ApiOperation("修改角色名及角色权限")
@@ -98,10 +107,17 @@ public class AdminController {
         privilegeService.createPrivilege(privilege);
     }
 
-    @ApiOperation("修改权限名")
+    @ApiOperation("修改权限")
     @PutMapping("/privilege")
     public void updatePrivilege(Privilege privilege) throws PrivilegeException {
         privilegeService.updatePrivilege(privilege);
+    }
+
+
+    @ApiOperation("添加认证信息")
+    @PostMapping("/certification")
+    public void addCertificationInfo(@Valid @RequestBody Certification certification){
+        certificationService.createCertification(certification);
     }
 
 }
