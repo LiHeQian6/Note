@@ -81,10 +81,5 @@ class FollowFragment : Fragment() {
 
     private fun initView() {
 
-        var title: TextView = root.follow_tool_bar.getChildAt(0) as TextView
-        title.layoutParams.width = LinearLayout.LayoutParams.MATCH_PARENT
-        title.gravity = Gravity.CENTER_HORIZONTAL
-        title.textSize = resources.getDimension(R.dimen.sp_6)
-        title.typeface = Typeface.DEFAULT
     }
 }

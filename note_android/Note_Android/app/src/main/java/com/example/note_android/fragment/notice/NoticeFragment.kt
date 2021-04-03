@@ -59,11 +59,7 @@ class NoticeFragment : Fragment(),View.OnClickListener {
     }
 
     private fun initToolBar() {
-        var title: TextView = root.notice_tool_bar.getChildAt(0) as TextView
-        title.layoutParams.width = LinearLayout.LayoutParams.MATCH_PARENT
-        title.gravity = Gravity.CENTER_HORIZONTAL
-        title.textSize = resources.getDimension(R.dimen.sp_6)
-        title.typeface = Typeface.DEFAULT
+
     }
 
     private fun initData() {
