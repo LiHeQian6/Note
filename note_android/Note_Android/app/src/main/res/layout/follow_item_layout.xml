@@ -3,16 +3,8 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_marginTop="@dimen/dp_4">
+    android:layout_marginTop="@dimen/dp_3">
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/dp_160"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        android:text="这是一个Item"
-        android:textSize="@dimen/sp_18"
-        android:gravity="center"/>
+    <include layout="@layout/note_list_item"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

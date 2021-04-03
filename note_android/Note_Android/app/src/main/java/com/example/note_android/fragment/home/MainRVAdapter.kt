@@ -6,12 +6,13 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.note_android.R
+import com.example.note_android.holder.NoteViewHolder
 import com.example.note_android.listener.OnItemClickListener
 
 class MainRVAdapter(var list: MutableList<Int>,
                     var context: Context,
                     var recyclerView: RecyclerView):
-    RecyclerView.Adapter<MainRVAdapter.ViewHolder>(), View.OnClickListener {
+    RecyclerView.Adapter<NoteViewHolder>(), View.OnClickListener {
 
     private var itemClickListener: OnItemClickListener? = null
 
@@ -19,20 +20,23 @@ class MainRVAdapter(var list: MutableList<Int>,
         this.itemClickListener = itemClickListener
     }
 
-    inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-    }
-
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NoteViewHolder {
         var view: View = LayoutInflater.from(parent.context).inflate(R.layout.home_item_layout,parent,false)
         view.setOnClickListener(this)
-        return ViewHolder(view)
+        return NoteViewHolder(view)
     }
 
     override fun getItemCount(): Int {
         return list.size
     }
 
-    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: NoteViewHolder, position: Int) {
+        holder.writerHeader.isCircle = true
+        holder.noteTitle.text = "Kotlin开发"
+        holder.noteLittleContent.text = "浅谈Kotlin开发"
+        holder.viewNum.text = "1"
+        holder.saveNum.text = "2"
+        holder.commonNum.text = "3"
     }
 
     override fun onClick(v: View?) {

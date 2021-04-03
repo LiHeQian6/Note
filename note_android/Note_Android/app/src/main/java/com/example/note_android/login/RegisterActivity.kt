@@ -6,22 +6,20 @@ import android.os.Bundle
 import android.util.Patterns
 import android.view.View
 import android.widget.Toast
-import androidx.databinding.DataBindingUtil
 import com.example.note_android.listener.HttpListener
 import com.example.note_android.R
-import com.example.note_android.databinding.ActivityRegisterBinding
 import com.example.note_android.login.registerModel.RegisterVM
 import com.example.note_android.util.SystemCode
 import com.xuexiang.xui.XUI
+import kotlinx.android.synthetic.main.activity_register.*
 
 class RegisterActivity : AppCompatActivity(),View.OnClickListener {
 
-    private lateinit var dataBinding:ActivityRegisterBinding
     private lateinit var registerVM: RegisterVM
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        dataBinding = DataBindingUtil.setContentView(this,R.layout.activity_register)
+        setContentView(R.layout.activity_register)
         registerVM = RegisterVM(this)
         initView()
         initListener()
@@ -31,15 +29,15 @@ class RegisterActivity : AppCompatActivity(),View.OnClickListener {
     }
 
     private fun initListener() {
-        dataBinding.getVerifyCode.setOnClickListener(this)
-        dataBinding.registerButton.setOnClickListener(this)
+        get_verify_code.setOnClickListener(this)
+        register_button.setOnClickListener(this)
         registerVM.setHttpListener(object :
             HttpListener {
             override fun complete(dataType: String, data: String) {
                 if(data == "Success"){
                     intent.putExtra("result","Success")
-                    intent.putExtra("email",dataBinding.email.text)
-                    intent.putExtra("password",dataBinding.password.text)
+                    intent.putExtra("email",email.text)
+                    intent.putExtra("password",password.text)
                     setResult(SystemCode.REGISTER,intent)
                     finish()
                 }else{
@@ -51,15 +49,15 @@ class RegisterActivity : AppCompatActivity(),View.OnClickListener {
     }
 
     private fun checkData(option:Int):Boolean{
-        if(!Patterns.EMAIL_ADDRESS.matcher(dataBinding.email.text).matches()){
+        if(!Patterns.EMAIL_ADDRESS.matcher(email.text).matches()){
             Toast.makeText(applicationContext,"邮箱格式不合法！",Toast.LENGTH_SHORT).show()
             return false
         }
-        if(dataBinding.password.text.length <6){
+        if(password.text.length <6){
             Toast.makeText(applicationContext,"密码不得小于6位！",Toast.LENGTH_SHORT).show()
             return false
         }
-        if(option == 1 && dataBinding.verifyCode.text.length != 4){
+        if(option == 1 && verify_code.text.length != 4){
             Toast.makeText(applicationContext,"验证码必须为4位",Toast.LENGTH_SHORT).show()
             return false
         }
@@ -70,16 +68,16 @@ class RegisterActivity : AppCompatActivity(),View.OnClickListener {
         when(v?.id){
             R.id.get_verify_code -> {
                 if(checkData(0)) {
-                    CountDownTimer(dataBinding.getVerifyCode).run()
-                    registerVM.getVerifyCode(dataBinding.email.text.toString())
+                    CountDownTimer(get_verify_code).run()
+                    registerVM.getVerifyCode(email.text.toString())
                 }
             }
             R.id.register_button -> {
                 if(checkData(1))
                     registerVM.register(
-                        dataBinding.email.text.toString(),
-                        dataBinding.password.text.toString(),
-                        dataBinding.verifyCode.text.toString()
+                        email.text.toString(),
+                        password.text.toString(),
+                        verify_code.text.toString()
                     )
             }
         }

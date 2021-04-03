@@ -61,7 +61,7 @@ class MainActivity : AppCompatActivity() {
         viewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
                 super.onPageSelected(position)
-                nav_view.menu.getItem(position).setChecked(true)
+                nav_view.menu.getItem(position).isChecked = true
             }
         })
         nav_view.setOnNavigationItemSelectedListener { item: MenuItem ->

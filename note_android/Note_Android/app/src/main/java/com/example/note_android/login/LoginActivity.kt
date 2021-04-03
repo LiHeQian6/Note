@@ -4,15 +4,14 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
-import androidx.databinding.DataBindingUtil
 import com.example.note_android.MainActivity
 import com.example.note_android.R
 import com.example.note_android.annotation.Page
-import com.example.note_android.databinding.ActivityLoginBinding
 import com.example.note_android.login.QQLogin.MyIUiListener
 import com.example.note_android.login.bean.UserInfo
 import com.example.note_android.util.*
 import com.tencent.tauth.Tencent
+import kotlinx.android.synthetic.main.activity_login.*
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
@@ -20,12 +19,11 @@ import org.greenrobot.eventbus.ThreadMode
 
 @Page(name = "登录页")
 class LoginActivity : AppCompatActivity(), View.OnClickListener {
-    private lateinit var loginBinding:ActivityLoginBinding
     private lateinit var mTencent: Tencent
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        loginBinding = DataBindingUtil.setContentView(this,R.layout.activity_login)
+        setContentView(R.layout.activity_login)
         mTencent = Tencent.createInstance(resources.getString(R.string.APP_ID),applicationContext)
         EventBus.getDefault().register(this)
         //initView()
@@ -41,16 +39,11 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
         }
     }
 
-    private fun initView(){
-        var user = UserInfo("admin","admin")
-        loginBinding.user = user
-    }
-
     private fun initListener(){
-        loginBinding.loginButton.setOnClickListener(this)
-        loginBinding.iconQqLogin.setOnClickListener(this)
-        loginBinding.btnToRegister.setOnClickListener(this)
-        loginBinding.btnForgetPassword.setOnClickListener(this)
+        login_button.setOnClickListener(this)
+        icon_qq_login.setOnClickListener(this)
+        btn_to_register.setOnClickListener(this)
+        btn_forget_password.setOnClickListener(this)
     }
 
     private fun QQLogin(){
@@ -73,8 +66,8 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
                 if(data?.extras?.get("result").toString() == "Success") {
                     var email = data?.extras?.get("email").toString()
                     var password = data?.extras?.get("password").toString()
-                    loginBinding.loginEmail.setText(email)
-                    loginBinding.loginPassword.setText(password)
+                    login_email.setText(email)
+                    login_password.setText(password)
                 }
             }
         }

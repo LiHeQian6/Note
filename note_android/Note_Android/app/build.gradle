@@ -10,10 +10,11 @@ final def markdown_version = '4.6.2'
 android {
     signingConfigs {
         config {
-            storeFile file('C:\\APPKey\\zhifou_note.jks')
-            storePassword 'zhifou@001'
-            keyAlias 'key0'
-            keyPassword 'zhifou@001'
+//            storeFile file('C:\\APPKey\\zhifou_note.jks')
+//            storePassword 'zhifou@001'
+//            keyAlias 'key0'
+//            keyPassword 'zhifou@001'
+
         }
     }
     compileSdkVersion 30
@@ -41,9 +42,6 @@ android {
     }
     kotlinOptions {
         jvmTarget = '1.8'
-    }
-    dataBinding {
-        enabled = true
     }
 }
 

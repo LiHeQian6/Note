@@ -95,7 +95,7 @@ class HomeFragment : Fragment(),View.OnClickListener {
     override fun onClick(v: View?) {
         when(v?.id){
             R.id.add_button -> {
-                ActivityUtil.get()?.activity(requireContext(),EditActivity::class.java)
+                ActivityUtil.get().activity(requireContext(),EditActivity::class.java)
             }
             R.id.saoma -> {
                 ScanActivity.start(requireActivity(),1, R.style.XQRCodeTheme_Custom)
