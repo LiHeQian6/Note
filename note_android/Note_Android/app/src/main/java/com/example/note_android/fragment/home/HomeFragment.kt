@@ -17,6 +17,7 @@ import com.example.note_android.annotation.Page
 import com.example.note_android.edit.EditActivity
 import com.example.note_android.listener.OnItemClickListener
 import com.example.note_android.fragment.notice.NoticeViewModel
+import com.example.note_android.note.ShowActivity
 import com.example.note_android.scan.ScanActivity
 import com.example.note_android.util.ActivityUtil
 import com.example.note_android.util.StateBarUtils
@@ -34,7 +35,7 @@ class HomeFragment : Fragment(),View.OnClickListener {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         homeViewModel =
             ViewModelProvider(this).get(NoticeViewModel::class.java)
         root = inflater.inflate(R.layout.fragment_home, container, false)
@@ -74,7 +75,7 @@ class HomeFragment : Fragment(),View.OnClickListener {
         adapter.setOnItemClickListener(object :
             OnItemClickListener {
             override fun onItemClick(position: Int) {
-                XToast.success(requireContext(),"这是第${position+1}个").show()
+                ActivityUtil.get().activity(requireContext(),ShowActivity::class.java)
             }
         })
 //        root.home_recyclerView.addOnItemTouchListener()

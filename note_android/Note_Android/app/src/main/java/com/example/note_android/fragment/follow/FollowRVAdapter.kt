@@ -21,7 +21,7 @@ class FollowRVAdapter(var list: MutableList<Any>,
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NoteViewHolder {
-        var view = LayoutInflater.from(parent.context).inflate(R.layout.follow_item_layout,parent,false)
+        var view = LayoutInflater.from(parent.context).inflate(R.layout.home_item_layout,parent,false)
         view.setOnClickListener(this)
         return NoteViewHolder(view)
     }

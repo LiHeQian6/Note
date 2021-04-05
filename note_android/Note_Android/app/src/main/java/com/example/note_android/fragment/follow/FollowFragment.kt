@@ -16,6 +16,8 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.note_android.R
 import com.example.note_android.listener.OnItemClickListener
+import com.example.note_android.note.ShowActivity
+import com.example.note_android.util.ActivityUtil
 import com.example.note_android.util.StateBarUtils
 import com.xuexiang.xui.widget.toast.XToast
 import kotlinx.android.synthetic.main.fragment_follow.view.*
@@ -68,7 +70,7 @@ class FollowFragment : Fragment() {
         adapter.setOnItemClickListener(object :
             OnItemClickListener {
             override fun onItemClick(position: Int) {
-                XToast.success(requireContext(),"这是第${position+1}个").show()
+                ActivityUtil.get().activity(requireContext(), ShowActivity::class.java)
             }
         })
     }
