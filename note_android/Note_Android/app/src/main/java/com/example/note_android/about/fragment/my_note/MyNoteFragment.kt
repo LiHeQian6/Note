@@ -7,10 +7,14 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.note_android.R
 import com.example.note_android.listener.OnItemClickListener
 import com.example.note_android.listener.OnItemLongClickListener
+import com.example.note_android.note.ShowActivity
+import com.example.note_android.util.ActivityUtil
 import com.xuexiang.xui.widget.dialog.bottomsheet.BottomSheet
 import com.xuexiang.xui.widget.dialog.bottomsheet.BottomSheet.BottomGridSheetBuilder
 import com.xuexiang.xui.widget.dialog.bottomsheet.BottomSheetItemView
@@ -56,11 +60,14 @@ class MyNoteFragment : Fragment() {
     private fun initRV(){
         var layoutManager = LinearLayoutManager(requireContext())
         myNoteRVAdapter = MyNoteRVAdapter(list,my_note_recycler_view)
+        var divider = DividerItemDecoration(requireContext(),LinearLayoutManager.VERTICAL)
+        divider.setDrawable(resources.getDrawable(R.drawable.rv_divider))
+        my_note_recycler_view.addItemDecoration(divider)
         my_note_recycler_view.layoutManager = layoutManager
         my_note_recycler_view.adapter = myNoteRVAdapter
         myNoteRVAdapter.setOnItemClickListener(object : OnItemClickListener{
             override fun onItemClick(position: Int) {
-                //TODO 跳转笔记展示页面
+                ActivityUtil.get().activity(requireContext(), ShowActivity::class.java)
             }
         })
         myNoteRVAdapter.setLongClickListener(object : OnItemLongClickListener{

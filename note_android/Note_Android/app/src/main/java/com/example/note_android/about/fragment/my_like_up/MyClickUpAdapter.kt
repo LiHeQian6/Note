@@ -26,7 +26,7 @@ class MyClickUpAdapter(private var list: MutableList<Int>,
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        var view = LayoutInflater.from(parent.context).inflate(R.layout.my_click_item,parent,false)
+        var view = LayoutInflater.from(parent.context).inflate(R.layout.note_list_item,parent,false)
         view.setOnClickListener(this)
         view.setOnLongClickListener(this)
         return ViewHolder(view)

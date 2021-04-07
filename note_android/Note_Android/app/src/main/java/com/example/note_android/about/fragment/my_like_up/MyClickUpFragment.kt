@@ -8,11 +8,14 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.lifecycle.Observer
+import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.note_android.R
 import com.example.note_android.about.fragment.my_note.MyNoteRVAdapter
 import com.example.note_android.listener.OnItemClickListener
 import com.example.note_android.listener.OnItemLongClickListener
+import com.example.note_android.note.ShowActivity
+import com.example.note_android.util.ActivityUtil
 import com.xuexiang.xui.widget.dialog.bottomsheet.BottomSheet
 import com.xuexiang.xui.widget.dialog.bottomsheet.BottomSheetItemView
 import kotlinx.android.synthetic.main.my_click_up_fragment.*
@@ -47,11 +50,14 @@ class MyClickUpFragment : Fragment() {
     private fun initAdapter(list: MutableList<Int>) {
         clickUpAdapter = MyClickUpAdapter(list,click_up_recycler_view)
         var layoutManager = LinearLayoutManager(requireContext())
+        var divider = DividerItemDecoration(requireContext(),LinearLayoutManager.VERTICAL)
+        divider.setDrawable(resources.getDrawable(R.drawable.rv_divider))
+        click_up_recycler_view.addItemDecoration(divider)
         click_up_recycler_view.layoutManager = layoutManager
         click_up_recycler_view.adapter = clickUpAdapter
         clickUpAdapter.setOnItemClickListener(object : OnItemClickListener {
             override fun onItemClick(position: Int) {
-                //TODO 跳转笔记展示页面
+                ActivityUtil.get().activity(requireContext(), ShowActivity::class.java)
             }
         })
         clickUpAdapter.setLongClickListener(object : OnItemLongClickListener {

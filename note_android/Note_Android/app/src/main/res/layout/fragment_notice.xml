@@ -24,22 +24,24 @@
             android:textColor="@color/less_black"/>
     </LinearLayout>
 
-    <com.scwang.smart.refresh.layout.SmartRefreshLayout
+    <com.google.android.material.tabs.TabLayout
+        android:id="@+id/notice_tab"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/dp_16"
+        app:tabIndicatorColor="@color/orange"
+        app:tabSelectedTextColor="@color/orange"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/bar_card"/>
+
+    <androidx.viewpager2.widget.ViewPager2
+        android:id="@+id/notice_view_pager"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dp_0"
+        android:layout_marginHorizontal="@dimen/dp_16"
+        app:layout_constraintTop_toBottomOf="@id/notice_tab"
+        app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/bar_card">
-
-        <com.scwang.smart.refresh.header.MaterialHeader
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recyclerView"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:overScrollMode="never"
-            app:layout_constraintTop_toBottomOf="@id/bar_card" />
-    </com.scwang.smart.refresh.layout.SmartRefreshLayout>
+        app:navGraph="@navigation/mobile_navigation"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

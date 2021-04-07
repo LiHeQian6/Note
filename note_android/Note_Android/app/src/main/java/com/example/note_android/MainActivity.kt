@@ -29,7 +29,7 @@ import kotlinx.android.synthetic.main.activity_main.*
 class MainActivity : AppCompatActivity() {
 
     private lateinit var viewPager: ViewPager2
-    private lateinit var mTencent:Tencent
+//    private lateinit var mTencent:Tencent
     private lateinit var navView: BottomNavigationView
 
     @RequiresApi(Build.VERSION_CODES.P)
@@ -37,7 +37,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         XUI.init(application)
         setContentView(R.layout.activity_main)
-        mTencent = Tencent.createInstance(resources.getString(R.string.APP_ID),applicationContext)
+//        mTencent = Tencent.createInstance(resources.getString(R.string.APP_ID),applicationContext)
         navView = findViewById(R.id.nav_view)
         initNavView()
         initViewPage()
@@ -87,10 +87,10 @@ class MainActivity : AppCompatActivity() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if(requestCode == SystemCode.QQ_LOGIN_REQUEST && StateUtil.LOGIN_INFO!= null){
-            mTencent.openId = StateUtil.LOGIN_INFO?.openid
-            mTencent.setAccessToken(StateUtil.LOGIN_INFO?.access_token, StateUtil.LOGIN_INFO?.expires_in)
-            var user = UserInfo(this,mTencent.qqToken)
-            user.getUserInfo(MyIUiListener(applicationContext,"get_user_info"))
+//            mTencent.openId = StateUtil.LOGIN_INFO?.openid
+//            mTencent.setAccessToken(StateUtil.LOGIN_INFO?.access_token, StateUtil.LOGIN_INFO?.expires_in)
+//            var user = UserInfo(this,mTencent.qqToken)
+//            user.getUserInfo(MyIUiListener(applicationContext,"get_user_info"))
         }
     }
 }

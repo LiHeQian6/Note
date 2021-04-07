@@ -4,15 +4,48 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@color/white"
-    android:layout_marginTop="@dimen/dp_4">
+    android:paddingHorizontal="@dimen/dp_16"
+    android:paddingVertical="@dimen/dp_10">
 
-    <TextView
-        android:id="@+id/my_note_item_text"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/dp_130"
-        android:gravity="center"
-        android:text="这是一个收藏Item"
-        android:textSize="@dimen/sp_18"
+    <com.xuexiang.xui.widget.imageview.RadiusImageView
+        android:id="@+id/like_writer_header"
+        android:layout_width="@dimen/dp_25"
+        android:layout_height="@dimen/dp_25"
+        android:src="@drawable/head_img"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/like_writer_name"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/dp_4"
+        android:text="一字见心"
+        android:textColor="@color/deep_gray"
+        android:textSize="@dimen/sp_12"
+        app:layout_constraintBottom_toBottomOf="@id/like_writer_header"
+        app:layout_constraintLeft_toRightOf="@+id/like_writer_header"
+        app:layout_constraintTop_toTopOf="@+id/like_writer_header" />
+
+    <TextView
+        android:id="@+id/like_note_header"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/dp_6"
+        android:text="Android开发"
+        android:textSize="@dimen/sp_16"
+        android:textColor="@color/less_black"
+        app:layout_constraintLeft_toLeftOf="@+id/like_writer_name"
+        app:layout_constraintTop_toBottomOf="@+id/like_writer_name" />
+
+    <TextView
+        android:id="@+id/like_note_content"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/dp_5"
+        android:text="Android开发"
+        android:textColor="@color/little_gray"
+        android:textSize="@dimen/sp_13"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/like_note_header" />
 </androidx.constraintlayout.widget.ConstraintLayout>

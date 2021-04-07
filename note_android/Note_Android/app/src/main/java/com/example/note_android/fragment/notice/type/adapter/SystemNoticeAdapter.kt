@@ -1,4 +1,4 @@
-package com.example.note_android.fragment.notice
+package com.example.note_android.fragment.notice.type.adapter
 
 import android.content.Context
 import android.view.LayoutInflater
@@ -7,14 +7,15 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.note_android.R
+import com.example.note_android.fragment.notice.Notice
 import com.example.note_android.listener.OnItemClickListener
 import com.xuexiang.xui.widget.imageview.RadiusImageView
 
 
-class NoticeRVAdapter(var list: List<Notice>,
-                      var context: Context,
-                      var recyclerView: RecyclerView):
-    RecyclerView.Adapter<NoticeRVAdapter.ViewHolder>(),View.OnClickListener {
+class SystemNoticeAdapter(var list: List<Notice>,
+                          var context: Context,
+                          var recyclerView: RecyclerView):
+    RecyclerView.Adapter<SystemNoticeAdapter.ViewHolder>(),View.OnClickListener {
 
     private var itemClickListener: OnItemClickListener? = null
 
@@ -35,9 +36,9 @@ class NoticeRVAdapter(var list: List<Notice>,
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.image.isCircle = true
-        holder.message_title.text = list[position].title
-        holder.message_cont.text = list[position].content
-        holder.message_time.text = list[position].time
+        holder.messageTitle.text = list[position].title
+        holder.messageCont.text = list[position].content
+        holder.messageTime.text = list[position].time
     }
 
     override fun onClick(v: View?) {
@@ -48,16 +49,9 @@ class NoticeRVAdapter(var list: List<Notice>,
     }
 
     inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        var image: RadiusImageView
-        var message_title: TextView
-        var message_cont: TextView
-        var message_time: TextView
-
-        init {
-            image = view.findViewById(R.id.message_image)
-            message_title = view.findViewById(R.id.message_name)
-            message_cont = view.findViewById(R.id.message_con)
-            message_time = view.findViewById(R.id.message_time)
-        }
+        var image: RadiusImageView = view.findViewById(R.id.message_image)
+        var messageTitle: TextView = view.findViewById(R.id.message_name)
+        var messageCont: TextView = view.findViewById(R.id.message_con)
+        var messageTime: TextView = view.findViewById(R.id.message_time)
     }
 }

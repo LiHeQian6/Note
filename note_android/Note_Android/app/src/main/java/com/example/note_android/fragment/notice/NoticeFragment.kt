@@ -1,5 +1,6 @@
 package com.example.note_android.fragment.notice
 
+import android.content.res.ColorStateList
 import android.graphics.Typeface
 import android.os.Build
 import android.os.Bundle
@@ -7,50 +8,77 @@ import android.view.*
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.annotation.RequiresApi
+import androidx.core.view.get
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.viewpager2.widget.ViewPager2
 import com.example.note_android.R
 import com.example.note_android.annotation.Page
 import com.example.note_android.listener.OnItemClickListener
 import com.example.note_android.util.StateBarUtils
+import com.google.android.material.tabs.TabLayout
+import com.google.android.material.tabs.TabLayoutMediator
 import com.xuexiang.xui.widget.toast.XToast
+import kotlinx.android.synthetic.main.fragment_notice.*
 import kotlinx.android.synthetic.main.fragment_notice.view.*
 
 @Page(name = "消息页")
-class NoticeFragment : Fragment(),View.OnClickListener {
+class NoticeFragment : Fragment(){
 
     private lateinit var noticeViewModel: NoticeViewModel
     private lateinit var root: View
-    private var list: MutableList<Notice> = ArrayList()
-    private lateinit var adapter: NoticeRVAdapter
+    private lateinit var tabList:Array<String>
 
     @RequiresApi(Build.VERSION_CODES.M)
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         noticeViewModel =
             ViewModelProvider(this).get(NoticeViewModel::class.java)
         root = inflater.inflate(R.layout.fragment_notice, container, false)
-         fitSystem()
-        initToolBar()
-        initData()
-        initRVAdapter()
-        initListener()
+        initView()
         return root
     }
 
+
+
     @RequiresApi(Build.VERSION_CODES.M)
-    private fun fitSystem(){
-        var decorView = requireActivity().window.decorView;
-        var windowInsets = decorView.rootWindowInsets
-        if (windowInsets != null) {
-            root.dispatchApplyWindowInsets(windowInsets.replaceSystemWindowInsets(0, windowInsets.getSystemWindowInsetTop(), 0, 0))
-            root.setOnApplyWindowInsetsListener{v: View?, insets: WindowInsets? -> insets }
+    private fun initView() {
+        //初始化ViewPager2
+        root.notice_view_pager.orientation = ViewPager2.ORIENTATION_HORIZONTAL
+        root.notice_view_pager.adapter = NoticeVPAdapter(requireActivity())
+
+        //初始化TabLayout，并绑定ViewPager2
+        root.notice_tab.tabRippleColor = ColorStateList.valueOf(resources.getColor(R.color.transparent,null))
+        tabList = resources.getStringArray(R.array.notice_type)
+        var tabLayout =  TabLayoutMediator(root.notice_tab,root.notice_view_pager) { tab, position ->
+            tab.text = tabList[position]
+            var view = layoutInflater.inflate(R.layout.custom_tablayout,null)
+            view.findViewById<TextView>(R.id.tab_text).text = tabList[position]
+            tab.customView = view
         }
+        tabLayout.attach()
+        root.notice_tab[SYSTEM].findViewById<TextView>(R.id.tab_text).setTextColor(resources.getColor(R.color.orange,null))
+        root.notice_tab.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener{
+            override fun onTabSelected(tab: TabLayout.Tab?) {
+                tab?.customView?.findViewById<TextView>(R.id.tab_text)
+                        ?.setTextColor(resources.getColor(R.color.orange,null))
+            }
+
+            override fun onTabUnselected(tab: TabLayout.Tab?) {
+                tab?.customView?.findViewById<TextView>(R.id.tab_text)
+                        ?.setTextColor(resources.getColor(R.color.deep_gray,null))
+            }
+
+            override fun onTabReselected(tab: TabLayout.Tab?) {
+
+            }
+
+        })
     }
 
     override fun onResume() {
@@ -58,36 +86,15 @@ class NoticeFragment : Fragment(),View.OnClickListener {
         StateBarUtils.setStatusBarLightMode(requireActivity())
     }
 
-    private fun initToolBar() {
+    companion object {
 
-    }
+        const val SYSTEM = 0
 
-    private fun initData() {
-        for (i in 1..20){
-            list.add(Notice("李和谦","你好，大佬","2021-2-28"))
-        }
-    }
+        const val LIKE = 1
 
-    private fun initRVAdapter() {
-        var layoutManager = LinearLayoutManager(requireContext())
-        adapter = NoticeRVAdapter(list,requireContext(),root.recyclerView)
-        root.recyclerView.layoutManager = layoutManager
-        root.recyclerView.addItemDecoration(DividerItemDecoration(requireContext(),LinearLayoutManager.VERTICAL))
-        root.recyclerView.adapter = adapter
-    }
+        const val COMMON = 2
 
-    private fun initListener() {
-        adapter.setOnItemClickListener(object :
-            OnItemClickListener {
-            override fun onItemClick(position: Int) {
-                XToast.success(requireContext(),"这是第${position+1}个").show()
-            }
-        })
-    }
+        const val FOLLOW = 3
 
-    override fun onClick(v: View?) {
-        when(v?.id){
-
-        }
     }
 }

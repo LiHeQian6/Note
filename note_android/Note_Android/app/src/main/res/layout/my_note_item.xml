@@ -3,16 +3,29 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/white"
-    android:layout_marginTop="@dimen/dp_4">
+    android:paddingVertical="@dimen/dp_10"
+    android:paddingHorizontal="@dimen/dp_16"
+    android:background="@color/white">
 
     <TextView
-        android:id="@+id/my_note_item_text"
+        android:id="@+id/note_header"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/dp_130"
-        android:gravity="center"
-        android:text="这是一个笔记Item"
-        android:textSize="@dimen/sp_18"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/dp_6"
+        android:text="Android开发"
+        android:textColor="@color/less_black"
+        android:textSize="@dimen/sp_16"
+        app:layout_constraintLeft_toLeftOf="@+id/writer_header"
+        app:layout_constraintTop_toBottomOf="@+id/writer_header" />
+
+    <TextView
+        android:id="@+id/note_little_content"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/dp_5"
+        android:text="Android开发"
+        android:textColor="@color/little_gray"
+        android:textSize="@dimen/sp_13"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@id/note_header" />
 </androidx.constraintlayout.widget.ConstraintLayout>
