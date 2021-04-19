@@ -39,4 +39,9 @@ public class RoleService {
             throw new RoleException("角色不存在！", Status.NOT_FOUND_ROLE);
         }
     }
+
+    public List<Role> findRoles(List<Integer> ids){
+        return roleRepository.findAllById(ids);
+    }
+
 }

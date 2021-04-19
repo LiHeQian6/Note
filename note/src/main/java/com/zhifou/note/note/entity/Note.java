@@ -5,7 +5,6 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
-import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -33,7 +32,6 @@ public class Note {
     @ManyToOne(targetEntity = User.class)
     private User user;
     @ManyToOne(targetEntity = Type.class)
-    @Valid
     @NotNull(message = "必须选择一个分类")
     private Type type;
     @ManyToMany
@@ -43,10 +41,9 @@ public class Note {
                     name = "note_id"),
             inverseJoinColumns = @JoinColumn(
                     name = "tag_id"))
-    @Valid
     @Size(min = 1,message = "至少选择一个标签")
     private Set<Tag> tags;
-    @OneToMany(mappedBy = "note")
+    @OneToMany(mappedBy = "note",cascade = CascadeType.REMOVE)
     private Set<Comment> comments;
     private int status=0;
 

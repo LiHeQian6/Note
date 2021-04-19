@@ -53,6 +53,9 @@ public class TokenFilter extends OncePerRequestFilter{
                         resolver.resolveException(request,response,null,new TokenException("Token已经过期,请重新登录！", Status.TOKEN_EXPIRED));
                         return;
                     }
+                }else {
+                    resolver.resolveException(request,response,null,new TokenException("Token已经过期,请重新登录！", Status.TOKEN_EXPIRED));
+                    return;
                 }
 
             }

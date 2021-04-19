@@ -5,10 +5,13 @@ import com.zhifou.note.exception.CertificationException;
 import com.zhifou.note.user.entity.Certification;
 import com.zhifou.note.user.entity.User;
 import com.zhifou.note.user.repository.CertificationRepository;
+import org.springframework.data.jpa.datatables.mapping.DataTablesInput;
+import org.springframework.data.jpa.datatables.mapping.DataTablesOutput;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.util.List;
 
 /**
  * @author : li
@@ -37,9 +40,27 @@ public class CertificationService {
         certificationRepository.save(certification);
     }
 
+    public Certification findCertificationById(int id) throws CertificationException {
+        Certification certification = certificationRepository.findCertificationById(id);
+        if (certification==null) {
+            throw new CertificationException("认证信息不存在！",Status.NOT_FOUND_CERTIFICATION);
+        }
+        return certification;
+    }
 
 
 
 
+    public DataTablesOutput<Certification> getCertifications(DataTablesInput input) {
+        return certificationRepository.findAll(input);
+    }
 
+    public void deleteCertification(int id) throws CertificationException {
+        Certification certification = findCertificationById(id);
+        certificationRepository.delete(certification);
+    }
+
+    public void createCertifications(List<Certification> certifications) {
+        certificationRepository.saveAll(certifications);
+    }
 }

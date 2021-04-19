@@ -7,7 +7,7 @@ import com.zhifou.note.note.entity.Type;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.Date;
+import java.text.SimpleDateFormat;
 import java.util.Set;
 
 /**
@@ -26,7 +26,7 @@ public class NoteVO {
     private long collect;
     private boolean isCollect;
     private Set<CommentVO> comments;
-    private Date createTime;
+    private String createTime;
     private UserVO user;
     private Type type;
     @JsonIgnoreProperties({"hibernateLazyInitializer","handler"})
@@ -43,7 +43,8 @@ public class NoteVO {
         this.collect=collect;
         this.isCollect=isCollect;
         this.comments=comments;
-        createTime=note.getCreateTime();
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+        createTime= format.format(note.getCreateTime());
         user=new UserVO(note.getUser());
         type=note.getType();
         tags=note.getTags();
@@ -60,7 +61,8 @@ public class NoteVO {
         this.collect=collect;
         this.isCollect=false;
         this.comments=comments;
-        createTime=note.getCreateTime();
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+        createTime= format.format(note.getCreateTime());
         user=new UserVO(note.getUser());
         type=note.getType();
         tags=note.getTags();
@@ -71,7 +73,8 @@ public class NoteVO {
         id=note.getId();
         title=note.getTitle();
         content=note.getContent().substring(0, Math.min(note.getContent().length(), 100));
-        createTime=note.getCreateTime();
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+        createTime= format.format(note.getCreateTime());
         user=new UserVO(note.getUser());
         type=note.getType();
         tags=note.getTags();

@@ -103,6 +103,18 @@ public class NoteService implements Constant {
         Note note = getNote(id, username);
         noteRepository.delete(note);
     }
+    /**
+     * @param: id
+     * @param: username
+     * @return void
+     * @description 删除指定的笔记
+     * @author li
+     * @Date 2021/3/24 22:19
+     */
+    public void deleteNote(int id) throws NoteException {
+        Note note = getNote(id);
+        noteRepository.delete(note);
+    }
 
     /**
      * @param:
@@ -191,6 +203,6 @@ public class NoteService implements Constant {
             NoteVO noteVO = new NoteVO(note);
             noteVOList.add(noteVO);
         }
-        return new PageImpl<>(noteVOList,pageRequest,noteVOList.size());
+        return new PageImpl<>(noteVOList, pageRequest, noteVOList.size());
     }
 }

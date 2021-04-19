@@ -1,7 +1,9 @@
 package com.zhifou.note.admin.controller;
 
 import com.zhifou.note.note.service.NoteService;
+import com.zhifou.note.user.entity.Role;
 import com.zhifou.note.user.service.DataService;
+import com.zhifou.note.user.service.RoleService;
 import com.zhifou.note.user.service.UserDetailsServiceImp;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.stereotype.Controller;
@@ -27,10 +29,8 @@ public class PageController {
     private NoteService noteService;
     @Resource
     private UserDetailsServiceImp userService;
-
-
-
-
+    @Resource
+    private RoleService roleService;
 
     @ApiOperation("首页")
     @RequestMapping("/")
@@ -47,6 +47,21 @@ public class PageController {
         request.setAttribute("tags",tagNoteCount.keySet());
         request.setAttribute("tagsCount",tagNoteCount.values());
         return "admin-index";
+    }
+
+    @ApiOperation("用户管理")
+    @RequestMapping("/user-management")
+    public String userManagement(HttpServletRequest request){
+        List<Role> roles = roleService.getRoles();
+        String rs="";
+        String rid="";
+        for (Role role : roles) {
+            rs+=role.getName()+",";
+            rid+=role.getId()+",";
+        }
+        request.setAttribute("roles", rs);
+        request.setAttribute("rolesId", rid);
+        return "user-management";
     }
 
     @RequestMapping("/{page}")

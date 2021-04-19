@@ -2,18 +2,26 @@ package com.zhifou.note.message.service;
 
 import com.zhifou.note.bean.Constant;
 import com.zhifou.note.bean.MessageVO;
+import com.zhifou.note.bean.Status;
+import com.zhifou.note.exception.MessageException;
 import com.zhifou.note.message.entity.Message;
 import com.zhifou.note.message.repository.MessageRepository;
 import com.zhifou.note.user.entity.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.jpa.datatables.mapping.Column;
+import org.springframework.data.jpa.datatables.mapping.DataTablesInput;
+import org.springframework.data.jpa.datatables.mapping.DataTablesOutput;
+import org.springframework.data.jpa.datatables.mapping.Search;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.function.Predicate;
 
 /**
  * @author : li
@@ -79,5 +87,43 @@ public class MessageService implements Constant {
             messageVOS.add(messageVO);
         }
         return new PageImpl<>(messageVOS,pageRequest,messageVOS.size());
+    }
+
+    public DataTablesOutput<Message> getSystemMessages(DataTablesInput input) {
+        Search search = new Search();
+        search.setValue("system");
+        search.setRegex(false);
+        Column column = new Column();
+        column.setData("msType");
+        column.setOrderable(true);
+        column.setSearch(search);
+        column.setSearchable(true);
+        input.getColumns().add(column);
+        DataTablesOutput<Message> output = messageRepository.findAll(input);
+        List<Message> data = output.getData();
+        ArrayList<Message> messages = new ArrayList<>(data);
+        messages.removeIf(new Predicate<Message>() {
+            @Override
+            public boolean test(Message message) {
+                return !message.getMsType().equals(TOPIC_SYSTEM);
+            }
+        });
+        output.setData(messages);
+        output.setRecordsFiltered(messages.size());
+        output.setRecordsTotal(messages.size());
+        return output;
+    }
+
+    public Message getMessage(int id) throws MessageException {
+        Message message = messageRepository.findMessageByIdAndStatus(id,0);
+        if (message ==null) {
+            throw new MessageException("没有找到指定消息！", Status.NOT_FOUND_MESSAGE);
+        }
+        return message;
+    }
+
+    public void deleteSystemMessage(int id) throws MessageException {
+        Message message = getMessage(id);
+        messageRepository.delete(message);
     }
 }

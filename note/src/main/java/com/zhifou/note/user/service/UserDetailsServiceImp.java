@@ -2,12 +2,14 @@ package com.zhifou.note.user.service;
 
 import com.zhifou.note.bean.Status;
 import com.zhifou.note.exception.UserException;
+import com.zhifou.note.message.service.FollowService;
 import com.zhifou.note.user.entity.Role;
 import com.zhifou.note.user.entity.User;
 import com.zhifou.note.user.repository.RoleRepository;
 import com.zhifou.note.user.repository.UserRepository;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.data.jpa.datatables.mapping.DataTablesInput;
+import org.springframework.data.jpa.datatables.mapping.DataTablesOutput;
 import org.springframework.security.authentication.InternalAuthenticationServiceException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -18,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author : li
@@ -31,6 +34,11 @@ public class UserDetailsServiceImp implements UserDetailsService {
     private UserRepository userRepository;
     @Resource
     private RoleRepository roleRepository;
+    @Resource
+    private RoleService roleService;
+    @Resource
+    @Lazy
+    private FollowService followService;
 
     @Resource
     private PasswordEncoder passwordEncoder;
@@ -54,9 +62,8 @@ public class UserDetailsServiceImp implements UserDetailsService {
         userRepository.save(user);
     }
 
-    public Page<User> getUsers(int page, int size) {
-        PageRequest pageRequest = PageRequest.of(page, size);
-        return userRepository.findAll(pageRequest);
+    public DataTablesOutput<User> getUsers(DataTablesInput input) {
+        return userRepository.findAll(input);
     }
 
     public User findUserById(int userId) throws UserException {
@@ -94,8 +101,18 @@ public class UserDetailsServiceImp implements UserDetailsService {
 
     public void disableUser(int id) throws UserException {
         User user = findUserById(id);
-        user.setEnabled(false);
+        if (user.isEnabled()) {
+            user.setEnabled(false);
+        }else {
+            user.setEnabled(true);
+        }
         userRepository.save(user);
+    }
+
+    public void changeUserRole(int userId, List<Integer> roleIds) throws UserException {
+        User user = findUserById(userId);
+        List<Role> roles = roleService.findRoles(roleIds);
+        user.setRoles(roles);
     }
 
     public void addRole(int userId,int roleId) throws UserException {

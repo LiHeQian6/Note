@@ -40,7 +40,7 @@ import java.util.concurrent.TimeUnit;
 @Api("用户模块")
 @RestController
 @Validated
-public class UserController {//todo 修改用户认证，认证管理改认证中心，管理员认证改管理员管理（添加修改管理员角色）
+public class UserController {
 
     @Resource
     private RedisTemplate<String,Object> redisTemplate;

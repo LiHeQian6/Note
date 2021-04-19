@@ -40,7 +40,6 @@ public class CommentController implements Constant {
         User userInfo = jwtUtils.getUserInfo();
         comment.setUser(userInfo);
         Note note = comment.getNote();
-        comment.setNote(noteService.getNote(note.getId()));
         commentService.addComment(comment);
         MessageEvent commentEvent = new MessageEvent();
         commentEvent.setUserId(userInfo.getId());

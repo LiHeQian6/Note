@@ -42,7 +42,7 @@
                     <div class="drop-down dropdown-profile animated bounceInDown">
                         <div class="dropdown-content-body">
                             <ul>
-                                <li><a href=""><i class="mdi mdi-account"></i> <span>username</span></a> </li>
+<!--                                <li><a href=""><i class="mdi mdi-account"></i> <span>username</span></a> </li>-->
                                 <li><a href="/logout"><i class="icon-power"></i> <span>Logout</span></a> </li>
                             </ul>
                         </div>
@@ -97,7 +97,7 @@
     <div class="container" style="padding-top: 0;margin-top: -10px" th:fragment="breadcrumb(position)">
         <div class="row page-titles">
             <div class="col p-0">
-                <h4>欢迎, <span>username</span></h4>
+                <h4>欢迎, <span th:text="${#authentication.name}"></span></h4>
             </div>
             <div class="col p-0">
                 <ol class="breadcrumb">

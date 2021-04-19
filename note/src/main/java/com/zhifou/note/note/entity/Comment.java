@@ -1,6 +1,5 @@
 package com.zhifou.note.note.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.zhifou.note.user.entity.User;
 import lombok.Getter;
 import lombok.Setter;
@@ -30,7 +29,7 @@ public class Comment {
     @ManyToOne
     @NotNull(message = "评论所属笔记不能为空")
     private Note note;
-    @JsonIgnore
+//    @JsonIgnore
     @ManyToOne
     private Comment parent;
     @OneToMany(mappedBy = "parent")

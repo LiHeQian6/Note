@@ -7,6 +7,8 @@ import com.zhifou.note.note.entity.Tag;
 import com.zhifou.note.note.repository.TagRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.jpa.datatables.mapping.DataTablesInput;
+import org.springframework.data.jpa.datatables.mapping.DataTablesOutput;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -52,5 +54,22 @@ public class TagService implements Constant {
         }else {
             throw new TagException("标签已经存在！", Status.TAG_ALREADY_EXIST);
         }
+    }
+
+    public DataTablesOutput<Tag> getTags(DataTablesInput input) {
+        return tagRepository.findAll(input);
+    }
+
+    public void deleteTag(int id) throws TagException {
+        Tag tag = getTag(id);
+        tagRepository.delete(tag);
+    }
+
+    private Tag getTag(int id) throws TagException {
+        Tag tag = tagRepository.findTagById(id);
+        if (tag ==null) {
+            throw new TagException("没有找到指定标签！", Status.NOT_FOUND_TAG);
+        }
+        return tag;
     }
 }

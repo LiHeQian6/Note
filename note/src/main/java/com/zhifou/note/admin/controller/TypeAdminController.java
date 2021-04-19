@@ -15,7 +15,7 @@ import javax.validation.Valid;
  * @author : li
  * @Date: 2021-03-10 17:44
  */
-@Controller
+@RestController
 @Validated
 @RequestMapping("/admin")
 public class TypeAdminController {

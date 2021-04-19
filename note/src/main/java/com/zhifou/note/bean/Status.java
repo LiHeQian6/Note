@@ -19,6 +19,7 @@ public enum  Status {
     NOT_FOUND_ROLE(1006, "未找到指定角色"),
     NOT_FOUND_PRIVILEGE(1007, "未找到指定权限"),
     NOT_FOUND_CERTIFICATION(1008, "未找到认证信息"),
+    NOT_FOUND_MESSAGE(1014,"未找到指定消息"),
     TAG_ALREADY_EXIST(1009, "标签已经存在"),
     TYPE_ALREADY_EXIST(1010, "类型已经存在"),
     ROLE_ALREADY_EXIST(1011, "角色已经存在"),
