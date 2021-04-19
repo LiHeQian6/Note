@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/custom_divider"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:divider="@drawable/custom_divider"
+    android:dividerPadding="@dimen/dp_1"
+    android:orientation="vertical"
+    android:showDividers="end">
+
+</LinearLayout>

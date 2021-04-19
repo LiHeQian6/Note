@@ -33,7 +33,7 @@ class EditNoteFragment: Fragment(),View.OnClickListener {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         rootView = inflater.inflate(R.layout.fragment_edit_note,container,false)
         initTool()
         initEditor()

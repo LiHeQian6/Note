@@ -1,161 +1,146 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true">
 
-    <data>
+    <ImageView
+        android:id="@+id/login_logo"
+        android:layout_width="@dimen/dp_150"
+        android:layout_height="@dimen/dp_150"
+        android:layout_centerHorizontal="true"
+        android:background="@drawable/ico_login" />
 
-        <import type="com.example.note_android.login.bean.UserInfo" />
+    <LinearLayout
+        android:id="@+id/account_edit"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/login_logo"
+        android:layout_marginHorizontal="@dimen/dp_40"
+        android:background="@drawable/custom_editext"
+        android:orientation="horizontal">
 
-        <variable
-            name="user"
-            type="UserInfo" />
-    </data>
+        <EditText
+            android:id="@+id/login_email"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/dp_40"
+            android:background="@null"
+            android:hint="请输入账号"
+            android:textAlignment="center"
+            android:textColorHint="#bcbcbc"
+            android:textSize="@dimen/sp_15" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/password_edit"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/account_edit"
+        android:layout_marginHorizontal="@dimen/dp_40"
+        android:layout_marginTop="@dimen/dp_15"
+        android:background="@drawable/custom_editext"
+        android:orientation="horizontal">
+
+        <EditText
+            android:id="@+id/login_password"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/dp_40"
+            android:background="@null"
+            android:hint="请输入密码"
+            android:inputType="textPassword"
+            android:textAlignment="center"
+            android:textColorHint="#bcbcbc"
+            android:textSize="@dimen/sp_15" />
+
+    </LinearLayout>
 
     <RelativeLayout
+        android:id="@+id/login_select"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:fitsSystemWindows="true">
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/password_edit"
+        android:layout_marginHorizontal="@dimen/dp_50"
+        android:layout_marginTop="@dimen/dp_15"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/btn_to_register"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="立即注册"
+            android:textColor="@color/black"
+            android:textSize="@dimen/sp_13" />
+
+        <TextView
+            android:id="@+id/btn_forget_password"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:text="忘记密码"
+            android:textColor="@color/black"
+            android:textSize="@dimen/sp_13" />
+
+    </RelativeLayout>
+
+    <com.xuexiang.xui.widget.button.roundbutton.RoundButton
+        android:id="@+id/login_button"
+        style="@style/RoundButton.Blue"
+        android:layout_width="@dimen/dp_180"
+        android:layout_height="@dimen/dp_35"
+        android:layout_below="@+id/login_select"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="@dimen/dp_20"
+        android:text="登 陆"
+        android:textColor="@color/white"
+        android:textSize="@dimen/sp_14"
+        app:rb_backgroundColor="@color/orange"
+        app:rb_isRadiusAdjustBounds="true" />
+
+    <LinearLayout
+        android:id="@+id/tip"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="@dimen/dp_5"
+        android:gravity="center">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="登陆即代表同意" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="用户协议"
+            android:textColor="@color/blue" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="和" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="隐私政策"
+            android:textColor="@color/blue" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/tip"
+        android:layout_marginBottom="@dimen/dp_5"
+        android:gravity="center">
 
         <ImageView
-            android:id="@+id/login_logo"
-            android:layout_width="@dimen/dp_150"
-            android:layout_height="@dimen/dp_150"
-            android:layout_centerHorizontal="true"
-            android:background="@drawable/ico_login" />
-
-        <LinearLayout
-            android:id="@+id/account_edit"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/login_logo"
-            android:layout_marginHorizontal="@dimen/dp_40"
-            android:background="@drawable/custom_editext"
-            android:orientation="horizontal">
-
-            <EditText
-                android:id="@+id/login_email"
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/dp_40"
-                android:background="@null"
-                android:textAlignment="center"
-                android:hint="请输入账号"
-                android:text="@{user.name}"
-                android:textColorHint="#bcbcbc"
-                android:textSize="@dimen/sp_15" />
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/password_edit"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/account_edit"
-            android:layout_marginHorizontal="@dimen/dp_40"
-            android:layout_marginTop="@dimen/dp_15"
-            android:background="@drawable/custom_editext"
-            android:orientation="horizontal">
-
-            <EditText
-                android:id="@+id/login_password"
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/dp_40"
-                android:background="@null"
-                android:textAlignment="center"
-                android:hint="请输入密码"
-                android:inputType="textPassword"
-                android:text="@{user.password}"
-                android:textColorHint="#bcbcbc"
-                android:textSize="@dimen/sp_15" />
-
-        </LinearLayout>
-
-        <RelativeLayout
-            android:id="@+id/login_select"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/password_edit"
-            android:layout_marginHorizontal="@dimen/dp_50"
-            android:layout_marginTop="@dimen/dp_15"
-            android:orientation="horizontal">
-
-            <TextView
-                android:id="@+id/btn_to_register"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="立即注册"
-                android:textColor="@color/black"
-                android:textSize="@dimen/sp_13" />
-
-            <TextView
-                android:id="@+id/btn_forget_password"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"
-                android:text="忘记密码"
-                android:textColor="@color/black"
-                android:textSize="@dimen/sp_13" />
-
-        </RelativeLayout>
-
-        <com.xuexiang.xui.widget.button.roundbutton.RoundButton
-            android:id="@+id/login_button"
-            style="@style/RoundButton.Blue"
-            android:layout_width="@dimen/dp_180"
-            android:layout_height="@dimen/dp_35"
-            android:layout_below="@+id/login_select"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="@dimen/dp_20"
-            android:text="登 陆"
-            android:textColor="@color/white"
-            android:textSize="@dimen/sp_14"
-            app:rb_backgroundColor="@color/orange"
-            app:rb_isRadiusAdjustBounds="true" />
-
-        <LinearLayout
-            android:id="@+id/tip"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_marginBottom="@dimen/dp_5"
-            android:gravity="center">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="登陆即代表同意" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="用户协议"
-                android:textColor="@color/blue" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="和" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="隐私政策"
-                android:textColor="@color/blue" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_above="@+id/tip"
-            android:layout_marginBottom="@dimen/dp_5"
-            android:gravity="center">
-
-            <ImageView
-                android:id="@+id/icon_qq_login"
-                android:layout_width="@dimen/dp_30"
-                android:layout_height="@dimen/dp_30"
-                android:background="@drawable/ico_qq"
-                android:visibility="invisible" />
-        </LinearLayout>
-    </RelativeLayout>
-</layout>
+            android:id="@+id/icon_qq_login"
+            android:layout_width="@dimen/dp_30"
+            android:layout_height="@dimen/dp_30"
+            android:background="@drawable/ico_qq"
+            android:visibility="invisible" />
+    </LinearLayout>
+</RelativeLayout>

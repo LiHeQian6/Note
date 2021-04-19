@@ -27,17 +27,17 @@ class PersonFragment : Fragment(),View.OnClickListener {
 
     private lateinit var personViewModel: PersonViewModel
     private lateinit var root: View
-    private lateinit var mTencent:Tencent
+//    private lateinit var mTencent:Tencent
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         personViewModel =
             ViewModelProvider(this).get(PersonViewModel::class.java)
         root = inflater.inflate(R.layout.fragment_person, container, false)
-        mTencent = Tencent.createInstance(resources.getString(R.string.APP_ID),requireContext())
+//        mTencent = Tencent.createInstance(resources.getString(R.string.APP_ID),requireContext())
         EventBus.getDefault().register(this)
         initView()
         checkLogin()
@@ -46,9 +46,13 @@ class PersonFragment : Fragment(),View.OnClickListener {
         return root
     }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+    }
+
     override fun onResume() {
         super.onResume()
-        StateBarUtils.translucent(requireActivity())
+        StateBarUtils.customFullScreen(requireActivity())
         if(StateUtil.IF_LOGIN && StateUtil.initInfo(requireContext())) {
             root.user_name?.setText(StateUtil.USER_INFO?.nickname)
             Glide.with(requireContext()).load(StateUtil.USER_INFO?.figureurl_qq_2)
@@ -105,17 +109,17 @@ class PersonFragment : Fragment(),View.OnClickListener {
         root.person_image.isCircle = true
     }
 
-    private fun logout(){
-        if(!StateUtil.IF_LOGIN)
-            return
-        var editor = requireContext().getSharedPreferences(resources.getString(R.string.LoginInfo),
-            Context.MODE_PRIVATE).edit()
-        editor?.clear()
-        editor?.apply()
-        root.user_name?.setText("立即登录")
-        StateUtil.IF_LOGIN = false
-        mTencent.logout(requireContext())
-    }
+//    private fun logout(){
+//        if(!StateUtil.IF_LOGIN)
+//            return
+//        var editor = requireContext().getSharedPreferences(resources.getString(R.string.LoginInfo),
+//            Context.MODE_PRIVATE).edit()
+//        editor?.clear()
+//        editor?.apply()
+//        root.user_name?.setText("立即登录")
+//        StateUtil.IF_LOGIN = false
+//        mTencent.logout(requireContext())
+//    }
 
     override fun onClick(v: View?) {
         when(v?.id){

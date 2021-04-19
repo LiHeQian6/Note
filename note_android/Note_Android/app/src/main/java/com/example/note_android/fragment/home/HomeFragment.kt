@@ -1,17 +1,23 @@
 package com.example.note_android.fragment.home
 
+import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowInsets
+import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.note_android.R
 import com.example.note_android.annotation.Page
 import com.example.note_android.edit.EditActivity
 import com.example.note_android.listener.OnItemClickListener
 import com.example.note_android.fragment.notice.NoticeViewModel
+import com.example.note_android.note.ShowActivity
 import com.example.note_android.scan.ScanActivity
 import com.example.note_android.util.ActivityUtil
 import com.example.note_android.util.StateBarUtils
@@ -29,10 +35,11 @@ class HomeFragment : Fragment(),View.OnClickListener {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         homeViewModel =
             ViewModelProvider(this).get(NoticeViewModel::class.java)
         root = inflater.inflate(R.layout.fragment_home, container, false)
+
         initData()
         initRVAdapter()
         initListener()
@@ -54,20 +61,21 @@ class HomeFragment : Fragment(),View.OnClickListener {
 
     override fun onResume() {
         super.onResume()
-        StateBarUtils.initStatusBarStyle(requireActivity(),false,resources.getColor(R.color.white))
+        StateBarUtils.setStatusBarLightMode(requireActivity())
     }
 
     private fun initRVAdapter() {
         var layoutManager = LinearLayoutManager(requireContext())
         var adapter = MainRVAdapter(list,requireContext(),root.home_recyclerView)
+        var divider = DividerItemDecoration(requireContext(),LinearLayoutManager.VERTICAL)
+        divider.setDrawable(resources.getDrawable(R.drawable.rv_divider,null))
         root.home_recyclerView.layoutManager = layoutManager
-//        root.home_recyclerView.addItemDecoration(DividerItemDecoration(requireContext(),LinearLayoutManager.VERTICAL))
-
+        root.home_recyclerView.addItemDecoration(divider)
         root.home_recyclerView.adapter = adapter
         adapter.setOnItemClickListener(object :
             OnItemClickListener {
             override fun onItemClick(position: Int) {
-                XToast.success(requireContext(),"这是第${position+1}个").show()
+                ActivityUtil.get().activity(requireContext(),ShowActivity::class.java)
             }
         })
 //        root.home_recyclerView.addOnItemTouchListener()
@@ -77,6 +85,7 @@ class HomeFragment : Fragment(),View.OnClickListener {
         for (i in 1..10){
             list.add(i)
         }
+        Log.e("状态栏高度",StateBarUtils.getStatusBarHeight(requireContext()).toString())
     }
 
     private fun initListener() {
@@ -87,7 +96,7 @@ class HomeFragment : Fragment(),View.OnClickListener {
     override fun onClick(v: View?) {
         when(v?.id){
             R.id.add_button -> {
-                ActivityUtil.get()?.activity(requireContext(),EditActivity::class.java)
+                ActivityUtil.get().activity(requireContext(),EditActivity::class.java)
             }
             R.id.saoma -> {
                 ScanActivity.start(requireActivity(),1, R.style.XQRCodeTheme_Custom)

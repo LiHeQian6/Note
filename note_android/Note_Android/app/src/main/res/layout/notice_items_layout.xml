@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingVertical="@dimen/dp_10"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <com.xuexiang.xui.widget.imageview.RadiusImageView
+        android:id="@+id/notice_option_head"
+        android:layout_width="@dimen/dp_30"
+        android:layout_height="@dimen/dp_30"
+        android:layout_marginVertical="@dimen/dp_5"
+        android:src="@drawable/head_img"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:layout_editor_absoluteY="1dp" />
+
+    <RelativeLayout
+        android:id="@+id/ll_notice_message"
+        android:layout_width="@dimen/dp_0"
+        android:layout_height="wrap_content"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintBottom_toBottomOf="@id/notice_option_head"
+        app:layout_constraintLeft_toRightOf="@+id/notice_option_head"
+        app:layout_constraintTop_toTopOf="@id/notice_option_head">
+
+        <TextView
+            android:id="@+id/notice_message_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/dp_6"
+            android:text="李和谦"
+            android:textColor="@color/little_gray"
+            android:textSize="@dimen/sp_10"/>
+
+        <TextView
+            android:id="@+id/notice_message_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:layout_marginEnd="@dimen/dp_10"
+            android:text="2021-2-28"
+            android:layout_alignParentRight="true"
+            android:textColor="@color/little_gray"
+            android:textSize="@dimen/sp_10" />
+    </RelativeLayout>
+
+    <LinearLayout
+        android:layout_width="@dimen/dp_0"
+        android:layout_height="@dimen/dp_40"
+        android:layout_marginTop="@dimen/dp_10"
+        android:background="@drawable/register_editext"
+        android:gravity="center_vertical"
+        app:layout_constraintLeft_toLeftOf="@id/ll_notice_message"
+        app:layout_constraintTop_toBottomOf="@id/notice_option_head"
+        app:layout_constraintRight_toRightOf="parent">
+
+        <TextView
+            android:id="@+id/notice_note_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Android"
+            android:textColor="@color/less_black"
+            android:textSize="@dimen/sp_14"
+            android:layout_marginLeft="@dimen/dp_6"/>
+
+    </LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
