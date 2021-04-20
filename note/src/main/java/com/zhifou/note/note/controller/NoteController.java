@@ -18,13 +18,17 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
-import java.util.Set;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 /**
  * @author : li
@@ -111,6 +115,34 @@ public class NoteController implements Constant {
                                       @ApiParam("页大小") @Min(value = 1, message = "页尺寸最小为1") int size,
                                       @PathVariable int tagId){
         return noteService.getNotesByTag(page,size,tagId);
+    }
+
+    @ApiOperation("根据热度分页获取笔记")
+    @GetMapping("/notes/popularity")
+    public Page<NoteVO> getNoteByPopularity(@ApiParam("第几页") @Min(value = 0, message = "页数最小为0") int page,
+                                      @ApiParam("页大小") @Min(value = 1, message = "页尺寸最小为1") int size) throws ParseException {
+        Page<NoteVO> notes = noteService.getNotesByPage(page, size);
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(2021, Calendar.FEBRUARY,1);
+        //热度=点赞*4+收藏*6+日期%2021-1-1
+        for (NoteVO note : notes.getContent()) {
+            long like = likeService.findEntityLikeCount(ENTITY_TYPE_NOTE, note.getId());
+            long collect = collectService.getNoteCollectCount(note.getId());
+            long look = lookService.lookNum(note.getId());
+            Date createTime = format.parse(note.getCreateTime());
+            note.setPopularity((long) (look+like*4+collect*6+ createTime.getTime()%calendar.getTime().getTime()));
+        }
+        ArrayList<NoteVO> noteVOList = new ArrayList<>(notes.getContent());
+        PageRequest pageRequest = PageRequest.of(page, size);
+        noteVOList.sort(new Comparator<NoteVO>() {
+            @Override
+            public int compare(NoteVO o1, NoteVO o2) {
+                return Integer.valueOf(String.valueOf(o1.getPopularity() - o2.getPopularity()));
+            }
+        });
+
+        return new PageImpl<>(noteVOList, pageRequest, noteVOList.size());
     }
 
 }

@@ -4,6 +4,7 @@ import cn.hutool.captcha.CaptchaUtil;
 import cn.hutool.captcha.CircleCaptcha;
 import cn.hutool.captcha.LineCaptcha;
 import com.zhifou.note.bean.RegisterValid;
+import com.zhifou.note.bean.UserVO;
 import com.zhifou.note.exception.CertificationException;
 import com.zhifou.note.exception.UserException;
 import com.zhifou.note.exception.ValidateCodeException;
@@ -17,6 +18,7 @@ import com.zhifou.note.util.RedisKeyUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import org.springframework.data.domain.Page;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -27,6 +29,8 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.awt.*;
 import java.io.IOException;
@@ -98,7 +102,7 @@ public class UserController {
 
     @ApiOperation("忘记密码")
     @PostMapping("/forgotPassword/{mailCode}")
-    public void forgotPassword(@PathVariable String mailCode,@RequestBody String username,@RequestBody String newPassword) throws UserException {
+    public void forgotPassword(@NotBlank(message = "邮箱不能为空") String username,@NotBlank(message = "密码不能为空") String newPassword,@PathVariable String mailCode) throws UserException {
         String verifyCode = (String) redisTemplate.opsForValue().get(RedisKeyUtil.getVerifyCodeKey(username));
         if (verifyCode==null) {
             throw new ValidateCodeException("验证码已过期！");
@@ -124,6 +128,13 @@ public class UserController {
     public void certification(@Valid Certification certification) throws CertificationException {
         User userInfo = jwtUtils.getUserInfo();
         certificationService.certification(userInfo,certification);
+    }
+
+    @ApiOperation("分页获取热门作者")
+    @GetMapping("/users/popular")
+    public Page<UserVO> getPopularUsers(@ApiParam("第几页") @Min(value = 0, message = "页数最小为0") int page,
+                                        @ApiParam("页大小") @Min(value = 1, message = "页尺寸最小为1") int size){
+        return userService.getUsersByPopular(page,size);
     }
 
 

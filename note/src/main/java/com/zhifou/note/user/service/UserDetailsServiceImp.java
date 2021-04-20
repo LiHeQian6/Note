@@ -1,6 +1,7 @@
 package com.zhifou.note.user.service;
 
 import com.zhifou.note.bean.Status;
+import com.zhifou.note.bean.UserVO;
 import com.zhifou.note.exception.UserException;
 import com.zhifou.note.message.service.FollowService;
 import com.zhifou.note.user.entity.Role;
@@ -8,6 +9,9 @@ import com.zhifou.note.user.entity.User;
 import com.zhifou.note.user.repository.RoleRepository;
 import com.zhifou.note.user.repository.UserRepository;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.datatables.mapping.DataTablesInput;
 import org.springframework.data.jpa.datatables.mapping.DataTablesOutput;
 import org.springframework.security.authentication.InternalAuthenticationServiceException;
@@ -20,6 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -134,5 +139,22 @@ public class UserDetailsServiceImp implements UserDetailsService {
 
     public long getUserCount(){
         return userRepository.count();
+    }
+
+    public Page<UserVO> getUsersByPopular(int page, int size) {
+        PageRequest pageRequest = PageRequest.of(page, size);
+        Page<User> users = userRepository.findAll(pageRequest);
+        ArrayList<UserVO> userVOList = new ArrayList<>();
+        for (User user : users) {
+            UserVO userVO = new UserVO(user);
+            userVOList.add(userVO);
+        }
+        userVOList.sort(new Comparator<UserVO>() {
+            @Override
+            public int compare(UserVO o1, UserVO o2) {
+                return (int) (o1.getLike()-o2.getLike());
+            }
+        });
+        return new PageImpl<>(userVOList, pageRequest, userVOList.size());
     }
 }

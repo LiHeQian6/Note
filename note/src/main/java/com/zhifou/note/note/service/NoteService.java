@@ -37,6 +37,10 @@ public class NoteService implements Constant {
     private EntityManager entityManager;
     @Resource
     private TagRepository tagRepository;
+//    @Resource
+//    private LikeService likeService;
+//    @Resource
+//    private CollectService collectService;
 
     /**
      * @param: id
@@ -198,6 +202,25 @@ public class NoteService implements Constant {
     public Page<NoteVO> getNotesByTag(int page, int size,int tagId) {
         PageRequest pageRequest = PageRequest.of(page, size);
         Page<Note> notes = noteRepository.findNotesByTagsIsContaining(tagRepository.getOne(tagId),pageRequest);
+        ArrayList<NoteVO> noteVOList = new ArrayList<>();
+        for (Note note : notes) {
+            NoteVO noteVO = new NoteVO(note);
+            noteVOList.add(noteVO);
+        }
+        return new PageImpl<>(noteVOList, pageRequest, noteVOList.size());
+    }
+
+    /**
+     * @param: page
+     * @param: size
+     * @return org.springframework.data.domain.Page<com.zhifou.note.bean.NoteVO>
+     * @description 分页获取笔记
+     * @author li
+     * @Date 2021/4/20 16:49
+     */
+    public Page<NoteVO> getNotesByPage(int page, int size) {
+        PageRequest pageRequest = PageRequest.of(page, size);
+        Page<Note> notes = noteRepository.findAll(pageRequest);
         ArrayList<NoteVO> noteVOList = new ArrayList<>();
         for (Note note : notes) {
             NoteVO noteVO = new NoteVO(note);

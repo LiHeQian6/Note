@@ -24,6 +24,7 @@ public class NoteVO {
     private boolean isLike;
     private long look;
     private long collect;
+    private long popularity;
     private boolean isCollect;
     private Set<CommentVO> comments;
     private String createTime;
