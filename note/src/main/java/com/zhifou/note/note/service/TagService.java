@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.util.List;
 
 /**
  * @author : li
@@ -71,5 +72,9 @@ public class TagService implements Constant {
             throw new TagException("没有找到指定标签！", Status.NOT_FOUND_TAG);
         }
         return tag;
+    }
+
+    public List<Tag> getTagsByKeyWord(String keyWord) {
+        return tagRepository.findAllByNameIgnoreCaseIsContaining(keyWord);
     }
 }

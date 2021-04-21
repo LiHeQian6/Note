@@ -1,6 +1,7 @@
 package com.zhifou.note.note.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.zhifou.note.annotation.WordFilter;
 import com.zhifou.note.bean.Constant;
 import com.zhifou.note.exception.CommentException;
 import com.zhifou.note.exception.NoteException;
@@ -34,6 +35,7 @@ public class CommentController implements Constant {
     @Resource
     private EventProducer eventProducer;
 
+    @WordFilter(description = "comment")
     @ApiOperation("发布评论")
     @PostMapping("/comment")
     public void publishComment(@Valid @RequestBody @ApiParam("只需要传content,note.id;有parent传parent.Id") Comment comment) throws NoteException, JsonProcessingException, CommentException {
@@ -59,6 +61,7 @@ public class CommentController implements Constant {
         eventProducer.fireMessageEvent(commentEvent);
     }
 
+    @WordFilter(description = "comment")
     @ApiOperation("修改评论")
     @PutMapping("/comment")
     public void editComment(@Valid @RequestBody Comment newComment) throws CommentException {

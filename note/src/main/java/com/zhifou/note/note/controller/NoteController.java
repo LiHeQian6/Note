@@ -1,5 +1,6 @@
 package com.zhifou.note.note.controller;
 
+import com.zhifou.note.annotation.WordFilter;
 import com.zhifou.note.bean.CommentVO;
 import com.zhifou.note.bean.Constant;
 import com.zhifou.note.bean.NoteVO;
@@ -75,6 +76,7 @@ public class NoteController implements Constant {
         return noteVO;
     }
 
+    @WordFilter(description = "note")
     @ApiOperation("发布笔记")
     @PostMapping("/note")
     public void publishNote(@ApiParam("只需要传title,content,type.id,tags=[tag.id]") @Valid @RequestBody Note note) throws Exception {
@@ -83,6 +85,7 @@ public class NoteController implements Constant {
         noteService.addNote(note);
     }
 
+    @WordFilter(description = "note")
     @ApiOperation("修改笔记")
     @PutMapping("/note")
     public void editNote(@ApiParam("只需要传title,content,type.id,tags=[tag.id]") @Valid @RequestBody Note newNote) throws NoteException {
