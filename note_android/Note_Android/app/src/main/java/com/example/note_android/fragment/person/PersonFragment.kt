@@ -14,6 +14,7 @@ import com.example.note_android.R
 import com.example.note_android.about.AboutMeActivity
 import com.example.note_android.annotation.Page
 import com.example.note_android.login.LoginActivity
+import com.example.note_android.setting.SettingActivity
 import com.example.note_android.util.*
 import com.tencent.tauth.Tencent
 import kotlinx.android.synthetic.main.fragment_person.*
@@ -85,6 +86,7 @@ class PersonFragment : Fragment(),View.OnClickListener {
 
     private fun initListener() {
         root.user_name.setOnClickListener(this)
+        root.person_image.setOnClickListener(this)
         root.ico_settings.setOnClickListener(this)
         root.user_bac_image.setOnClickListener(this)
         root.my_note.setOnClickListener(this)
@@ -129,10 +131,14 @@ class PersonFragment : Fragment(),View.OnClickListener {
                 else
                     ActivityUtil.get().goActivityResult(requireActivity(),LoginActivity::class.java,SystemCode.QQ_LOGIN_REQUEST)
             }
-            R.id.ico_settings -> {
+//            R.id.ico_settings -> {
+//                ActivityUtil.get().goActivity(requireContext(),SettingActivity::class.java,MessageBean("Success","Setting",null))
+//            }
+            R.id.user_bac_image -> {
 
             }
-            R.id.user_bac_image -> {
+            R.id.person_image -> {
+                ActivityUtil.get().goActivity(requireContext(),SettingActivity::class.java,MessageBean("Success","UserMessage",null))
             }
             R.id.my_note -> {
                 ActivityUtil.get().goActivity(requireContext(),AboutMeActivity::class.java,MessageBean("Success","MyNote",null))

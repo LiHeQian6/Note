@@ -68,7 +68,6 @@ class RegisterActivity : AppCompatActivity(),View.OnClickListener {
         when(v?.id){
             R.id.get_verify_code -> {
                 if(checkData(0)) {
-                    CountDownTimer(get_verify_code).run()
                     registerVM.getVerifyCode(email.text.toString())
                 }
             }

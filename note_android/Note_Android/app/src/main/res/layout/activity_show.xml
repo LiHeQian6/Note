@@ -92,7 +92,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/dp_10"
-                android:text="最近更新2021-13-14"
+                android:text="发布于2021-13-14"
                 android:textColor="@color/little_gray"
                 android:textSize="@dimen/sp_13"
                 app:layout_constraintLeft_toLeftOf="parent"

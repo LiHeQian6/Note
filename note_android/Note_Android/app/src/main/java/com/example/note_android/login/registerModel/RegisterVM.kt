@@ -2,12 +2,15 @@ package com.example.note_android.login.registerModel
 
 import android.app.Activity
 import android.os.Handler
+import android.os.Looper
 import android.os.Message
 import android.widget.Toast
 import androidx.core.net.toUri
 import com.example.note_android.listener.HttpListener
+import com.example.note_android.login.CountDownTimer
 import com.example.note_android.util.HttpAddressUtil
 import com.google.gson.annotations.JsonAdapter
+import kotlinx.android.synthetic.main.activity_register.*
 import okhttp3.*
 import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
@@ -33,9 +36,10 @@ class RegisterVM {
                 var result = JSONObject(msg.obj.toString())
                 when(msg.what){
                     0 -> {
-                        if(result.get("status") != null && result.get("status") == "SUCCESS")
+                        if(result.get("status") != null && result.get("status") == "SUCCESS"){
+                            CountDownTimer(activity.get_verify_code).run()
                             Toast.makeText(activity.applicationContext,"发送成功，请查收！",Toast.LENGTH_SHORT).show()
-                        else
+                        }else
                             Toast.makeText(activity.applicationContext,"发送失败，请重试！",Toast.LENGTH_SHORT).show()
                     }
                     1 -> {
@@ -51,12 +55,15 @@ class RegisterVM {
 
     fun getVerifyCode(email: String){
         var httpClient = OkHttpClient()
-        var urlBuilder = HttpAddressUtil.getVerifyCodeIP().toHttpUrlOrNull()?.newBuilder()
+        val urlBuilder = HttpAddressUtil.getVerifyCodeIP().toHttpUrlOrNull()?.newBuilder()
         urlBuilder?.addQueryParameter("mail",email)
+        urlBuilder?.addPathSegment("注册")
         var request = Request.Builder().url(urlBuilder?.build()!!).get().build()
         httpClient.newCall(request).enqueue(object : Callback{
             override fun onFailure(call: Call, e: IOException) {
+                Looper.prepare()
                 Toast.makeText(activity.applicationContext,"网络出了点问题",Toast.LENGTH_SHORT).show()
+                Looper.loop()
             }
 
             override fun onResponse(call: Call, response: Response) {
@@ -75,16 +82,19 @@ class RegisterVM {
     }
 
     fun register(email:String,password:String,verifyCode:String){
-        var jsonStr = JSONObject()
-        jsonStr.put("username",email)
-        jsonStr.put("password",password)
         var httpClient = OkHttpClient()
-        var mediaType = "application/json".toMediaTypeOrNull();
-        var resultBody = RequestBody.create(mediaType,jsonStr.toString())
-        var request = Request.Builder().url(HttpAddressUtil.getRegisterIP()+verifyCode).header("Content-Type", "application/json").post(resultBody).build()
+        var json = JSONObject()
+        json.put("username", email)
+        json.put("password", password)
+        var requestBody = RequestBody.create("application/json; charset=utf-8".toMediaTypeOrNull(),json.toString())
+        val urlBuilder = HttpAddressUtil.getRegisterIP().toHttpUrlOrNull()!!.newBuilder()
+        urlBuilder.addPathSegment(verifyCode)
+        var request = Request.Builder().url(urlBuilder.build()).post(requestBody).build()
         httpClient.newCall(request).enqueue(object : Callback{
             override fun onFailure(call: Call, e: IOException) {
+                Looper.prepare()
                 Toast.makeText(activity.applicationContext,"网络出了点问题",Toast.LENGTH_SHORT).show()
+                Looper.loop()
             }
 
             override fun onResponse(call: Call, response: Response) {
