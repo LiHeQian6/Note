@@ -37,9 +37,9 @@ public interface Constant {
     String TOPIC_COLLECT = "collect";
 
     /**
-     * 主题: 关注的人发布笔记
+     * 主题: 自定义系统通知
      */
-    String TOPIC_FOLLOWER_PUBLISH = "follower_publish";
+    String TOPIC_SYSTEM = "system";
 
     /**
      * 系统用户ID
@@ -65,6 +65,16 @@ public interface Constant {
      * 笔记标签初始化数据
      */
     String[] TAG_INIT_DATA={"C语言","LINUX","CENTOS","PYTHON","NGINX","SHELL","神经网络","算法","机器学习","人工智能"};
+
+
+    /**
+     * 可用
+     */
+    int ENABLE=0;
+    /**
+     * 禁用
+     */
+    int DISABLE=1;
 
 
 }

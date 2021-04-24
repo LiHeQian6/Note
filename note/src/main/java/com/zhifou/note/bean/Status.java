@@ -14,7 +14,17 @@ public enum  Status {
     PARAM_NOT_VALID(1001, "参数无效"),
     NOT_FOUND_NOTE(1002, "未找到指定笔记"),
     NOT_FOUND_COMMENT(1003, "未找到指定评论"),
-    TAG_ALREADY_EXIST(1004, "标签已经存在"),
+    NOT_FOUND_TYPE(1004, "未找到指定类型"),
+    NOT_FOUND_TAG(1005, "未找到指定标签"),
+    NOT_FOUND_ROLE(1006, "未找到指定角色"),
+    NOT_FOUND_PRIVILEGE(1007, "未找到指定权限"),
+    NOT_FOUND_CERTIFICATION(1008, "未找到认证信息"),
+    NOT_FOUND_MESSAGE(1014,"未找到指定消息"),
+    TAG_ALREADY_EXIST(1009, "标签已经存在"),
+    TYPE_ALREADY_EXIST(1010, "类型已经存在"),
+    ROLE_ALREADY_EXIST(1011, "角色已经存在"),
+    PRIVILEGE_ALREADY_EXIST(1012, "权限已经存在"),
+    CERTIFICATION_ALREADY_EXIST(1013, "认证已经存在"),
 
     /* 用户错误 */
     USER_NOT_LOGIN(2001, "用户未登录"),

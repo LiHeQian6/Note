@@ -6,6 +6,7 @@ import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
 import java.util.Collection;
 
 @Entity
@@ -16,10 +17,12 @@ public class Role implements GrantedAuthority {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
+    @NotBlank(message = "角色名称不能为空")
     private String name;
     @JsonIgnore
     @ManyToMany(mappedBy = "roles",targetEntity = User.class)
     private Collection<org.springframework.security.core.userdetails.User> users;
+    @JsonIgnore
     @ManyToMany
     @JoinTable(
             name = "roles_privileges",

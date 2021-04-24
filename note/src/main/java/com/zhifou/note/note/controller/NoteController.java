@@ -1,5 +1,6 @@
 package com.zhifou.note.note.controller;
 
+import com.zhifou.note.annotation.WordFilter;
 import com.zhifou.note.bean.CommentVO;
 import com.zhifou.note.bean.Constant;
 import com.zhifou.note.bean.NoteVO;
@@ -12,16 +13,23 @@ import com.zhifou.note.note.entity.Note;
 import com.zhifou.note.note.service.CommentService;
 import com.zhifou.note.note.service.NoteService;
 import com.zhifou.note.user.entity.User;
+import com.zhifou.note.user.service.DataService;
 import com.zhifou.note.util.JwtUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
-import java.util.Set;
+import javax.validation.constraints.Min;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 /**
  * @author : li
@@ -41,9 +49,11 @@ public class NoteController implements Constant {
     @Resource
     private FollowService followService;
     @Resource
-    private JwtUtils jwtUtils;
-    @Resource
     private CollectService collectService;
+    @Resource
+    private DataService dataService;
+    @Resource
+    private JwtUtils jwtUtils;
 
     @ApiOperation("浏览笔记")
     @GetMapping("/note/{id}")
@@ -57,6 +67,7 @@ public class NoteController implements Constant {
         Note note = noteService.getNote(id);
         NoteVO noteVO = new NoteVO(note, like, look, collect, comments);
         if (userInfo !=null) {
+            dataService.recordDAU(userInfo.getId());
             boolean followed = followService.hasFollowed(userInfo.getId(), note.getUser().getId());
             noteVO.getUser().setFollow(followed);
             noteVO.setIsLike(likeService.findEntityLikeStatus(userInfo.getId(),ENTITY_TYPE_NOTE, id));
@@ -65,6 +76,7 @@ public class NoteController implements Constant {
         return noteVO;
     }
 
+    @WordFilter(description = "note")
     @ApiOperation("发布笔记")
     @PostMapping("/note")
     public void publishNote(@ApiParam("只需要传title,content,type.id,tags=[tag.id]") @Valid @RequestBody Note note) throws Exception {
@@ -73,6 +85,7 @@ public class NoteController implements Constant {
         noteService.addNote(note);
     }
 
+    @WordFilter(description = "note")
     @ApiOperation("修改笔记")
     @PutMapping("/note")
     public void editNote(@ApiParam("只需要传title,content,type.id,tags=[tag.id]") @Valid @RequestBody Note newNote) throws NoteException {
@@ -88,6 +101,51 @@ public class NoteController implements Constant {
     public void deleteNote(@PathVariable int id) throws NoteException {
         User userInfo = jwtUtils.getUserInfo();
         noteService.deleteNote(id,userInfo.getUsername());
+    }
+
+
+    @ApiOperation("根据类型分页获取笔记")
+    @GetMapping("/notes/type/{typeId}")
+    public Page<NoteVO> getNoteByType(@ApiParam("第几页") @Min(value = 0, message = "页数最小为0") int page,
+                                      @ApiParam("页大小") @Min(value = 1, message = "页尺寸最小为1") int size,
+                                      @PathVariable int typeId){
+        return noteService.getNotesByType(page,size,typeId);
+    }
+
+    @ApiOperation("根据标签分页获取笔记")
+    @GetMapping("/notes/tag/{tagId}")
+    public Page<NoteVO> getNoteByTag(@ApiParam("第几页") @Min(value = 0, message = "页数最小为0") int page,
+                                      @ApiParam("页大小") @Min(value = 1, message = "页尺寸最小为1") int size,
+                                      @PathVariable int tagId){
+        return noteService.getNotesByTag(page,size,tagId);
+    }
+
+    @ApiOperation("根据热度分页获取笔记")
+    @GetMapping("/notes/popularity")
+    public Page<NoteVO> getNoteByPopularity(@ApiParam("第几页") @Min(value = 0, message = "页数最小为0") int page,
+                                      @ApiParam("页大小") @Min(value = 1, message = "页尺寸最小为1") int size) throws ParseException {
+        Page<NoteVO> notes = noteService.getNotesByPage(page, size);
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(2021, Calendar.FEBRUARY,1);
+        //热度=点赞*4+收藏*6+日期%2021-1-1
+        for (NoteVO note : notes.getContent()) {
+            long like = likeService.findEntityLikeCount(ENTITY_TYPE_NOTE, note.getId());
+            long collect = collectService.getNoteCollectCount(note.getId());
+            long look = lookService.lookNum(note.getId());
+            Date createTime = format.parse(note.getCreateTime());
+            note.setPopularity((long) (look+like*4+collect*6+ createTime.getTime()%calendar.getTime().getTime()));
+        }
+        ArrayList<NoteVO> noteVOList = new ArrayList<>(notes.getContent());
+        PageRequest pageRequest = PageRequest.of(page, size);
+        noteVOList.sort(new Comparator<NoteVO>() {
+            @Override
+            public int compare(NoteVO o1, NoteVO o2) {
+                return Integer.valueOf(String.valueOf(o1.getPopularity() - o2.getPopularity()));
+            }
+        });
+
+        return new PageImpl<>(noteVOList, pageRequest, noteVOList.size());
     }
 
 }

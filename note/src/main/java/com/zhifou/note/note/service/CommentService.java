@@ -7,11 +7,15 @@ import com.zhifou.note.exception.CommentException;
 import com.zhifou.note.message.service.LikeService;
 import com.zhifou.note.note.entity.Comment;
 import com.zhifou.note.note.repository.CommentRepository;
+import org.springframework.data.jpa.datatables.mapping.DataTablesInput;
+import org.springframework.data.jpa.datatables.mapping.DataTablesOutput;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -36,7 +40,7 @@ public class CommentService implements Constant {
         for (Comment comment : comments) {
             CommentVO commentVO = new CommentVO(comment,
                     likeService.findEntityLikeCount(ENTITY_TYPE_COMMENT,comment.getId()),
-                    likeService.findEntityLikeStatus(userId,ENTITY_TYPE_COMMENT,comment.getId()));
+                    likeService.findEntityLikeStatus(userId,ENTITY_TYPE_COMMENT,comment.getId()), likeService);
             commentVOs.add(commentVO);
         }
         return commentVOs;
@@ -64,5 +68,25 @@ public class CommentService implements Constant {
     public void deleteComment(int id, String username) throws CommentException {
         Comment comment= getComment(id, username);
         commentRepository.delete(comment);
+    }
+
+    public void deleteComment(int id) throws CommentException {
+        Comment comment= getComment(id);
+        commentRepository.delete(comment);
+    }
+
+    public DataTablesOutput<CommentVO> getComments(DataTablesInput input) {
+        DataTablesOutput<CommentVO> output = new DataTablesOutput<>();
+        ArrayList<CommentVO> commentVOS = new ArrayList<>();
+        DataTablesOutput<Comment> comments = commentRepository.findAll(input);
+        List<Comment> data = comments.getData();
+        for (Comment comment : data) {
+            CommentVO commentVO = new CommentVO(comment,likeService.findEntityLikeCount(ENTITY_TYPE_COMMENT,comment.getId()),false, likeService);
+            commentVOS.add(commentVO);
+        }
+        output.setData(commentVOS);
+        output.setRecordsFiltered(comments.getRecordsFiltered());
+        output.setRecordsTotal(comments.getRecordsTotal());
+        return output;
     }
 }

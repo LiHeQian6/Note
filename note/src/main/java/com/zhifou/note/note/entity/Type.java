@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
 import java.util.Set;
 
 /**
@@ -18,6 +19,7 @@ public class Type {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
+    @NotBlank(message = "类型名不能为空！")
     private String name;
     @ManyToOne(targetEntity = Type.class,cascade = CascadeType.ALL)
     @JsonIgnore

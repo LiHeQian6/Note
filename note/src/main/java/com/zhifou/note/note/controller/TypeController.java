@@ -19,11 +19,6 @@ public class TypeController {
     @Resource
     private TypeService typeService;
 
-//    @ApiOperation("新增类型")
-//    @PostMapping("/type")//添加到管理员访问里
-//    public void publishComment(@Valid @RequestBody @ApiParam("只需要传content,note.id") Comment comment) throws NoteException {
-//
-//    }
 
     @ApiOperation("获取所有笔记类型")
     @GetMapping("/types")

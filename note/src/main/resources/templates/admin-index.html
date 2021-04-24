@@ -27,35 +27,35 @@
     <div th:replace="common::breadcrumb('系统总览')"></div>
 
     <div class="row">
-     <div class="col-lg-3" style="text-align: center;">
+     <div class="col-lg-4" style="text-align: center;">
       <div class="card">
        <div class="card-body">
         <h4><i class="mdi mdi-eye-outline f-s-60 pull-left text-primary"></i>今日独立访问量</h4>
-        <h3 class="m-t-20" th:utext="${#request.getAttribute('uv')}"></h3>
+        <h3 class="m-t-20" th:utext="${#request.getAttribute('uv')}">666</h3>
        </div>
       </div>
      </div>
-     <div class="col-lg-3" style="text-align: center;">
+<!--     <div class="col-lg-3" style="text-align: center;">-->
+<!--      <div class="card">-->
+<!--       <div class="card-body">-->
+<!--        <h4><i class="mdi mdi-file-plus f-s-60 pull-left text-success"></i>今日笔记发布量</h4>-->
+<!--        <h3 class="m-t-20">666</h3>-->
+<!--       </div>-->
+<!--      </div>-->
+<!--     </div>-->
+     <div class="col-lg-4" style="text-align: center;">
       <div class="card">
        <div class="card-body">
-        <h4><i class="mdi mdi-file-plus f-s-60 pull-left text-success"></i>今日笔记发布量</h4>
-        <h3 class="m-t-20">666</h3>
+        <h4><i class="mdi mdi-book-open-variant f-s-60 pull-left text-secondary"></i>笔记发布总量</h4>
+        <h3 class="m-t-20" th:utext="${#request.getAttribute('noteCount')}">666</h3>
        </div>
       </div>
      </div>
-     <div class="col-lg-3" style="text-align: center;">
+     <div class="col-lg-4" style="text-align: center;">
       <div class="card">
        <div class="card-body">
-        <h4><i class="mdi mdi-book-open-variant f-s-60 pull-left text-secondary"></i>笔记发布总数量</h4>
-        <h3 class="m-t-20">666</h3>
-       </div>
-      </div>
-     </div>
-     <div class="col-lg-3" style="text-align: center;">
-      <div class="card">
-       <div class="card-body">
-        <h4><i class="mdi mdi-account f-s-60 pull-left text-danger"></i>网站用户总数量</h4>
-        <h3 class="m-t-20">666</h3>
+        <h4><i class="mdi mdi-account f-s-60 pull-left text-danger"></i>网站用户总量</h4>
+        <h3 class="m-t-20" th:utext="${#request.getAttribute('userCount')}">666</h3>
        </div>
       </div>
      </div>
@@ -64,7 +64,7 @@
      <div class="col-lg-12">
       <div class="card">
        <div class="card-body">
-        <h4 class="card-title">七日活跃用户量</h4>
+        <h4 class="card-title">七日日活跃用户量</h4>
         <div id="line-smoothing" class="ct-chart ct-golden-section">
          <div class="chartist-tooltip" style="top: 274px; left: 54px;"></div>
         </div>
@@ -92,15 +92,14 @@
    <script th:src="@{/static/js/custom.min.js}" src="../js/custom.min.js"></script>
    <script th:src="@{/static/assets/plugins/chartist/js/chartist.min.js}" src="../../assets/plugins/chartist/js/chartist.min.js"></script>
    <script th:src="@{/static/assets/plugins/chartist/js/chartist-plugin-tooltip.min.js}" src="../../assets/plugins/chartist/js/chartist-plugin-tooltip.min.js"></script>
-   <script type="text/javascript">
+   <script type="text/javascript"  th:inline="javascript">
+    /*<![CDATA[*/
 			$(document).ready(function () {
                 //Line Interpolation / Smoothing
-
+             var dataDAU=[[${dau}]];
              var chart = new Chartist.Line('#line-smoothing', {
               labels: [1, 2, 3, 4, 5, 6, 7],
-              series: [
-                      [1, 5, 10, 0, 1, 4, 8]
-              ]
+              series: [dataDAU]
              }, {
               // Remove this configuration to see that chart rendered with cardinal spline interpolation
               // Sometimes, on large jumps in data values, it's better to use simple smoothing.
@@ -119,8 +118,8 @@
              //Pie chart with custom labels
 
 					var data = {
-					  labels: ['Java', 'C++', 'Android'],
-					  series: [35, 15, 50]
+					  labels: [[${tags}]],
+					  series: [[${tagsCount}]]
 					};
 
 					var options = {
@@ -146,6 +145,7 @@
 
 					new Chartist.Pie('#pie-chart', data, options, responsiveOptions);
             });
+          /*]]>*/
         </script>
   </div>
  </body>

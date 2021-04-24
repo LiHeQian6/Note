@@ -1,5 +1,6 @@
 package com.zhifou.note.aspect;
 
+import com.zhifou.note.annotation.IgnorePackage;
 import com.zhifou.note.bean.ResponseBean;
 import com.zhifou.note.bean.Status;
 import org.springframework.core.MethodParameter;
@@ -19,12 +20,12 @@ import java.io.File;
  * @Date: 2021-02-06 22:26
  */
 @Component
-@ControllerAdvice("com.zhifou.note")
+@ControllerAdvice({"com.zhifou.note.note","com.zhifou.note.user","com.zhifou.note.message"})
 public class ResultAdvice implements ResponseBodyAdvice<Object> {
 
     @Override
     public boolean supports(MethodParameter methodParameter, Class<? extends HttpMessageConverter<?>> aClass) {
-        return true;
+        return !methodParameter.hasMethodAnnotation(IgnorePackage.class);
     }
 
     @Override

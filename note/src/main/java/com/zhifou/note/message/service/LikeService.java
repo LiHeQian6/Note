@@ -32,13 +32,12 @@ public class LikeService implements Constant {
     private NoteService noteService;
 
     /**
-     * @param: userId
-     * @param: entityType
-
-     * @param: entityId
-     * @param: entityUserId
+     * @param: userId 点赞者的id
+     * @param: entityType 被点赞对象类型；笔记/评论
+     * @param: entityId 被点赞对象id
+     * @param: entityUserId 被点赞笔记的所属用户的id
      * @return void
-     * @description 给笔记和评论点赞，同时增加用户被赞数
+     * @description 给笔记和评论点赞，同时增加被赞用户被赞数并记录自己的点赞历史
      * @author li
      * @Date 2021/3/3 15:49
      */
@@ -47,7 +46,7 @@ public class LikeService implements Constant {
             @Override
             public Object execute(RedisOperations operations) throws DataAccessException {
                 String entityLikeKey = RedisKeyUtil.getEntityLikeKey(entityType, entityId);
-                String userLikeKey = RedisKeyUtil.getUserLikeKey(userId);
+                String userLikeKey = RedisKeyUtil.getUserLikeKey(entityUserId);
                 String userLikedKey = RedisKeyUtil.getUserLikedKey(userId);
 
                 boolean isMember = operations.opsForSet().isMember(entityLikeKey, userId);
@@ -57,7 +56,7 @@ public class LikeService implements Constant {
                 if (isMember) {
                     operations.opsForSet().remove(entityLikeKey, userId);
                     if (entityType==ENTITY_TYPE_NOTE)
-                        operations.opsForSet().remove(userLikedKey, entityId);
+                        operations.opsForZSet().remove(userLikedKey, entityId);
                     operations.opsForValue().decrement(userLikeKey);
 
                 } else {
@@ -113,10 +112,11 @@ public class LikeService implements Constant {
     }
 
 
-    public Set<NoteVO> getUserLikedNote(int userId,int offset,int limit) throws NoteException {
+    public Set<NoteVO> getUserLikedNote(int userId,int page,int size) throws NoteException {
+        int offset=page*size;
         Set<NoteVO> noteVOs = new HashSet<>();
         String userLikedKey = RedisKeyUtil.getUserLikedKey(userId);
-        Set<Integer> notes = (Set<Integer>) redisTemplate.opsForZSet().reverseRange(userLikedKey, offset, offset + limit - 1);
+        Set<Integer> notes = (Set<Integer>) redisTemplate.opsForZSet().reverseRange(userLikedKey, offset, offset + size - 1);
         if (notes != null) {
             for (Integer noteId : notes) {
                 Note note = noteService.getNote(noteId);

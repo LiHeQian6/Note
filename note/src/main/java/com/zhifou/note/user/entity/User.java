@@ -30,20 +30,21 @@ public class User extends org.springframework.security.core.userdetails.User {
     private Integer id;
     @Email(message = "邮箱格式错误",groups = RegisterValid.class)
     private String username;
+    @JsonIgnore
     @Length(min = 8,message = "密码必须大于8位",groups = RegisterValid.class)
     private String password;
     private String introduction="还没有任何介绍哦！";
     @NotBlank(message = "昵称不能为空")
     private String nickName="一只笔记君";
     private String photo;
-    private String certification;//实名认证，保存真实学号
+    @OneToOne(mappedBy = "user")
+    private Certification certification;//认证
     private Date createTime=new Date();
     private Date lastReadTime=new Date();
     private boolean accountNonExpired=true;
     private boolean accountNonLocked=true;
     private boolean credentialsNonExpired=true;
     private boolean enabled=true;
-    @JsonIgnore
     @ManyToMany
     @JoinTable(
         name = "users_roles",
@@ -58,10 +59,11 @@ public class User extends org.springframework.security.core.userdetails.User {
 
 
     @Transient
+    @JsonIgnore
     private Collection<? extends GrantedAuthority> authorities;
 
     public User() {
-        super("admin1","admin",new ArrayList<>());
+        super("user", "user",new ArrayList<>());
     }
 
     public User(String username, String password, List<Role> roles, Collection<? extends GrantedAuthority> authorities) {
@@ -99,7 +101,6 @@ public class User extends org.springframework.security.core.userdetails.User {
                 ", accountNonLocked=" + accountNonLocked +
                 ", credentialsNonExpired=" + credentialsNonExpired +
                 ", enabled=" + enabled +
-                ", roles=" + roles +
                 ", authorities=" + authorities +
                 '}';
     }

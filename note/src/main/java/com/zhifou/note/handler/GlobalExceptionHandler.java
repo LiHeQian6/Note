@@ -12,7 +12,11 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import org.springframework.web.servlet.NoHandlerFoundException;
+
+import javax.validation.ConstraintViolation;
+import javax.validation.ConstraintViolationException;
 
 /**
  * @author : li
@@ -28,6 +32,22 @@ public class GlobalExceptionHandler{
         responseBean.setStatus(e.getStatus());
         responseBean.setMessage(e.getMessage());
         return responseBean;
+    }
+
+    @ExceptionHandler(ConstraintViolationException.class)
+    @ResponseBody
+    public String exception(ConstraintViolationException e) {
+        StringBuilder errors = new StringBuilder();
+        for (ConstraintViolation<?> error : e.getConstraintViolations()) {
+            errors.append(error.getMessageTemplate()).append(";");
+        }
+        return errors.toString();
+    }
+
+    @ExceptionHandler(MaxUploadSizeExceededException.class)
+    @ResponseBody
+    public String exception(MaxUploadSizeExceededException e) {
+        return "超出文件大小限制";
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)

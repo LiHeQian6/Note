@@ -58,7 +58,7 @@ public class SecurityConfig {
                     .and()
                     .authorizeRequests()//启用基于 HttpServletRequest 的访问限制，开始配置哪些URL需要被保护、哪些不需要被保护
                     .antMatchers("/static/**","/logout").permitAll()//未登陆用户允许的请求
-                    .anyRequest().authenticated()/*.hasRole("ADMIN")*///其他/admin路径下的请求全部需要登陆，获得ADMIN角色
+                    .anyRequest().hasRole("ADMIN")//其他/admin路径下的请求全部需要登陆，获得ADMIN角色
                     .and()
                     .headers().frameOptions().sameOrigin()//设置X-Frame-Options同源可访问
                     .and()
@@ -105,8 +105,8 @@ public class SecurityConfig {
                     .logoutUrl("/logout")//登出请求地址
                     .and()
                     .authorizeRequests()//启用基于 HttpServletRequest 的访问限制，开始配置哪些URL需要被保护、哪些不需要被保护
-                    .antMatchers(HttpMethod.GET,"/note/**","/types","/tags").permitAll()
-                    .antMatchers("/getImageCode","/getMailCode/**",
+                    .antMatchers(HttpMethod.GET,"/note/**","/types","/tags/**","/notes/**","/users/popular").permitAll()
+                    .antMatchers("/getImageCode","/getMailCode/**","/forgotPassword/**",
                             "/register/**","/static/**","/webjars/**","/swagger-resources/**",
                             "/webjars/**", "/v2/**", "/swagger-ui.html/**",
                             "/druid/**","/logout").permitAll()//未登陆用户允许的请求

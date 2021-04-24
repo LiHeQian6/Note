@@ -2,6 +2,7 @@ package com.zhifou.note.util;
 
 import com.zhifou.note.user.entity.User;
 import com.zhifou.note.user.repository.UserRepository;
+import com.zhifou.note.user.service.DataService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -43,6 +44,8 @@ public class JwtUtils implements Serializable {
     private Long expiration;
     @Resource
     private UserRepository userRepository;
+    @Resource
+    private DataService dataService;
 
     /**
      * @param: user
@@ -82,7 +85,6 @@ public class JwtUtils implements Serializable {
                     .parseClaimsJws(token)
                     .getBody();
         } catch (Exception e) {
-            e.printStackTrace();
             claims = null;
         }
         return claims;
@@ -295,15 +297,21 @@ public class JwtUtils implements Serializable {
     public User getUserInfo(){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Object principal = authentication.getPrincipal();
+        User userDetails=null;
         if (StringUtils.equals(principal.toString(),"anonymousUser")) {
             return null;
         }
         if ((principal instanceof String)) {
             String username = getUserNameFromToken(principal.toString());
-            UserDetails userDetails = userRepository.findUserByUsername(username);
-            UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(userDetails,authentication.getCredentials(),userDetails.getAuthorities());
-            SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+            userDetails = userRepository.findUserByUsername(username);
+            dataService.recordDAU(userDetails.getId());
+
+        }else {
+            Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+            userDetails = userRepository.findUserByUsername(auth.getName());
         }
+        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(userDetails,authentication.getCredentials(),userDetails.getAuthorities());
+        SecurityContextHolder.getContext().setAuthentication(authenticationToken);
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         return (User) auth.getPrincipal();
     }
