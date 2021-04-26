@@ -1,0 +1,389 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>WorkWise Html Template</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="" />
+<meta name="keywords" content="" />
+<link rel="stylesheet" type="text/css" href="/static/css/animate.css">
+<link href="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/4.2.1/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" type="text/css" href="/static/css/line-awesome.css">
+<link rel="stylesheet" type="text/css" href="/static/css/line-awesome-font-awesome.min.css">
+<link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/font-awesome/4.7.0/css/font-awesome.css">
+<link rel="stylesheet" type="text/css" href="/static/css/jquery.mCustomScrollbar.min.css">
+<link rel="stylesheet" type="text/css" href="/static/lib/slick/slick.css">
+<link rel="stylesheet" type="text/css" href="/static/lib/slick/slick-theme.css">
+<link rel="stylesheet" type="text/css" href="/static/css/style.css">
+<link rel="stylesheet" type="text/css" href="/static/css/responsive.css">
+
+<script type="text/javascript">
+    window.onload = function(){
+		var localStorage = window.localStorage;
+		var header1 = localStorage.getItem("Access-control-expose-headers");
+		var header2 = localStorage.getItem("Authorization");
+
+		//用户信息展示
+        if(header1 != null && header2 != null){
+            var resultData;
+            $.ajax({
+                type: "GET",
+                url: "/getInfo",
+                headers: {
+                   "Access-control-expose-headers": header1,
+                   "Authorization": header2
+                },
+                data: {},
+                dataType: "json",
+                success: function(data){
+                    resultData = data.status;
+                    if(resultData == "USER_NOT_LOGIN"){
+                        alert("请重新登录！");
+                        logout();
+                        return;    
+                    }
+                    var result = data.data;
+                    $("#navUserLogin").hide();
+                    $("#navUserInfo").show();
+                    $("#nickName").text(result.nickName);
+                },
+                complete: function(xhr,data){
+                    if(resultData == "SUCCESS" && data == "success"){
+                        updateLocalToken(xhr);
+                    } 
+                }
+            });
+        }else{
+            window.location.href = "sign-in.html";
+        }
+		//退出登录
+        function logout(){
+            localStorage.clear();
+            window.location.href = "sign-in.html";
+        }
+		//更新本地token
+	    function updateLocalToken(param){
+	        localStorage.setItem("Access-control-expose-headers", param.getResponseHeader("Access-control-expose-headers"));
+	        localStorage.setItem("Authorization", param.getResponseHeader("Authorization"));
+	    }
+	}
+</script>
+</head> 
+
+
+<body>
+	
+
+	<div class="wrapper"> 
+
+		<header>
+			<div class="container">
+				<div class="header-data">
+					<div class="logo">
+						<a href="index.html" class="logo-text" style="font-weight: bold;font-size: 30px;color: #fff;">知否笔记</a>
+					</div><!--logo end-->
+					<nav style="">
+						<ul>
+							<li>
+								<a href="index.html" title="" class="nav-actived">
+									<!-- <span><img src="/static/images/icon1.png" alt=""></span> -->
+									首页
+								</a>
+							</li>
+							<li>
+								<a href="follow.html" title="">
+									<!-- <span><img src="/static/images/icon1.png" alt=""></span> -->
+									关注
+								</a>
+							</li>
+							<li>
+								<a href="#" title="" class="not-box-open">
+									<!-- <span><img src="/static/images/icon6.png" alt=""></span> -->
+									消息
+								</a>
+								<div class="notification-box msg">
+									<div class="user-account-settingss" style="visibility: visible;opacity: 1;z-index: 9999;">
+										<a href="message.html" title=""><div class="custom-user-account-dropdown" style="margin-top: -15px">评论</div></a>
+										<a href="message.html" title=""><div class="custom-user-account-dropdown">点赞</div></a>
+										<a href="message.html" title=""><div class="custom-user-account-dropdown">关注</div></a>
+										<a href="message.html" title=""><div class="custom-user-account-dropdown">私信</div></a>
+										<a href="message.html" title=""><div class="custom-user-account-dropdown">其他通知</div></a>
+										<a href="message.html" title=""><div class="custom-user-account-logout">View All Message</div></a>
+									</div><!--user-account-settingss end-->
+								</div><!--notification-box end-->
+							</li>
+						</ul>
+					</nav>
+					<div class="search-bar">
+						<form>
+							<input type="text" name="search" placeholder="Search..." class="form-control">
+							<button type="submit"><i class="la la-search" style="color: #FF6700"></i></button>
+						</form>
+					</div><!--search-bar end-->
+					<!--nav end-->
+					<div class="menu-btn">
+						<a href="#" title=""><i class="fa fa-bars"></i></a>
+					</div><!--menu-btn end-->
+
+					<div class="user-account">
+						<div id="navUserLogin" class="login_register" style="margin-bottom: 8px;">
+							<ul>
+								<li><a href="sign-in.html" title="">Login</a></li>
+							</ul>
+						</div>
+						<div id="navUserInfo" class="user-info" style="display: none">
+							<img src="/static/images/resources/user.png" alt="">
+							<a id="nickName" href="#" title="">John</a>
+							<i class="la la-sort-down"></i>
+						</div>
+						<div class="user-account-settingss">
+							<a href="person-homepage.html" title=""><div class="custom-user-account-dropdown">个人主页</div></a>
+							<a href="collect.html" title=""><div class="custom-user-account-dropdown">收藏笔记</div></a>
+							<a href="like.html" title=""><div class="custom-user-account-dropdown">喜欢笔记</div></a>
+							<a href="management.html" title=""><div class="custom-user-account-dropdown">管理笔记</div></a>
+							<a href="setting.html" title=""><div class="custom-user-account-dropdown">设置</div></a>
+							<a href="javascript:logout()" title=""><div class="custom-user-account-logout">退出登陆</div></a>
+						</div><!--user-account-settingss end-->
+					</div>
+				</div><!--header-data end-->
+			</div>
+		</header>	<!--header end-->
+
+		<main>
+			<div class="main-section">
+				<div class="container">
+					<div class="company-title">
+						<h3>喜欢笔记</h3>
+					</div><!--company-title end-->
+					<div class="main-section-data">
+						<div class="row">
+							<div class="col-lg-8">
+								<div class="main-ws-sec">
+									<div class="posts-section">
+										<div class="post-bar">
+											<div class="post_topbar">
+												<div class="usy-dt">
+													<a href="user-homepage.html"><img src="/static/images/resources/us-pic.png" alt=""></a>
+													<div class="usy-name"></a>
+														<h3><a href="user-homepage.html" style="color: black">张小明</h3></a>
+														<span><img src="/static/images/clock.png" alt="">3 min ago</span>
+													</div>
+												</div>
+											</div>
+											
+											<div class="job_descp">
+												<h3><a href="note-detail.html" style="color: black">C语言学习心得</a></h3>
+												<p>c语言作为一种计算机的语言，我们学习它，有助于我们更好的了解计算机，与计算机进行交流，因此，c语言的学习对我们尤其重要... <a href="note-detail.html" title="">view more</a></p>
+												<ul class="skill-tags">
+													<li><a href="#" title="">HTML</a></li>
+													<li><a href="#" title="">PHP</a></li>
+													<li><a href="#" title="">CSS</a></li>
+													<li><a href="#" title="">Javascript</a></li>
+													<li><a href="#" title="">Wordpress</a></li> 	
+												</ul>
+											</div>
+											<div class="job-status-bar">
+												<ul class="like-com">
+													<li>
+														<a href="#"><i class="la la-heart"></i> Like</a>
+														<img src="/static/images/liked-img.png" alt="">
+														<span>25</span>
+													</li> 
+													<li><a href="note-detail.html" title="" class="com"><img src="/static/images/com.png" alt=""> Comment 15</a></li>
+												</ul>
+												<a><i class="la la-eye"></i>Views 50</a>
+											</div>
+										</div><!--post-bar end-->
+										<div class="post-bar">
+											<div class="post_topbar">
+												<div class="usy-dt">
+													<a href="user-homepage.html"><img src="/static/images/resources/us-pic.png" alt=""></a>
+													<div class="usy-name"></a>
+														<h3><a href="user-homepage.html" style="color: black">张小明</h3></a>
+														<span><img src="/static/images/clock.png" alt="">3 min ago</span>
+													</div>
+												</div>
+											</div>
+											
+											<div class="job_descp">
+												<h3><a href="note-detail.html" style="color: black">C语言学习心得</a></h3>
+												<p>c语言作为一种计算机的语言，我们学习它，有助于我们更好的了解计算机，与计算机进行交流，因此，c语言的学习对我们尤其重要... <a href="note-detail.html" title="">view more</a></p>
+												<ul class="skill-tags">
+													<li><a href="#" title="">HTML</a></li>
+													<li><a href="#" title="">PHP</a></li>
+													<li><a href="#" title="">CSS</a></li>
+													<li><a href="#" title="">Javascript</a></li>
+													<li><a href="#" title="">Wordpress</a></li> 	
+												</ul>
+											</div>
+											<div class="job-status-bar">
+												<ul class="like-com">
+													<li>
+														<a href="#"><i class="la la-heart"></i> Like</a>
+														<img src="/static/images/liked-img.png" alt="">
+														<span>25</span>
+													</li> 
+													<li><a href="note-detail.html" title="" class="com"><img src="/static/images/com.png" alt=""> Comment 15</a></li>
+												</ul>
+												<a><i class="la la-eye"></i>Views 50</a>
+											</div>
+										</div><!--post-bar end-->
+										<div class="post-bar">
+											<div class="post_topbar">
+												<div class="usy-dt">
+													<a href="user-homepage.html"><img src="/static/images/resources/us-pic.png" alt=""></a>
+													<div class="usy-name"></a>
+														<h3><a href="user-homepage.html" style="color: black">张小明</h3></a>
+														<span><img src="/static/images/clock.png" alt="">3 min ago</span>
+													</div>
+												</div>
+											</div>
+											
+											<div class="job_descp">
+												<h3><a href="note-detail.html" style="color: black">C语言学习心得</a></h3>
+												<p>c语言作为一种计算机的语言，我们学习它，有助于我们更好的了解计算机，与计算机进行交流，因此，c语言的学习对我们尤其重要... <a href="note-detail.html" title="">view more</a></p>
+												<ul class="skill-tags">
+													<li><a href="#" title="">HTML</a></li>
+													<li><a href="#" title="">PHP</a></li>
+													<li><a href="#" title="">CSS</a></li>
+													<li><a href="#" title="">Javascript</a></li>
+													<li><a href="#" title="">Wordpress</a></li> 	
+												</ul>
+											</div>
+											<div class="job-status-bar">
+												<ul class="like-com">
+													<li>
+														<a href="#"><i class="la la-heart"></i> Like</a>
+														<img src="/static/images/liked-img.png" alt="">
+														<span>25</span>
+													</li> 
+													<li><a href="note-detail.html" title="" class="com"><img src="/static/images/com.png" alt=""> Comment 15</a></li>
+												</ul>
+												<a><i class="la la-eye"></i>Views 50</a>
+											</div>
+										</div><!--post-bar end-->
+										<div class="process-comm">
+											<a href="#" title=""><img src="/static/images/process-icon.png" alt=""></a>
+										</div><!--process-comm end-->
+									</div><!--posts-section end-->
+								</div><!--main-ws-sec end-->
+							</div>
+							<div class="col-lg-4">
+								<div class="widget widget-jobs">
+									<div class="sd-title">
+										<h3>推荐阅读</h3>
+										<i id="custom-refresh" class="la la-refresh"></i>
+										<!-- <i class="la la-ellipsis-v"></i> -->
+									</div>
+									<div class="jobs-list" >
+										<div class="job-info">
+											<div class="hr-rate">
+												<span>1、</span>
+											</div>
+											<div class="job-details">
+												<h3><a href="note-detail.html">C语言学习心得</a></h3>
+												<p>c语言作为一种计算机的语言，我们学习它，有助于我们更好的...</p>
+											</div>
+										</div><!--job-info end-->
+										<div class="job-info">
+											<div class="hr-rate">
+												<span>2、</span>
+											</div>
+											<div class="job-details">
+												<h3><a href="note-detail.html">C语言学习心得</a></h3>
+												<p>c语言作为一种计算机的语言，我们学习它，有助于我们更好的...</p>
+											</div>
+										</div><!--job-info end-->
+										<div class="job-info">
+											<div class="hr-rate">
+												<span>3、</span>
+											</div>
+											<div class="job-details">
+												<h3><a href="note-detail.html">C语言学习心得</a></h3>
+												<p>c语言作为一种计算机的语言，我们学习它，有助于我们更好的...</p>
+											</div>
+										</div><!--job-info end-->
+										<div class="job-info">
+											<div class="hr-rate">
+												<span>4、</span>
+											</div>
+											<div class="job-details">
+												<h3><a href="note-detail.html">C语言学习心得</a></h3>
+												<p>c语言作为一种计算机的语言，我们学习它，有助于我们更好的...</p>
+											</div>
+										</div><!--job-info end-->
+										<div class="job-info">
+											<div class="hr-rate">
+												<span>5、</span>
+											</div>
+											<div class="job-details">
+												<h3><a href="note-detail.html">C语言学习心得</a></h3>
+												<p>c语言作为一种计算机的语言，我们学习它，有助于我们更好的...</p>
+											</div>
+										</div><!--job-info end-->
+									</div><!--jobs-list end-->
+								</div>
+								<div class="widget widget-adver">
+									<img src="http://via.placeholder.com/370x270" alt="">
+								</div><!--widget-adver end-->
+							</div><!--widget-jobs end-->
+						</div>
+					</div><!-- main-section-data end-->
+				</div> 
+			</div>
+		</main>
+		
+		<div class="chatbox-list" style="display: block;">
+	        <div class="chatbox">
+	            <div class="chat-mg" style="margin: 20px 10px">
+	                <div class="go-top">
+	                    <div class="arrow" style="text-align: center"><i class="fa fa-chevron-up"></i></div>
+	                </div>
+	            </div>
+	        </div>
+	    </div><!--chatbox-list end-->
+
+		<footer class="myfooter">
+	        <div class="footy-sec mn no-margin">
+	            <div class="container text-center">
+	                <p style="float: none;"><span><img style="float: none;" src="/static/images/copy-icon2.png" alt="">Copyright 2020 本归尘博客系统由游马版权所有</span></p>
+	            </div>
+	        </div>
+	    </footer>
+
+
+	</div><!--theme-layout end-->
+
+
+
+<script src="http://code.jquery.com/jquery-1.10.2.min.js"></script>
+<script type="text/javascript" src="/static/js/popper.js"></script>
+<script type="text/javascript" src="/static/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="/static/js/jquery.mCustomScrollbar.js"></script>
+<script type="text/javascript" src="/static/lib/slick/slick.min.js"></script>
+<script type="text/javascript" src="/static/js/scrollbar.js"></script>
+<script type="text/javascript" src="/static/js/script.js"></script>
+
+<script src="https://cdn.staticfile.org/vue/2.4.2/vue.min.js"></script>
+<script src="https://cdn.staticfile.org/axios/0.18.0/axios.min.js"></script>
+<script src="https://cdn.staticfile.org/vue-resource/1.5.1/vue-resource.min.js"></script>
+
+<script>
+    //回顶部
+    $(function() {
+        $(window).scroll(function() {
+            if ($(window).scrollTop() > 0){
+                $('div.go-top').show();
+            }else{
+                $('div.go-top').hide();
+            }
+        });
+        $('div.go-top').click(function() {
+            $('html, body').animate({scrollTop: 0}, 500);
+        });
+    });
+</script>
+
+</body>
+</html>
