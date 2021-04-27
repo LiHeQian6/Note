@@ -19,11 +19,15 @@
 <link rel="stylesheet" type="text/css" href="/static/css/responsive.css">
 
 <script type="text/javascript">
-    window.onload = function(){
-		var localStorage = window.localStorage;
-		var header1 = localStorage.getItem("Access-control-expose-headers");
-		var header2 = localStorage.getItem("Authorization");
+    var localStorage;
+    var header1;
+    var header2;
 
+	window.onload = function(){
+		localStorage = window.localStorage;
+        header1 = localStorage.getItem("Access-control-expose-headers");
+        header2 = localStorage.getItem("Authorization");
+        
 		//用户信息展示
         if(header1 != null && header2 != null){
             var resultData;
@@ -38,35 +42,29 @@
                 dataType: "json",
                 success: function(data){
                     resultData = data.status;
-                    if(resultData == "USER_NOT_LOGIN"){
+                    if(resultData == "TOKEN_EXPIRED"){
                         alert("请重新登录！");
                         logout();
                         return;    
+                    }else if(resultData == "SUCCESS"){
+                        $("#navUserLogin").hide();
+                        $("#navUserInfo").show();
+                        $("#nickName").text(data.data.nickName);
+                        return;
                     }
-                    var result = data.data;
-                    $("#navUserLogin").hide();
-                    $("#navUserInfo").show();
-                    $("#nickName").text(result.nickName);
+                    console.log(resultData);
                 },
                 complete: function(xhr,data){
                     if(resultData == "SUCCESS" && data == "success"){
                         updateLocalToken(xhr);
+                        return;
                     } 
+                    console.log(data);
                 }
             });
         }else{
             window.location.href = "sign-in.html";
         }
-		//退出登录
-        function logout(){
-            localStorage.clear();
-            window.location.href = "sign-in.html";
-        }
-		//更新本地token
-	    function updateLocalToken(param){
-	        localStorage.setItem("Access-control-expose-headers", param.getResponseHeader("Access-control-expose-headers"));
-	        localStorage.setItem("Authorization", param.getResponseHeader("Authorization"));
-	    }
 	}
 </script>
 </head> 
@@ -382,7 +380,18 @@
 <script src="https://cdn.staticfile.org/vue/2.4.2/vue.min.js"></script>
 <script src="https://cdn.staticfile.org/axios/0.18.0/axios.min.js"></script>
 <script src="https://cdn.staticfile.org/vue-resource/1.5.1/vue-resource.min.js"></script>
-
+<script type="text/javascript">
+	//退出登录
+    function logout(){
+        localStorage.clear();
+        window.location.href = "sign-in.html";
+    }
+	//更新本地token
+    function updateLocalToken(param){
+        localStorage.setItem("Access-control-expose-headers", param.getResponseHeader("Access-control-expose-headers"));
+        localStorage.setItem("Authorization", param.getResponseHeader("Authorization"));
+    }
+</script>
 <script>
     //回顶部
     $(function() {

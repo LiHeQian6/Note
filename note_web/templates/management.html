@@ -17,13 +17,23 @@
     <link rel="stylesheet" type="text/css" href="/static/css/style.css">
     <link rel="stylesheet" type="text/css" href="/static/css/responsive.css">
     <link rel="stylesheet" type="text/css" href="/static/lib/editor/css/editormd.css">
+    <link rel="stylesheet" type="text/css" href="/static/css/pagination.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tarekraafat-autocomplete.js/9.0.3/css/autoComplete.min.css">
 
 <script type="text/javascript">
+    var localStorage;
+    var header1;
+    var header2;
+    var userId;
+    var subject;
+    var noteList;
+    var notePage;
+
     window.onload = function(){
-        var localStorage = window.localStorage;
-        var header1 = localStorage.getItem("Access-control-expose-headers");
-        var header2 = localStorage.getItem("Authorization");
+        localStorage = window.localStorage;
+        header1 = localStorage.getItem("Access-control-expose-headers");
+        header2 = localStorage.getItem("Authorization");
+        userId = localStorage.getItem("UserId");
 
         //用户信息展示
         if(header1 != null && header2 != null){
@@ -39,37 +49,31 @@
                 dataType: "json",
                 success: function(data){
                     resultData = data.status;
-                    if(resultData == "USER_NOT_LOGIN"){
+                    if(resultData == "TOKEN_EXPIRED"){
                         alert("请重新登录！");
                         logout();
                         return;    
+                    }else if(resultData == "SUCCESS"){
+                        $("#navUserLogin").hide();
+                        $("#navUserInfo").show();
+                        $("#nickName").text(data.data.nickName);
+                        return;
                     }
-                    var result = data.data;
-                    $("#navUserLogin").hide();
-                    $("#navUserInfo").show();
-                    $("#nickName").text(result.nickName);
+                    console.log(resultData);
                 },
                 complete: function(xhr,data){
                     if(resultData == "SUCCESS" && data == "success"){
                         updateLocalToken(xhr);
+                        return;
                     } 
+                    console.log(data);
                 }
             });
         }else{
             window.location.href = "sign-in.html";
         }
-        //退出登录
-        function logout(){
-            localStorage.clear();
-            window.location.href = "sign-in.html";
-        }
-        //更新本地token
-        function updateLocalToken(param){
-            localStorage.setItem("Access-control-expose-headers", param.getResponseHeader("Access-control-expose-headers"));
-            localStorage.setItem("Authorization", param.getResponseHeader("Authorization"));
-        }
         //学科
-        var subject = new Vue({
+        subject = new Vue({
               el: '#subject',
               data:{
                   subjects1:[],//一级学科
@@ -93,6 +97,14 @@
                 }
              }
         });
+        //笔记列表
+        noteList = new Vue({
+              el: '#noteList',
+              data:{
+                  notes:[]
+              }
+        });
+
         //学科加载
         $.ajax({
             type: "GET",
@@ -100,10 +112,58 @@
             data: {},
             dataType: "json",
             success: function(data){
-                var result = data.data;
-                subject.subjects1 = result;
+                if(data.status == "SUCCESS"){
+                    subject.subjects1 = data.data;
+                    return;
+                }
+                console.log(data.status);
             }
         });
+        //笔记列表加载
+        var noteListUrl = "/notes/user/" + userId;
+        var notePageSize = 5;
+        $.ajax({
+            type: "GET",
+            url: noteListUrl,
+            data: {page:1, size:notePageSize},
+            dataType: "json",
+            success: function(data){
+                if(data.status == "SUCCESS"){
+                    var result = data.data;
+                    var totalNumber = result.totalElements;
+                    noteList.notes = result.content;
+
+                    //分页
+                    notePage = new Pagination({
+                        element: '#pages_1',
+                        type: 2,
+                        pageIndex: 1,
+                        pageSize: notePageSize,
+                        pageCount: 9,
+                        total: totalNumber,
+                        jumper: true,
+                        singlePageHide: false,
+                        disabled: true,
+                        currentChange: function(index) {
+                            $.ajax({
+                                type: "GET",
+                                url: noteListUrl,
+                                data: {page:index, size:notePageSize},
+                                dataType: "json",
+                                success: function(data1){
+                                    result = data1.data;
+                                    totalNumber = result.totalElements;
+                                    noteList.notes = result.content;
+                                }
+                            });
+                        }
+                    });
+                    return;
+                }
+                console.log(data.status);
+            }
+        });
+        
     }
 </script>
 </head> 
@@ -154,7 +214,7 @@
                     <div class="search-bar">
                         <form>
                             <input type="text" name="search" placeholder="Search..." class="form-control">
-                            <button type="submit"><i class="la la-search" style="color: #FF6700"></i></button>
+                            <button type="button"><i class="la la-search" style="color: #FF6700"></i></button>
                         </form>
                     </div><!--search-bar end-->
                     <!--nav end-->
@@ -214,9 +274,10 @@
                                 <div class="acc-setting">
                                     <form>
                                         <div class="cp-field">
+                                            <button id="btnChange" class="btn btn-primary">转换</button>
                                             <h5>标题</h5>
                                             <div class="cpp-fiel">
-                                                <input type="text" name="title" placeholder="描述一下主要内容吧！" class="form-control">
+                                                <input id="noteTitle" type="text" name="title" placeholder="描述一下标题吧！" class="form-control">
                                             </div>
                                         </div>
                                         <div id="subject" class="cp-field">
@@ -296,10 +357,10 @@
                                         <div class="save-stngs pd3">
                                             <ul class="row justify-content-center">
                                                 <li>
-                                                    <button type="submit">暂存一下</button>
+                                                    <button id="noteSave" type="button" class="btn btn-primary">暂存一下</button>
                                                 </li>
                                                 <li>
-                                                    <button id="noteSubmit" type="submit">发布</button>
+                                                    <button id="noteSubmit" type="button" class="btn btn-primary">发布</button>
                                                 </li>
                                             </ul>
                                         </div><!--save-stngs end-->
@@ -308,248 +369,36 @@
                             </div>
                             <div class="tab-pane fade" id="nav-requests" role="tabpanel" aria-labelledby="nav-requests-tab">
                                 <div class="acc-setting">
-                                    <div class="requests-list">
-                                        <div class="request-details" data-toggle="collapse" data-target="#demo1">
+                                    <div class="cp-field">
+                                        <div class="cpp-fiel row">
+                                            <input id="textNoteTitle" class="col-md-10 col-xs-8 form-control" style="width: 90%" type="text" name="title" placeholder="输入笔记标题进行查询！">
+                                            <div class="save-stngs col-md-2 col-xs-4" style="width: auto;float: right;padding: 0px">
+                                                <ul style="float: right">
+                                                    <li>
+                                                        <button id="btnSelectByTitle" type="button" class="btn btn-primary">笔记查询</button>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div id="noteList" class="requests-list">
+                                        <div v-for="site in notes" class="request-details" data-toggle="collapse" data-target="#demo1">
                                             <div class="request-info">
-                                                <h2 style="font-size: 20px;font-weight: 900;">深入理解JVM</h2>
-                                                <span style="margin-left: 10px;">2019年9月9日</span>
+                                                <h2 style="font-size: 20px;font-weight: 900;">{{site.title}}</h2>
+                                                <span style="margin-left: 10px;">{{site.createTime}}</span>
                                             </div>
                                             <div class="accept-feat">
                                                 <ul>
                                                     <li>
-                                                        <button type="submit" class="accept-req">编辑</button>
+                                                        <button type="button" class="btn btn-primary accept-req">编辑</button>
                                                     </li>
                                                     <li>
-                                                        <button type="submit" class="close-req"><i
-                                                                class="la la-close"></i></button>
+                                                        <button type="button" class="close-req"><i class="la la-close"></i></button>
                                                     </li>
                                                 </ul>
                                             </div><!--accept-feat end-->
-                                            <div id="demo1" style="float: left" class="collapse"> 
-                                                <div style="padding: 20px;">
-                                                    <p>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp c语言作为一种计算机的语言，我们学习它，有助于我们更好的了解计算机，与计算机进行交流，因此，c语言的学习对我们尤其重要。</p>
-                                                    <p>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp 在这个星期里，我们专业的学生在专业老师的带领下进行了c语言程序实践学习。在这之前，我们已经对c语言这门课程学习了一个学期，对其有了一定的了解，但是也仅仅是停留在了解的范围，对里面的好多东西还是很陌生，的在运用起来的时候还是感到很棘手，毕竟，万事开头难嘛。</p>
-                                                    <p>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp 由于时间的关系，我们的这次实践课程老师并没有给我们详细的介绍，只是给我们简单的介绍了几个比较重要的实际操作。包括了程序模块处理。简单界面程序。高级界面程序。程序的添加修改。用程序做一元线性回归处理以及用c语言程序来画粒度分布图等这几样比较重要的时间操作。</p>
-                                                    <p>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp 上机实验是学习程序设计语言必不可少的实践环节，特别是c语言灵活、简洁，更需要通过编程的实践来真正掌握它。对于程序设计语言的学习目的，可以概括为学习语法规定、掌握程序设计方法、提高程序开发能力，这些都必须通过充分的实际上机操作才能完成。</p>
-                                                </div>
-                                            </div>
                                         </div><!--request-detailse end-->
-                                        <div class="request-details" data-toggle="collapse" data-target="#demo2">
-                                            <div class="request-info">
-                                                <h2 style="font-size: 20px;font-weight: 900;">深入理解JVM</h2>
-                                                <span style="margin-left: 10px;">2019年9月9日</span>
-                                            </div>
-                                            <div class="accept-feat">
-                                                <ul>
-                                                    <li>
-                                                        <button type="submit" class="accept-req">编辑</button>
-                                                    </li>
-                                                    <li>
-                                                        <button type="submit" class="close-req"><i
-                                                                class="la la-close"></i></button>
-                                                    </li>
-                                                </ul>
-                                            </div><!--accept-feat end-->
-                                            <div id="demo2" style="float: left" class="collapse">
-                                                <div style="padding: 20px;">
-                                                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse at libero
-                                                        elit. Mauris ultrices sed lorem nec efficitur. Donec sit amet facilisis lorem,
-                                                        quis facilisis tellus. Nullam mollis dignissim nisi sit amet tempor. Nullam
-                                                        sollicitudin neque a felis commodo gravida at sed nunc. In justo nunc, sagittis
-                                                        sed venenatis at, dictum vel erat. Curabitur at quam ipsum. Quisque eget nibh
-                                                        aliquet, imperdiet diam pharetra, dapibus lacus. Sed tincidunt sapien in dui
-                                                        imperdiet eleifend. Ut ut sagittis purus, non tristique elit. Quisque tincidunt
-                                                        metus eget ligula sodales luctus. Donec convallis ex at dui convallis malesuada.
-                                                        Orci varius natoque penatibus et magnis dis parturient montes, nascetur
-                                                        ridiculus mus. Ut pretium euismod mollis. Pellentesque convallis gravida ante eu
-                                                        pretium. Integer rutrum mi nec purus tincidunt, nec rhoncus mauris porttitor.
-                                                        Donec id tellus at leo gravida egestas. Suspendisse consequat mi vel euismod
-                                                        efficitur. Donec sed elementum libero.</p>
-                                                    <p> Etiam rutrum ut urna eu tempus. Curabitur suscipit quis lorem vel dictum.
-                                                        Aliquam erat volutpat. Pellentesque volutpat viverra pulvinar. Mauris ac sapien
-                                                        ac metus tincidunt volutpat eu eu purus. Suspendisse pharetra quis quam id
-                                                        auctor. Pellentesque feugiat venenatis urna, vitae suscipit enim volutpat vitae.
-                                                        Nunc egestas tortor est, at sodales ligula auctor efficitur.</p>
-                                                </div>
-
-                                            </div>
-                                        </div><!--request-detailse end-->
-                                        <div class="request-details" data-toggle="collapse" data-target="#demo3">
-                                            <div class="request-info">
-                                                <h2 style="font-size: 20px;font-weight: 900;">深入理解JVM</h2>
-                                                <span style="margin-left: 10px;">2019年9月9日</span>
-                                            </div>
-                                            <div class="accept-feat">
-                                                <ul>
-                                                    <li>
-                                                        <button type="submit" class="accept-req">编辑</button>
-                                                    </li>
-                                                    <li>
-                                                        <button type="submit" class="close-req"><i
-                                                                class="la la-close"></i></button>
-                                                    </li>
-                                                </ul>
-                                            </div><!--accept-feat end-->
-                                            <div id="demo3" style="float: left" class="collapse">
-                                                <div style="padding: 20px;">
-                                                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse at libero
-                                                        elit. Mauris ultrices sed lorem nec efficitur. Donec sit amet facilisis lorem,
-                                                        quis facilisis tellus. Nullam mollis dignissim nisi sit amet tempor. Nullam
-                                                        sollicitudin neque a felis commodo gravida at sed nunc. In justo nunc, sagittis
-                                                        sed venenatis at, dictum vel erat. Curabitur at quam ipsum. Quisque eget nibh
-                                                        aliquet, imperdiet diam pharetra, dapibus lacus. Sed tincidunt sapien in dui
-                                                        imperdiet eleifend. Ut ut sagittis purus, non tristique elit. Quisque tincidunt
-                                                        metus eget ligula sodales luctus. Donec convallis ex at dui convallis malesuada.
-                                                        Orci varius natoque penatibus et magnis dis parturient montes, nascetur
-                                                        ridiculus mus. Ut pretium euismod mollis. Pellentesque convallis gravida ante eu
-                                                        pretium. Integer rutrum mi nec purus tincidunt, nec rhoncus mauris porttitor.
-                                                        Donec id tellus at leo gravida egestas. Suspendisse consequat mi vel euismod
-                                                        efficitur. Donec sed elementum libero.</p>
-                                                    <p> Etiam rutrum ut urna eu tempus. Curabitur suscipit quis lorem vel dictum.
-                                                        Aliquam erat volutpat. Pellentesque volutpat viverra pulvinar. Mauris ac sapien
-                                                        ac metus tincidunt volutpat eu eu purus. Suspendisse pharetra quis quam id
-                                                        auctor. Pellentesque feugiat venenatis urna, vitae suscipit enim volutpat vitae.
-                                                        Nunc egestas tortor est, at sodales ligula auctor efficitur.</p>
-                                                </div>
-
-                                            </div>
-                                        </div><!--request-detailse end-->
-                                        <div class="request-details" data-toggle="collapse" data-target="#demo4">
-                                            <div class="request-info">
-                                                <h2 style="font-size: 20px;font-weight: 900;">深入理解JVM</h2>
-                                                <span style="margin-left: 10px;">2019年9月9日</span>
-                                            </div>
-                                            <div class="accept-feat">
-                                                <ul>
-                                                    <li>
-                                                        <button type="submit" class="accept-req">编辑</button>
-                                                    </li>
-                                                    <li>
-                                                        <button type="submit" class="close-req"><i
-                                                                class="la la-close"></i></button>
-                                                    </li>
-                                                </ul>
-                                            </div><!--accept-feat end-->
-                                            <div id="demo4" style="float: left" class="collapse">
-                                                <div style="padding: 20px;">
-                                                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse at libero
-                                                        elit. Mauris ultrices sed lorem nec efficitur. Donec sit amet facilisis lorem,
-                                                        quis facilisis tellus. Nullam mollis dignissim nisi sit amet tempor. Nullam
-                                                        sollicitudin neque a felis commodo gravida at sed nunc. In justo nunc, sagittis
-                                                        sed venenatis at, dictum vel erat. Curabitur at quam ipsum. Quisque eget nibh
-                                                        aliquet, imperdiet diam pharetra, dapibus lacus. Sed tincidunt sapien in dui
-                                                        imperdiet eleifend. Ut ut sagittis purus, non tristique elit. Quisque tincidunt
-                                                        metus eget ligula sodales luctus. Donec convallis ex at dui convallis malesuada.
-                                                        Orci varius natoque penatibus et magnis dis parturient montes, nascetur
-                                                        ridiculus mus. Ut pretium euismod mollis. Pellentesque convallis gravida ante eu
-                                                        pretium. Integer rutrum mi nec purus tincidunt, nec rhoncus mauris porttitor.
-                                                        Donec id tellus at leo gravida egestas. Suspendisse consequat mi vel euismod
-                                                        efficitur. Donec sed elementum libero.</p>
-                                                    <p> Etiam rutrum ut urna eu tempus. Curabitur suscipit quis lorem vel dictum.
-                                                        Aliquam erat volutpat. Pellentesque volutpat viverra pulvinar. Mauris ac sapien
-                                                        ac metus tincidunt volutpat eu eu purus. Suspendisse pharetra quis quam id
-                                                        auctor. Pellentesque feugiat venenatis urna, vitae suscipit enim volutpat vitae.
-                                                        Nunc egestas tortor est, at sodales ligula auctor efficitur.</p>
-                                                </div>
-
-                                            </div>
-                                        </div><!--request-detailse end-->
-                                        <div class="request-details" data-toggle="collapse" data-target="#demo5">
-                                            <div class="request-info">
-                                                <h2 style="font-size: 20px;font-weight: 900;">深入理解JVM</h2>
-                                                <span style="margin-left: 10px;">2019年9月9日</span>
-                                            </div>
-                                            <div class="accept-feat">
-                                                <ul>
-                                                    <li>
-                                                        <button type="submit" class="accept-req">编辑</button>
-                                                    </li>
-                                                    <li>
-                                                        <button type="submit" class="close-req"><i
-                                                                class="la la-close"></i></button>
-                                                    </li>
-                                                </ul>
-                                            </div><!--accept-feat end-->
-                                            <div id="demo5" style="float: left" class="collapse">
-                                                <div style="padding: 20px;">
-                                                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse at libero
-                                                        elit. Mauris ultrices sed lorem nec efficitur. Donec sit amet facilisis lorem,
-                                                        quis facilisis tellus. Nullam mollis dignissim nisi sit amet tempor. Nullam
-                                                        sollicitudin neque a felis commodo gravida at sed nunc. In justo nunc, sagittis
-                                                        sed venenatis at, dictum vel erat. Curabitur at quam ipsum. Quisque eget nibh
-                                                        aliquet, imperdiet diam pharetra, dapibus lacus. Sed tincidunt sapien in dui
-                                                        imperdiet eleifend. Ut ut sagittis purus, non tristique elit. Quisque tincidunt
-                                                        metus eget ligula sodales luctus. Donec convallis ex at dui convallis malesuada.
-                                                        Orci varius natoque penatibus et magnis dis parturient montes, nascetur
-                                                        ridiculus mus. Ut pretium euismod mollis. Pellentesque convallis gravida ante eu
-                                                        pretium. Integer rutrum mi nec purus tincidunt, nec rhoncus mauris porttitor.
-                                                        Donec id tellus at leo gravida egestas. Suspendisse consequat mi vel euismod
-                                                        efficitur. Donec sed elementum libero.</p>
-                                                    <p> Etiam rutrum ut urna eu tempus. Curabitur suscipit quis lorem vel dictum.
-                                                        Aliquam erat volutpat. Pellentesque volutpat viverra pulvinar. Mauris ac sapien
-                                                        ac metus tincidunt volutpat eu eu purus. Suspendisse pharetra quis quam id
-                                                        auctor. Pellentesque feugiat venenatis urna, vitae suscipit enim volutpat vitae.
-                                                        Nunc egestas tortor est, at sodales ligula auctor efficitur.</p>
-                                                </div>
-
-                                            </div>
-                                        </div><!--request-detailse end-->
-                                        <div class="request-details" data-toggle="collapse" data-target="#demo6">
-                                            <div class="request-info">
-                                                <h2 style="font-size: 20px;font-weight: 900;">深入理解JVM</h2>
-                                                <span style="margin-left: 10px;">2019年9月9日</span>
-                                            </div>
-                                            <div class="accept-feat">
-                                                <ul>
-                                                    <li>
-                                                        <button type="submit" class="accept-req">编辑</button>
-                                                    </li>
-                                                    <li>
-                                                        <button type="submit" class="close-req"><i
-                                                                class="la la-close"></i></button>
-                                                    </li>
-                                                </ul>
-                                            </div><!--accept-feat end-->
-                                            <div id="demo6" style="float: left" class="collapse">
-                                                <div style="padding: 20px;">
-                                                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse at libero
-                                                        elit. Mauris ultrices sed lorem nec efficitur. Donec sit amet facilisis lorem,
-                                                        quis facilisis tellus. Nullam mollis dignissim nisi sit amet tempor. Nullam
-                                                        sollicitudin neque a felis commodo gravida at sed nunc. In justo nunc, sagittis
-                                                        sed venenatis at, dictum vel erat. Curabitur at quam ipsum. Quisque eget nibh
-                                                        aliquet, imperdiet diam pharetra, dapibus lacus. Sed tincidunt sapien in dui
-                                                        imperdiet eleifend. Ut ut sagittis purus, non tristique elit. Quisque tincidunt
-                                                        metus eget ligula sodales luctus. Donec convallis ex at dui convallis malesuada.
-                                                        Orci varius natoque penatibus et magnis dis parturient montes, nascetur
-                                                        ridiculus mus. Ut pretium euismod mollis. Pellentesque convallis gravida ante eu
-                                                        pretium. Integer rutrum mi nec purus tincidunt, nec rhoncus mauris porttitor.
-                                                        Donec id tellus at leo gravida egestas. Suspendisse consequat mi vel euismod
-                                                        efficitur. Donec sed elementum libero.</p>
-                                                    <p> Etiam rutrum ut urna eu tempus. Curabitur suscipit quis lorem vel dictum.
-                                                        Aliquam erat volutpat. Pellentesque volutpat viverra pulvinar. Mauris ac sapien
-                                                        ac metus tincidunt volutpat eu eu purus. Suspendisse pharetra quis quam id
-                                                        auctor. Pellentesque feugiat venenatis urna, vitae suscipit enim volutpat vitae.
-                                                        Nunc egestas tortor est, at sodales ligula auctor efficitur.</p>
-                                                </div>
-
-                                            </div>
-                                        </div><!--request-detailse end-->
-                                        <nav aria-label="Page navigation example" style="width: 100%">
-                                            <ul class="pagination justify-content-center">
-                                                <li class="page-item disabled">
-                                                    <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Previous</a>
-                                                </li>
-                                                <li class="page-item"><a class="page-link" href="#">1</a></li>
-                                                <li class="page-item"><a class="page-link" href="#">2</a></li>
-                                                <li class="page-item"><a class="page-link" href="#">3</a></li>
-                                                <li class="page-item"><a class="page-link" href="#">4</a></li>
-                                                <li class="page-item"><a class="page-link" href="#">5</a></li>
-                                                <li class="page-item"><a class="page-link" href="#">6</a></li>
-                                                <li class="page-item">
-                                                    <a class="page-link" href="#">Next</a>
-                                                </li>
-                                            </ul>
-                                        </nav>
+                                        <div id="pages_1" class="request-details"></div>
                                     </div><!--requests-list end-->
                                 </div><!--acc-setting end-->
                             </div>
@@ -624,15 +473,16 @@
 <script type="text/javascript" src="/static/lib/slick/slick.min.js"></script>
 <script type="text/javascript" src="/static/js/script.js"></script>
 <script type="text/javascript" src="/static/lib/editor/editormd.min.js"></script>
+<script type="text/javascript" src="/static/js/pagination.js"></script>
 
 <script src="https://cdn.staticfile.org/vue/2.4.2/vue.min.js"></script>
 <script src="https://cdn.staticfile.org/axios/0.18.0/axios.min.js"></script>
 <script src="https://cdn.staticfile.org/vue-resource/1.5.1/vue-resource.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/tarekraafat-autocomplete.js/9.0.3/js/autoComplete.min.js"></script>
 <script type="text/javascript">
-    //标签输入框提示
-    var tagNumber = 0;
     var tagArray = [];
+
+    //标签输入框提示
     var tagAuto = new autoComplete({
         selector: "#selectTag",
         placeHolder: "请选择标签名！",
@@ -667,14 +517,13 @@
             }
         },
         onSelection: (feedback) => {
-            var value = feedback.selection.value.name;
-            onClickDropdownItem(value);
+            onClickDropdownItem(feedback.selection.value.id, feedback.selection.value.name);
         },
     });   
 
     //点击标签项
-    function onClickDropdownItem(value) {
-        if(tagNumber >= 5){
+    function onClickDropdownItem(value, name) {
+        if(tagArray.length >= 5){
             $("#warningDiv").show();
             $("#warningContent").text("警告！标签最多可添加5个！");
             return;
@@ -686,23 +535,23 @@
             }
             var tab=document.createElement("li");
             var tabi=document.createElement("i");
-            tab.innerHTML=value;
+            tab.innerHTML=name;
             tabi.className = "fa fa-times-circle";
             tabi.setAttribute("onclick", "onClickClose(this)");
+            tabi.setAttribute("value", value);
             tabi.style="margin-left:5px;margin-right: -2px;cursor:pointer";
             tab.append(tabi);
             $(".quest-tags-b").append(tab);
+            $("#warningDiv").hide();
             
             tagArray.push(value);
-            tagNumber++;
         }
     }
     //点击标签'X'按钮
     function onClickClose(x) {
         x.parentNode.remove();
-        var index = tagArray.indexOf(x.innerHTML);
+        var index = tagArray.indexOf(x.getAttribute("value"));
         tagArray.splice(index, 1);
-        tagNumber--;
     }
 
     //创建标签
@@ -731,15 +580,16 @@
                     alert("创建成功");
                     $("#selectTag").val("");
                     $("#createTag").hide();
-                    onClickDropdownItem(tagName);
                     return;
                 }
-                alert(data.message);
+                console.log(resultData);
             },
             complete: function(xhr,data){
                 if(resultData == "SUCCESS" && data == "success"){
                     updateLocalToken(xhr);
+                    return;
                 } 
+                console.log(data); 
             }
         });
     });
@@ -748,25 +598,148 @@
     function hideWarning() {
         $("#warningDiv").hide();
     }
-
+    
     //发布笔记
     $("#noteSubmit").click(function(){
-        alert($("#noteContent").val());
+        if(subject.subject2 == -1){
+            alert("请选择学科！");
+            return;
+        }
+        if(tagArray.length == 0){
+            alert("请添加标签！");
+            return;
+        }
+        var newTagArray = [];
+        for (var i = tagArray.length - 1; i >= 0; i--) {
+            newTagArray[i] = {id: tagArray[i]};
+        }
+        var resultData;
+        $.ajax({
+            type: "POST",
+            headers: {
+               "Access-control-expose-headers": header1,
+               "Authorization": header2
+            },
+            url: "/note",
+            contentType: "application/json;charset=UTF-8",
+            data: JSON.stringify({title: $("#noteTitle").val(), content:$("#noteContent").val(), type:{id:subject.subject2}, tags:newTagArray}),
+            dataType: "json",
+            success: function(data){
+                resultData = data.status;
+                if(resultData == "SUCCESS"){
+                    alert("发布成功！");
+                    window.location.href = "management.html";
+                    return;
+                }
+                console.log(resultData);
+            },
+            complete: function(xhr,data){
+                if(resultData == "SUCCESS" && data == "success"){
+                    updateLocalToken(xhr);
+                    return;
+                } 
+                console.log(data);
+            }
+        });
     });
+
+    //根据标题查询笔记
+    $("#btnSelectByTitle").click(function(){
+        var resultData;
+        var textNoteTitle = $("#textNoteTitle").val();
+        $.ajax({
+            type: "GET",
+            headers: {
+               "Access-control-expose-headers": header1,
+               "Authorization": header2
+            },
+            url: "/findByTitle",
+            data: {page:1,size:notePageSize,title:textNoteTitle},
+            dataType: "json",
+            success: function(data){
+                resultData = data.status;
+                if(resultData == "SUCCESS"){
+                    var result = data.data;
+                    var totalNumber = result.totalElements;
+                    noteList.notes = result.content;
+                    //分页
+                    notePage = null;
+                    $("#pages_1").text("");
+                    notePage = new Pagination({
+                        element: '#pages_1',
+                        type: 2,
+                        pageIndex: 1,
+                        pageSize: notePageSize,
+                        pageCount: 9,
+                        total: totalNumber,
+                        jumper: true,
+                        singlePageHide: false,
+                        disabled: true,
+                        currentChange: function(index) {
+                            $.ajax({
+                                type: "GET",
+                                headers: {
+                                   "Access-control-expose-headers": header1,
+                                   "Authorization": header2
+                                },
+                                url: "/findByTitle",
+                                data: {page:index, size:notePageSize,title:textNoteTitle},
+                                dataType: "json",
+                                success: function(data1){
+                                    result = data1.data;
+                                    totalNumber = result.totalElements;
+                                    noteList.notes = result.content;
+                                }
+                            });
+                        }
+                    });
+                    return;
+                }
+                console.log(data.message);
+            },
+            complete: function(xhr,data){
+                if(resultData == "SUCCESS" && data == "success"){
+                    updateLocalToken(xhr);
+                    return;
+                } 
+                console.log(data); 
+            }
+        });
+    });
+
+    //暂存笔记
+    $("#noteSave").click(function(){
+        alert("已保存！");
+        window.location.href = "management.html";
+    });
+
+    //退出登录
+    function logout(){
+        localStorage.clear();
+        window.location.href = "sign-in.html";
+    }
+    //更新本地token
+    function updateLocalToken(param){
+        localStorage.setItem("Access-control-expose-headers", param.getResponseHeader("Access-control-expose-headers"));
+        localStorage.setItem("Authorization", param.getResponseHeader("Authorization"));
+    }
     
     //转换
     $("#btnChange").click(function(){
-        var content = $("#noteContent").val();
-        $("#appendTest").val(content);
-        editormd.markdownToHTML("testEditorMdview", {
-            htmlDecode: "style,script,iframe", //可以过滤标签解码
-            emoji: true,
-            taskList:true,
-            tex: true,               // 默认不解析
-            flowChart:true,         // 默认不解析
-            sequenceDiagram:true,  // 默认不解析
-        });
-    })
+        var data = $("#noteContent").val();
+        data = data.replace(/#*.*#/g, '').replace(/[^a-z0-9\u4e00-\u9fa5]/, '').substring(0, 200); // 除去标题部分，截取200个字用来显示
+        alert(data);
+        // var content = $("#noteContent").val();
+        // $("#appendTest").val(content);
+        // editormd.markdownToHTML("testEditorMdview", {
+        //     htmlDecode: "style,script,iframe", //可以过滤标签解码
+        //     emoji: true,
+        //     taskList:true,
+        //     tex: true,               // 默认不解析
+        //     flowChart:true,         // 默认不解析
+        //     sequenceDiagram:true,  // 默认不解析
+        // });
+    });
 
     //markdown编辑
     var testEditor;

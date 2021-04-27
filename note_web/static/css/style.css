@@ -895,7 +895,7 @@ main {
 }
 .sgt-text span {
 	color: #686868;
-	font-size: 14px;
+	font-size: 12px;
 }
 .suggestion-usd > span {
 	float: right;
@@ -1233,6 +1233,9 @@ main {
 	font-size: 18px;
 	font-weight: 600;
 	margin-bottom: 10px; 
+}
+.job_descp h3 a:hover{
+	text-decoration:underline;
 }
 .job-dt {
 	float: left;
@@ -4553,12 +4556,11 @@ a:hover {
 .accept-req {
 	color: #ffffff;
 	font-size: 16px;
-	background-color: #51a5fb;
+	/*background-color: #51a5fb;*/ /*background-color: #FF6700;*/ 
 	height: 30px;
 	padding: 0 20px;
 	font-weight: 600;
-	border: 0;
-	border: 1px solid #51a5fb;
+	border: 1px solid #51a5fb; /*border: 1px solid #FF6700;*/
 }
 .close-req {
 	height: 30px;

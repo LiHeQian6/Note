@@ -65,7 +65,7 @@
 												</div>
 											</div>
 											<div class="col-lg-12 no-pdd">
-												<div class="container" style="padding: 0">
+												<div class="container sn-field" style="padding: 0">
 													<div class="row">
 														<div class="col-lg-6 col-md-6 col-sm-6 col-xs-6" style="padding: 0">
 															<input id="imageCode" type="text" class="form-control" name="password" placeholder="请输入验证码"></div>
@@ -78,7 +78,7 @@
 											<div class="col-lg-12 no-pdd">
 												<div class="checky-sec">
 													<div class="fgt-sec">
-														<input type="checkbox" name="cc" id="c1">
+														<input type="checkbox" name="cc" id="c1" checked>
 														<label for="c1">
 															<span></span>
 														</label>
@@ -126,7 +126,7 @@
 												</div>
 											</div>
 											<div class="col-lg-12 no-pdd">
-												<div class="container" style="padding: 0">
+												<div class="container sn-field" style="padding: 0">
 													<div class="row">
 														<div class="col-lg-6 col-md-6 col-sm-6 col-xs-6" style="padding: 0">
 															<input id="mailCode" type="text" class="form-control" name="password" placeholder="请输入验证码"></div>
@@ -137,14 +137,14 @@
 												</div>
                                         	</div>
 											<div class="col-lg-12 no-pdd">
-												<div class="checky-sec st2">
-													<!-- <div class="fgt-sec">
-														<input type="checkbox" name="cc" id="c2">
+												<div class="checky-sec st2" style="margin-top: 0px">
+													<div class="fgt-sec">
+														<input type="checkbox" name="cc" id="c2" checked>
 														<label for="c2">
 															<span></span>
 														</label>
 														<small>Yes, I understand and agree to the workwise Terms & Conditions.</small>
-													</div> -->
+													</div>
 												</div>
 											</div>
 											<div class="col-lg-12 no-pdd" style="text-align: center;">
@@ -182,6 +182,7 @@
 <script type = "text/javascript">
 	//登陆
 	$('#btnLogin').click(function(){
+		var resultData;
         $.ajax({
             type: "POST",
             url: "/login",
@@ -189,18 +190,22 @@
             dataType: "json",
             success: function(data){
 	            // $('#resText').empty();   //清空resText里面的所有内容
-	            if(data.status == "SUCCESS"){
+	            resultData = data.status;
+	            if(resultData == "SUCCESS"){
 	            	alert("登陆成功");
 	            	window.location.href = "index.html";
-	            }else{
-	            	console.log(data);
-	            	alert(data.message);
+	            	return;
 	            }
+	            console.log(resultData);
 	        },
 	        complete: function(xhr,data){
-	        	var localStorage = window.localStorage;
-		        localStorage.setItem("Access-control-expose-headers", xhr.getResponseHeader("Access-control-expose-headers"));
-		        localStorage.setItem("Authorization", xhr.getResponseHeader("Authorization"));
+	        	if(resultData == "SUCCESS" && data == "success"){
+                    var localStorage = window.localStorage;
+			        localStorage.setItem("Access-control-expose-headers", xhr.getResponseHeader("Access-control-expose-headers"));
+			        localStorage.setItem("Authorization", xhr.getResponseHeader("Authorization"));
+			        return;
+                }
+                console.log(data);
 	        }
 	    });
 	});

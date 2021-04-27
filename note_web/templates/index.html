@@ -19,11 +19,16 @@
 <link rel="stylesheet" type="text/css" href="/static/css/responsive.css">
 
 <script type="text/javascript">
-	window.onload = function(){
-		var localStorage = window.localStorage;
-		var header1 = localStorage.getItem("Access-control-expose-headers");
-		var header2 = localStorage.getItem("Authorization");
+    var localStorage;
+    var header1;
+    var header2;
+    var subject;
+    var noteTag;
 
+	window.onload = function(){
+		localStorage = window.localStorage;
+        header1 = localStorage.getItem("Access-control-expose-headers");
+        header2 = localStorage.getItem("Authorization");
 		//用户信息展示
         if(header1 != null && header2 != null){
             var resultData;
@@ -36,32 +41,32 @@
                 },
                 data: {},
                 dataType: "json",
-                success: function(data){
+				success: function(data){
                     resultData = data.status;
-                    if(resultData == "USER_NOT_LOGIN"){
+                    if(resultData == "TOKEN_EXPIRED"){
                         alert("请重新登录！");
                         logout();
                         return;    
+                    }else if(resultData == "SUCCESS"){
+                    	localStorage.setItem("UserId", data.data.id);
+                        $("#navUserLogin").hide();
+                        $("#navUserInfo").show();
+                        $("#nickName").text(data.data.nickName);
+                        return;
                     }
-                    var result = data.data;
-                    $("#navUserLogin").hide();
-                    $("#navUserInfo").show();
-                    $("#nickName").text(result.nickName);
+                    console.log(resultData);
                 },
                 complete: function(xhr,data){
                     if(resultData == "SUCCESS" && data == "success"){
                         updateLocalToken(xhr);
+                        return;
                     } 
+                    console.log(data);
                 }
             });
         }
-		//更新本地token
-	    function updateLocalToken(param){
-	        localStorage.setItem("Access-control-expose-headers", param.getResponseHeader("Access-control-expose-headers"));
-	        localStorage.setItem("Authorization", param.getResponseHeader("Authorization"));
-	    }
 		//学科
-		var subject = new Vue({
+		subject = new Vue({
 			  el: '#subject',
 			  data:{
 			      subjects1:[],//一级学科
@@ -86,7 +91,7 @@
 		     }
 		});
 		//标签
-		var noteTag = new Vue({
+		noteTag = new Vue({
 			el: '#noteTag',
 			data:{
 				noteTags:[]
@@ -100,9 +105,12 @@
             data: {},
             dataType: "json",
             success: function(data){
-	            var result = data.data;
-				subject.subjects1 = result;
-	        }
+                if(data.status == "SUCCESS"){
+                    subject.subjects1 = data.data;
+                    return;
+                }
+                console.log(data.status);
+            }
 	    });
 		//标签加载
 		$.ajax({
@@ -111,8 +119,11 @@
             data: {page:1, size:4},
             dataType: "json",
             success: function(data){
-	            var result = data.data;
-	            noteTag.noteTags = result.content;
+				if(data.status == "SUCCESS"){
+					noteTag.noteTags = data.data.content;
+                    return;
+                }
+                console.log(data.status);
 	        }
 	    });
 	}
@@ -217,7 +228,7 @@
 								<div id="subject"class="filter-secs" style="margin-bottom: 20px">
 									<div class="filter-heading">
 										<h3>学科</h3>
-										<button id="btnNoteResearchByType" type="button" class="btn btn-default pull-right" style="margin-top: -5px;padding: 2px 0px 0px 0px;width: 30px;height: 30px;"><i class="la la-search" style="color: #FF6700;font-size: 23px;font-weight: bolder"></i></button>
+										<button id="btnSelectByType" type="button" class="btn btn-default pull-right" style="margin-top: -5px;padding: 2px 0px 0px 0px;width: 30px;height: 30px;"><i class="la la-search" style="color: #FF6700;font-size: 23px;font-weight: bolder"></i></button>
 									</div><!--filter-heading end-->
 									<div class="paddy">
 										<div class="filter-dd">
@@ -264,7 +275,7 @@
 		                                        </div><!--usr-mg-info end-->
 		                                    </div>
 		                                    <!-- <span>11篇</span> -->
-		                                    <span><img src="/static/images/price1.png" alt="">1185</span>
+		                                    <span><img src="/static/images/price1.png" alt="">55</span>
 		                                </li>
 		                                <li>
 
@@ -274,7 +285,7 @@
 		                                        </div><!--usr-mg-info end-->
 		                                    </div>
 		                                    <!-- <span>11篇</span> -->
-		                                    <span><img src="/static/images/price2.png" alt="">1165</span>
+		                                    <span><img src="/static/images/price2.png" alt="">43</span>
 		                                </li>
 		                                <li>
 
@@ -284,7 +295,7 @@
 		                                        </div><!--usr-mg-info end-->
 		                                    </div>
 		                                    <!-- <span>11篇</span> -->
-		                                    <span><img src="/static/images/price3.png" alt="">1120</span>
+		                                    <span><img src="/static/images/price3.png" alt="">36</span>
 		                                </li>
 		                                <li>
 
@@ -294,7 +305,7 @@
 		                                        </div><!--usr-mg-info end-->
 		                                    </div>
 		                                    <!-- <span>11篇</span> -->
-		                                    <span><img src="/static/images/price4.png" alt="">1009</span>
+		                                    <span><img src="/static/images/price4.png" alt="">21</span>
 		                                </li>
 
 		                            </ul>
@@ -433,7 +444,7 @@
 											<img src="/static/images/resources/s3.png" alt="">
 											<div class="sgt-text">
 												<h4><a href="user-homepage.html" style="color: black;">张小明</a></h4>
-												<span>C & C++ Developer</span>
+												<span>500获赞 &nbsp 500粉丝</span>
 											</div>
 											<span><i class="la la-plus"></i></span>
 										</div>
@@ -441,7 +452,7 @@
 											<img src="/static/images/resources/s3.png" alt="">
 											<div class="sgt-text">
 												<h4><a href="user-homepage.html" style="color: black;">张小明</a></h4>
-												<span>C & C++ Developer</span>
+												<span>500获赞 &nbsp 500粉丝</span>
 											</div>
 											<span><i class="la la-plus"></i></span>
 										</div>
@@ -449,7 +460,7 @@
 											<img src="/static/images/resources/s3.png" alt="">
 											<div class="sgt-text">
 												<h4><a href="user-homepage.html" style="color: black;">张小明</a></h4>
-												<span>C & C++ Developer</span>
+												<span>500获赞 &nbsp 500粉丝</span>
 											</div>
 											<span><i class="la la-plus"></i></span>
 										</div>
@@ -457,7 +468,7 @@
 											<img src="/static/images/resources/s3.png" alt="">
 											<div class="sgt-text">
 												<h4><a href="user-homepage.html" style="color: black;">张小明</a></h4>
-												<span>C & C++ Developer</span>
+												<span>500获赞 &nbsp 500粉丝</span>
 											</div>
 											<span><i class="la la-plus"></i></span>
 										</div>
@@ -465,7 +476,7 @@
 											<img src="/static/images/resources/s3.png" alt="">
 											<div class="sgt-text">
 												<h4><a href="user-homepage.html" style="color: black;">张小明</a></h4>
-												<span>C & C++ Developer</span>
+												<span>500获赞 &nbsp 500粉丝</span>
 											</div>
 											<span><i class="la la-plus"></i></span>
 										</div>
@@ -473,7 +484,7 @@
 											<img src="/static/images/resources/s3.png" alt="">
 											<div class="sgt-text">
 												<h4><a href="user-homepage.html" style="color: black;">张小明</a></h4>
-												<span>C & C++ Developer</span>
+												<span>500获赞 &nbsp 500粉丝</span>
 											</div>
 											<span><i class="la la-plus"></i></span>
 										</div>
@@ -528,25 +539,28 @@
 <script src="https://cdn.staticfile.org/vue-resource/1.5.1/vue-resource.min.js"></script>
 <script>
 	//笔记查询
-	$("btnNoteResearchByType").click(function(){
-		$.ajax({
-            type: "GET",
-            url: "/types",
-            data: {},
-            dataType: "json",
-            success: function(data){
-	            var result = data.data;
-				subject.subjects1 = result;
-	        }
-	    });
-    });
-
-    //退出登录
+	// $("btnSelectByType").click(function(){
+	// 	$.ajax({
+ //            type: "GET",
+ //            url: "/types",
+ //            data: {},
+ //            dataType: "json",
+ //            success: function(data){
+	//             var result = data.data;
+	// 			subject.subjects1 = result;
+	//         }
+	//     });
+ //    });
+	//退出登录
     function logout(){
-    	localStorage.clear();
-    	window.location.href = "sign-in.html";
+        localStorage.clear();
+        window.location.href = "sign-in.html";
     }
-
+	//更新本地token
+    function updateLocalToken(param){
+        localStorage.setItem("Access-control-expose-headers", param.getResponseHeader("Access-control-expose-headers"));
+        localStorage.setItem("Authorization", param.getResponseHeader("Authorization"));
+    }
 </script>
 <script type="text/javascript">
     //回顶部
