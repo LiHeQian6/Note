@@ -55,10 +55,13 @@ class WelcomeActivity : AppCompatActivity() {
     private fun checkLogin() {
         var shared = getSharedPreferences(resources.getString(R.string.Login_Type),Context.MODE_PRIVATE)
         var loginType = shared?.getString(resources.getString(R.string.Login_Type),"")
+        StateUtil.AUTHORIZATION = shared?.getString(resources.getString(R.string.Authorization),"").toString()
+        StateUtil.AUTHORIZATION = "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiI4NTk2ODQ1ODFAcXEuY29tIiwiY3JlYXRlZCI6MTYxOTU5OTA1NDA3Mywicm9sZXMiOiJST0xFX1VTRVIiLCJleHAiOjE2MjAyMDM4NTR9.4ygTDVAKwiqgEGcK9JgI5PFcPArkrT-AAnn9MzTqPvHujMuBv8XFjK9by977xrLnyo6IayWstWlj0b4Bzms49w"
+        StateUtil.AUTHORIZATION_HEADERS = shared?.getString(resources.getString(R.string.Authorization_Header),"").toString()
         StateUtil.initInfo(this)
         if (loginType.equals("") ||
             StateUtil.LOGIN_INFO==null ||
-            StateUtil.USER_INFO == null) {
+            StateUtil.USER_INFO == null || StateUtil.AUTHORIZATION_HEADERS == "") {
             StateUtil.IF_LOGIN = false
         }else{
             StateUtil.IF_LOGIN = true

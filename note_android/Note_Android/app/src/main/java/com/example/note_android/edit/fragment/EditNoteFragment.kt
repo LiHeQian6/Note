@@ -1,8 +1,12 @@
 package com.example.note_android.edit.fragment
 
+import android.app.Dialog
 import android.content.Context
 import android.content.DialogInterface
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
+import android.os.Message
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
@@ -10,24 +14,48 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
+import android.widget.Toast
+import androidx.core.graphics.rotationMatrix
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
 import com.example.note_android.R
+import com.example.note_android.bean.Note
+import com.example.note_android.bean.NoteType
+import com.example.note_android.bean.Tag
 import com.example.note_android.edit.util.SoftKeyBoardListener
+import com.example.note_android.login.CountDownTimer
+import com.example.note_android.util.HttpAddressUtil
+import com.example.note_android.util.StateUtil
+import com.google.gson.Gson
 import com.xuexiang.xui.widget.dialog.DialogLoader
 import io.noties.markwon.AbstractMarkwonPlugin
 import io.noties.markwon.Markwon
 import io.noties.markwon.core.MarkwonTheme
 import io.noties.markwon.editor.MarkwonEditor
 import io.noties.markwon.editor.MarkwonEditorTextWatcher
+import kotlinx.android.synthetic.main.activity_register.*
 import kotlinx.android.synthetic.main.fragment_edit_note.view.*
+import okhttp3.*
+import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import org.json.JSONObject
+import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.Executors
+import kotlin.collections.ArrayList
 
 class EditNoteFragment: Fragment(),View.OnClickListener {
 
     private lateinit var rootView: View
+    private lateinit var noteTitle: String
+    private lateinit var noteContent: String
+    private lateinit var handler: Handler
+    private var tags:MutableList<Tag> = ArrayList()
+    private lateinit var type:NoteType
+    private lateinit var gson:Gson
+    private lateinit var note:Note
+    private lateinit var dialog:Dialog
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -38,6 +66,18 @@ class EditNoteFragment: Fragment(),View.OnClickListener {
         initTool()
         initEditor()
         initView()
+        handler = object : Handler() {
+            override fun handleMessage(msg: Message) {
+                super.handleMessage(msg)
+                var result = JSONObject(msg.obj.toString())
+                if (result != null && result.get("status") == "SUCCESS"){
+                    dialog.dismiss()
+                    Toast.makeText(requireContext(),"发布成功", Toast.LENGTH_SHORT).show()
+                }else{
+                    Toast.makeText(requireContext(),"网络出了点问题", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
         return rootView
     }
 
@@ -125,6 +165,51 @@ class EditNoteFragment: Fragment(),View.OnClickListener {
         return simpleDateFormat.format(date)
     }
 
+    private fun publishNote(){
+        noteTitle = rootView.edit_note_title.text.toString()
+        noteContent = rootView.edit_markdown.text.toString()
+        var httpClient = OkHttpClient()
+        var mediaType = "application/json".toMediaTypeOrNull()
+        //TODO 实例数据
+        var tag = Tag(8,"")
+        tags.add(tag)
+        var tag1 = Tag(9,"")
+        tags.add(tag1)
+        var type = NoteType(null,15,"")
+        var json = JSONObject()
+        note = Note(noteTitle,noteContent,tags,type)
+        gson = Gson()
+        json.put("note", gson.toJson(note))
+        var requestBody = RequestBody.create(mediaType,json.get("note").toString())
+        val urlBuilder = HttpAddressUtil.publishNote().toHttpUrlOrNull()!!.newBuilder()
+        var request = Request.Builder()
+                .addHeader(resources.getString(R.string.Authorization),StateUtil.AUTHORIZATION)
+                .addHeader(resources.getString(R.string.Authorization_Header),StateUtil.AUTHORIZATION_HEADERS)
+                .url(urlBuilder.build())
+                .method("POST",requestBody).build()
+        httpClient.newCall(request).enqueue(object : Callback {
+            override fun onFailure(call: Call, e: IOException) {
+                Looper.prepare()
+                Toast.makeText(requireContext(),"网络出了点问题", Toast.LENGTH_SHORT).show()
+                Looper.loop()
+            }
+
+            override fun onResponse(call: Call, response: Response) {
+                var result: String? = response.body?.string()
+                if(result == null || result == ""){
+                    Toast.makeText(requireContext(),"数据出了点问题,请重试", Toast.LENGTH_SHORT).show()
+                    return
+                }
+                var mess = Message()
+                mess.obj = result
+                mess.what = 1
+                handler.sendMessage(mess)
+                tags.clear()
+            }
+
+        })
+    }
+
     private fun initTool() {
         SoftKeyBoardListener.setListener(requireActivity(),object : SoftKeyBoardListener.OnSoftKeyBoardChangeListener{
             override fun keyBoardShow(height: Int) {
@@ -151,12 +236,12 @@ class EditNoteFragment: Fragment(),View.OnClickListener {
                     .commit()
             }
             R.id.publish_note -> {
-                DialogLoader.getInstance().showConfirmDialog(
+                dialog = DialogLoader.getInstance().showConfirmDialog(
                     requireContext(),
                     "确定发布这篇文章吗",
                     "发布",
                     { dialog: DialogInterface?, which: Int ->
-                        //TODO 去发布
+                        publishNote()
                     },
                     "再想想",
                     { dialog: DialogInterface, which: Int ->

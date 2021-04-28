@@ -1,6 +1,8 @@
 package com.example.note_android.login
 
+import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -33,12 +35,14 @@ import java.util.*
 class LoginActivity : AppCompatActivity(), View.OnClickListener {
     private lateinit var mTencent: Tencent
     private lateinit var handler: Handler
+    private lateinit var share: SharedPreferences.Editor
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
         mTencent = Tencent.createInstance(resources.getString(R.string.APP_ID), applicationContext)
         EventBus.getDefault().register(this)
+        share = getSharedPreferences(resources.getString(R.string.LoginInfo),Context.MODE_PRIVATE).edit()
         //initView()
         getImageCode("")
         initListener()
@@ -101,8 +105,14 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
                     Toast.makeText(this@LoginActivity,"数据出了点问题,请重试", Toast.LENGTH_SHORT).show()
                     return
                 }
-                var authorHeaders =  response.headers.get("Access-Control-Expose-Headers");
-                var authorization =  response.headers.get("Authorization");
+                var authorHeaders = response.headers["Access-Control-Expose-Headers"]
+                var authorization = response.headers["Authorization"]
+                share.putString(resources.getString(R.string.Authorization),authorization)
+                share.putString(resources.getString(R.string.Authorization_Header),authorHeaders)
+                share.commit()
+                StateUtil.IF_LOGIN = true
+                StateUtil.AUTHORIZATION = authorization?:""
+                StateUtil.AUTHORIZATION_HEADERS = authorHeaders?:""
                 var mess = Message()
                 mess.obj = result
                 mess.what = 0

@@ -16,6 +16,7 @@ class HttpAddressUtil {
         private const val GET_IMAGE_CODE = "getImageCode"
         private const val LOGOUT = "logout"
         private const val FORGET_PASSWORD = "forgotPassword"
+        private const val PUBLISH_NOTE = "note"
 
         fun getVerifyCodeIP(): String{
             return this.IP+this.GET_VERIFY_CODE
@@ -39,6 +40,10 @@ class HttpAddressUtil {
 
         fun resetPassword(): String{
             return this.IP+this.FORGET_PASSWORD
+        }
+
+        fun publishNote(): String{
+            return this.IP+this.PUBLISH_NOTE
         }
     }
 }

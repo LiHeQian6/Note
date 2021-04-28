@@ -36,6 +36,8 @@
     <string name="LoginInfo">LoginInfo</string>
     <string name="Login_Type">Login_Type</string>
     <string name="LoginWithQQ">QQ</string>
+    <string name="Authorization">Authorization</string>
+    <string name="Authorization_Header">Access-Control-Expose-Headers</string>
 
     <!--    QQ登陆相关-->
     <string name="APP_ID">101936988</string>
@@ -74,4 +76,6 @@
     <string name="attachment_summary_on">Automatically download attachments for incoming emails
     </string>
     <string name="attachment_summary_off">Only download attachments when manually requested</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

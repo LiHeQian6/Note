@@ -67,6 +67,42 @@
     </androidx.cardview.widget.CardView>
 
     <EditText
+        android:id="@+id/edit_note_title"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dp_40"
+        android:background="@color/white"
+        android:hint="这里输入标题"
+        android:textSize="@dimen/sp_20"
+        android:textColor="@color/less_black"
+        android:textStyle="bold"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/edit_note_tool_bar"/>
+
+    <Button
+        android:id="@+id/edit_note_type"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dp_40"
+        android:background="@color/white"
+        android:textAlignment="textStart"
+        android:hint="选择文章分类"
+        android:textSize="@dimen/sp_15"
+        android:textColor="@color/less_black"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/edit_note_title"/>
+
+    <Button
+        android:id="@+id/edit_note_tag"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dp_40"
+        android:background="@color/white"
+        android:textAlignment="textStart"
+        android:hint="选择文章标签"
+        android:textSize="@dimen/sp_15"
+        android:textColor="@color/less_black"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/edit_note_type"/>
+
+    <EditText
         android:id="@+id/edit_markdown"
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -79,7 +115,7 @@
         android:paddingTop="@dimen/dp_20"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/edit_note_tool_bar" />
+        app:layout_constraintTop_toBottomOf="@+id/edit_note_tag" />
 
     <HorizontalScrollView
         android:id="@+id/input_tool"

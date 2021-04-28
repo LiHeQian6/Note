@@ -13,6 +13,8 @@ class StateUtil {
         var USER_INFO: QQUserInfo? = null
         var LOGIN_INFO: QQLoginInfo? = null
         var LOGIN_TYPE:String = ""
+        var AUTHORIZATION:String = ""
+        var AUTHORIZATION_HEADERS:String = ""
 
         fun initInfo(context: Context): Boolean{
             var gson = Gson()
