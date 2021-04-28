@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>归尘博客管理系统</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content=""/>
+    <meta name="keywords" content=""/>
+    <link rel="stylesheet" type="text/css" href="/static/css/animate.css">
+    <link href="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/4.2.1/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="/static/css/line-awesome.css">
+    <link rel="stylesheet" type="text/css" href="/static/css/line-awesome-font-awesome.min.css">
+    <link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/font-awesome/4.7.0/css/font-awesome.css">
+    <link rel="stylesheet" type="text/css" href="/static/css/jquery.mCustomScrollbar.min.css">
+    <link rel="stylesheet" type="text/css" href="/static/lib/slick/slick.css">
+    <link rel="stylesheet" type="text/css" href="/static/lib/slick/slick-theme.css">
+    <link rel="stylesheet" type="text/css" href="/static/css/style.css">
+    <link rel="stylesheet" type="text/css" href="/static/css/responsive.css">
+    <link rel="stylesheet" type="text/css" href="/static/lib/editor/css/editormd.css">
+    <link rel="stylesheet" type="text/css" href="/static/css/pagination.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tarekraafat-autocomplete.js/9.0.3/css/autoComplete.min.css">
+    
+
+</head> 
+
+<body>
+
+
+<div class="wrapper">
+
+
+    <section class="profile-account-setting">
+        <div class="container">
+            <div class="account-tabs-setting">
+                <div class="row">
+                    <div class="col-12">
+                        <div class="acc-leftbar">
+                            <div class="nav nav-tabs" id="nav-tab" role="tablist">
+                                <a class="nav-item nav-link active" id="nav-requests-tab" data-toggle="tab"
+                                   href="#nav-requests" role="tab" aria-controls="nav-requests" aria-selected="false">
+                                    <i class="fa fa-book"></i>笔记管理</a>
+                            </div>
+                        </div><!--acc-leftbar end-->
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-12">
+                        <div class="tab-content" id="nav-tabContent">
+                            <div class="tab-pane fade show active" id="nav-requests" role="tabpanel" aria-labelledby="nav-requests-tab">
+                                <div class="acc-setting">
+                                    <div class="cp-field">
+                                        <div class="cpp-fiel row">
+                                            <input class="col-md-10 col-xs-8 form-control" style="width: 90%" type="text" name="title" placeholder="输入笔记标题进行查询！">
+                                            <div class="save-stngs col-md-2 col-xs-4" style="width: auto;float: right;padding: 0px">
+                                                <ul style="float: right">
+                                                    <li>
+                                                        <button type="button" class="btn btn-primary">标题查询</button>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="requests-list">
+                                        <div class="request-details" data-toggle="collapse" data-target="#demo1">
+                                            <div class="request-info">
+                                                <h2 style="font-size: 20px;font-weight: 900;">深入理解JVM</h2>
+                                                <span style="margin-left: 10px;">2019年9月9日</span>
+                                            </div>
+                                            <div class="accept-feat">
+                                                <ul>
+                                                    <li>
+                                                        <button type="button" class="btn btn-primary accept-req">编辑</button>
+                                                    </li>
+                                                    <li>
+                                                        <button type="button" class="close-req"><i class="la la-close"></i></button>
+                                                    </li>
+                                                </ul>
+                                            </div><!--accept-feat end-->
+                                        </div><!--request-detailse end-->
+                                        <div class="request-details" data-toggle="collapse" data-target="#demo2">
+                                            <div class="request-info">
+                                                <h2 style="font-size: 20px;font-weight: 900;">深入理解JVM</h2>
+                                                <span style="margin-left: 10px;">2019年9月9日</span>
+                                            </div>
+                                            <div class="accept-feat">
+                                                <ul>
+                                                    <li>
+                                                        <button type="button" class="btn btn-primary accept-req">编辑</button>
+                                                    </li>
+                                                    <li>
+                                                        <button type="button" class="close-req"><i class="la la-close"></i></button>
+                                                    </li>
+                                                </ul>
+                                            </div><!--accept-feat end-->
+                                        </div><!--request-detailse end-->
+                                        <div class="request-details" data-toggle="collapse" data-target="#demo3">
+                                            <div class="request-info">
+                                                <h2 style="font-size: 20px;font-weight: 900;">深入理解JVM</h2>
+                                                <span style="margin-left: 10px;">2019年9月9日</span>
+                                            </div>
+                                            <div class="accept-feat">
+                                                <ul>
+                                                    <li>
+                                                        <button type="button" class="btn btn-primary accept-req">编辑</button>
+                                                    </li>
+                                                    <li>
+                                                        <button type="button" class="close-req"><i class="la la-close"></i></button>
+                                                    </li>
+                                                </ul>
+                                            </div><!--accept-feat end-->
+                                        </div><!--request-detailse end-->
+                                        <div class="request-details" data-toggle="collapse" data-target="#demo4">
+                                            <div class="request-info">
+                                                <h2 style="font-size: 20px;font-weight: 900;">深入理解JVM</h2>
+                                                <span style="margin-left: 10px;">2019年9月9日</span>
+                                            </div>
+                                            <div class="accept-feat">
+                                                <ul>
+                                                    <li>
+                                                        <button type="button" class="btn btn-primary accept-req">编辑</button>
+                                                    </li>
+                                                    <li>
+                                                        <button type="button" class="close-req"><i class="la la-close"></i></button>
+                                                    </li>
+                                                </ul>
+                                            </div><!--accept-feat end-->
+                                        </div><!--request-detailse end-->
+                                        <div class="request-details" data-toggle="collapse" data-target="#demo5">
+                                            <div class="request-info">
+                                                <h2 style="font-size: 20px;font-weight: 900;">深入理解JVM</h2>
+                                                <span style="margin-left: 10px;">2019年9月9日</span>
+                                            </div>
+                                            <div class="accept-feat">
+                                                <ul>
+                                                    <li>
+                                                        <button type="button" class="btn btn-primary accept-req">编辑</button>
+                                                    </li>
+                                                    <li>
+                                                        <button type="button" class="close-req"><i class="la la-close"></i></button>
+                                                    </li>
+                                                </ul>
+                                            </div><!--accept-feat end-->
+                                        </div><!--request-detailse end-->
+                                        <!-- <div class="request-details" id="pages">
+                                          
+                                        </div> -->
+                                        <div id="pages_1" class="request-details" style="">
+                                            
+                                        </div>
+                                    </div><!--requests-list end-->
+                                </div><!--acc-setting end-->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div><!--account-tabs-setting end-->
+        </div>
+    </section>
+
+</div><!--theme-layout end-->
+<script src="http://code.jquery.com/jquery-1.10.2.min.js"></script>
+<script type="text/javascript" src="/static/js/popper.js"></script>
+<script type="text/javascript" src="/static/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="/static/js/jquery.mCustomScrollbar.js"></script>
+<script type="text/javascript" src="/static/lib/slick/slick.min.js"></script>
+<script type="text/javascript" src="/static/js/script.js"></script>
+<script type="text/javascript" src="/static/lib/editor/editormd.min.js"></script>
+<script type="text/javascript" src="/static/js/pagination.js"></script>
+
+<script src="https://cdn.staticfile.org/vue/2.4.2/vue.min.js"></script>
+<script src="https://cdn.staticfile.org/axios/0.18.0/axios.min.js"></script>
+<script src="https://cdn.staticfile.org/vue-resource/1.5.1/vue-resource.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/tarekraafat-autocomplete.js/9.0.3/js/autoComplete.min.js"></script>
+
+<script>
+    // new Pagination({
+    //     element: '#pages',
+    //     type: 1,
+    //     pageIndex: 1,
+    //     pageSize: 10,
+    //     pageCount: 5,
+    //     total: 20,
+    //     jumper: true,
+    //     singlePageHide: false,
+    //     prevText: '上一页',
+    //     nextText: '下一页',
+    //     disabled: true,
+    //     currentChange: function(index) {
+    //         // console.log(index);
+    //     }
+    // });
+    new Pagination({
+        element: '#pages_1',
+        type: 2,
+        pageIndex: 1,
+        pageSize: 5,
+        pageCount: 9,
+        total: 100,
+        jumper: true,
+        singlePageHide: false,
+        disabled: true,
+        currentChange: function(index) {
+            console.log(index);
+        }
+    });
+</script>
+
+<script>
+    //回顶部
+    $(function() {
+        $(window).scroll(function() {
+            if ($(window).scrollTop() > 0){
+                $('div.go-top').show();
+            }else{
+                $('div.go-top').hide();
+            }
+        });
+        $('div.go-top').click(function() {
+            $('html, body').animate({scrollTop: 0}, 500);
+        });
+    });
+</script>
+</body>
+</html>

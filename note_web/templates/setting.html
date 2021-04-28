@@ -1,0 +1,325 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>WorkWise Html Template</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="" />
+<meta name="keywords" content="" />
+<link rel="stylesheet" type="text/css" href="/static/css/animate.css">
+<link href="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/4.2.1/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" type="text/css" href="/static/css/line-awesome.css">
+<link rel="stylesheet" type="text/css" href="/static/css/line-awesome-font-awesome.min.css">
+<link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/font-awesome/4.7.0/css/font-awesome.css">
+<link rel="stylesheet" type="text/css" href="/static/css/jquery.mCustomScrollbar.min.css">
+<link rel="stylesheet" type="text/css" href="/static/lib/slick/slick.css">
+<link rel="stylesheet" type="text/css" href="/static/lib/slick/slick-theme.css">
+<link rel="stylesheet" type="text/css" href="/static/css/style.css">
+<link rel="stylesheet" type="text/css" href="/static/css/responsive.css">
+
+<script type="text/javascript">
+    var localStorage;
+    var header1;
+    var header2;
+
+	window.onload = function(){
+		localStorage = window.localStorage;
+        header1 = localStorage.getItem("Access-control-expose-headers");
+        header2 = localStorage.getItem("Authorization");
+
+		//用户信息展示
+        if(header1 != null && header2 != null){
+            var resultData;
+            $.ajax({
+                type: "GET",
+                url: "/getInfo",
+                headers: {
+                   "Access-control-expose-headers": header1,
+                   "Authorization": header2
+                },
+                data: {},
+                dataType: "json",
+                success: function(data){
+                    resultData = data.status;
+                    if(resultData == "TOKEN_EXPIRED"){
+                        alert("请重新登录！");
+                        logout();
+                        return;    
+                    }else if(resultData == "SUCCESS"){
+                        $("#navUserLogin").hide();
+                        $("#navUserInfo").show();
+                        $("#nickName").text(data.data.nickName);
+                        return;
+                    }
+                    console.log(resultData);
+                },
+                complete: function(xhr,data){
+                    if(resultData == "SUCCESS" && data == "success"){
+                        updateLocalToken(xhr);
+                        return;
+                    } 
+                    console.log(data);
+                }
+            });
+        }else{
+            window.location.href = "sign-in.html";
+        }
+	}
+</script>
+</head>
+
+
+<body>
+	
+
+	<div class="wrapper">
+		
+
+
+		<header>
+			<div class="container">
+				<div class="header-data">
+					<div class="logo">
+						<a href="index.html" class="logo-text" style="font-weight: bold;font-size: 30px;color: #fff;">知否笔记</a>
+					</div><!--logo end-->
+					<nav style="">
+						<ul>
+							<li>
+								<a href="index.html" title="" class="nav-actived">
+									<!-- <span><img src="/static/images/icon1.png" alt=""></span> -->
+									首页
+								</a>
+							</li>
+							<li>
+								<a href="follow.html" title="">
+									<!-- <span><img src="/static/images/icon1.png" alt=""></span> -->
+									关注
+								</a>
+							</li>
+							<li>
+								<a href="#" title="" class="not-box-open">
+									<!-- <span><img src="/static/images/icon6.png" alt=""></span> -->
+									消息
+								</a>
+								<div class="notification-box msg">
+									<div class="user-account-settingss" style="visibility: visible;opacity: 1;z-index: 9999;">
+										<a href="message.html" title=""><div class="custom-user-account-dropdown" style="margin-top: -15px">评论</div></a>
+										<a href="message.html" title=""><div class="custom-user-account-dropdown">点赞</div></a>
+										<a href="message.html" title=""><div class="custom-user-account-dropdown">关注</div></a>
+										<a href="message.html" title=""><div class="custom-user-account-dropdown">私信</div></a>
+										<a href="message.html" title=""><div class="custom-user-account-dropdown">其他通知</div></a>
+										<a href="message.html" title=""><div class="custom-user-account-logout">View All Message</div></a>
+									</div><!--user-account-settingss end-->
+								</div><!--notification-box end-->
+							</li>
+						</ul>
+					</nav>
+					<div class="search-bar">
+						<form>
+							<input type="text" name="search" placeholder="Search..." class="form-control">
+							<button type="submit"><i class="la la-search" style="color: #FF6700"></i></button>
+						</form>
+					</div><!--search-bar end-->
+					<!--nav end-->
+					<div class="menu-btn">
+						<a href="#" title=""><i class="fa fa-bars"></i></a>
+					</div><!--menu-btn end-->
+
+					<div class="user-account">
+						<div id="navUserLogin" class="login_register" style="margin-bottom: 8px;">
+							<ul>
+								<li><a href="sign-in.html" title="">Login</a></li>
+							</ul>
+						</div>
+						<div id="navUserInfo" class="user-info" style="display: none">
+							<img src="/static/images/resources/user.png" alt="">
+							<a id="nickName" href="#" title="">John</a>
+							<i class="la la-sort-down"></i>
+						</div>
+						<div class="user-account-settingss">
+							<a href="person-homepage.html" title=""><div class="custom-user-account-dropdown">个人主页</div></a>
+							<a href="collect.html" title=""><div class="custom-user-account-dropdown">收藏笔记</div></a>
+							<a href="like.html" title=""><div class="custom-user-account-dropdown">喜欢笔记</div></a>
+							<a href="management.html" title=""><div class="custom-user-account-dropdown">管理笔记</div></a>
+							<a href="setting.html" title=""><div class="custom-user-account-dropdown">设置</div></a>
+							<a href="javascript:logout()" title=""><div class="custom-user-account-logout">退出登陆</div></a>
+						</div><!--user-account-settingss end-->
+					</div>
+				</div><!--header-data end-->
+			</div>
+		</header>	<!--header end-->
+
+
+		<section class="profile-account-setting">
+			<div class="container">
+				<div class="account-tabs-setting">
+					<div class="row">
+						<div class="col-lg-3">
+							<div class="acc-leftbar">
+								<div class="nav nav-tabs" id="nav-tab" role="tablist">
+								    <a class="nav-item nav-link active" id="nav-acc-tab" data-toggle="tab" href="#nav-acc" role="tab" aria-controls="nav-acc" aria-selected="true" style="width: 100%"><i class="la la-cogs"></i>个人资料</a>
+								    <a class="nav-item nav-link" id="nav-password-tab" data-toggle="tab" href="#nav-password" role="tab" aria-controls="nav-password" aria-selected="false" style="width: 100%"><i class="fa fa-lock"></i>修改密码</a>
+								  </div>
+							</div><!--acc-leftbar end-->
+						</div>
+						<div class="col-lg-9">
+							<div class="tab-content" id="nav-tabContent">
+								<div class="tab-pane fade show active" id="nav-acc" role="tabpanel" aria-labelledby="nav-acc-tab">
+									<div class="acc-setting">
+										<h3>个人资料</h3>
+										<form>
+											<div class="cp-field">
+	                                            <h5 class="h5">头像</h5>
+	                                            <div class="cpp-fiels row align-items-center">
+	                                                <div class="custom-camera">
+	                                                	<img src="/static/images/resources/user-pro-img.png">
+	                                                	<a href="#" title=""><i class="fa fa-camera" style="margin-left: -3px;color: #fff"></i></a>
+	                                                	<!-- <div class="custom-cover-sec">
+															<a href="#" title=""><i class="fa fa-camera"></i> Change Image</a>
+														</div> -->
+	                                                </div>
+	                                            </div>
+                                            </div>
+                                            <div class="cp-field">
+                                                <h5>昵称</h5>
+                                                <div class="cpp-fiels">
+                                                    <input type="text" class="form-control" name="old-password" value="孤独的小浣熊">
+                                                    <i class="fa fa-male"></i>
+                                                </div>
+                                                <p style="color: #A9A9A9;font-size: 13px;padding-left: 14px">其他人可通过该昵称找到你</p>
+                                            </div>
+                                            <div class="cp-field">
+                                                <h5>个人简介</h5>
+                                                <div class="cpp-fiels">
+                                                    <input type="text" class="form-control" name="repeat-password" value=" 我是MC水观音，发出性感的声音">
+                                                    <i class="fa fa-pencil-square-o"></i>
+                                                </div>
+                                            </div>
+                                            <div class="cp-field">
+                                                <h5>邮箱</h5>
+                                                <div class="cpp-fiels">
+                                                    <input type="email" class="form-control" name="new-password" value=" 1764056039@qq.com">
+                                                    <i class="fa fa-envelope-square"></i>
+                                                   	<p style="color: #A9A9A9;font-size: 13px;padding-left: 14px">邮箱地址是您用来登录账户的凭证，并帮助您在忘记密码的情况下进行密码重置。为确保您的邮箱地址正确有效，每次更换邮箱之后，请根据操作提示来完成邮箱验证</p>
+                                                </div>
+                                            </div>
+                                            <div class="save-stngs pd2">
+                                                <ul style="text-align: center;">
+                                                    <li>
+                                                        <button type="submit">保存</button>
+                                                    </li>
+                                                </ul>
+                                            </div><!--save-stngs end-->
+                                        </form>
+									</div><!--acc-setting end-->
+								</div>
+							  	<div class="tab-pane fade" id="nav-password" role="tabpanel" aria-labelledby="nav-password-tab">
+	                                <div class="acc-setting">
+	                                    <h3>修改密码</h3>
+	                                    <form>
+	                                        <div class="cp-field">
+	                                            <h5>旧密码</h5>
+	                                            <div class="cpp-fiels">
+	                                                <input type="password" class="form-control" name="old-password" placeholder="请输入旧密码">
+	                                                <i class="fa fa-lock"></i>
+	                                            </div>
+	                                        </div>
+	                                        <div class="cp-field">
+	                                            <h5>新密码</h5>
+	                                            <div class="cpp-fiels">
+	                                                <input type="password" class="form-control" name="new-password" placeholder="请输入新密码">
+	                                                <i class="fa fa-lock"></i>
+	                                                <p style="color: #A9A9A9;font-size: 13px;padding-left: 14px">密码长度在6-20位之间，且密码必须包含数字、字母</p>
+	                                            </div>
+	                                        </div>
+	                                        <div class="cp-field">
+	                                            <h5>确认密码</h5>
+	                                            <div class="cpp-fiels">
+	                                                <input type="password" class="form-control" name="repeat-password" placeholder="请再次输入新密码">
+	                                                <i class="fa fa-lock"></i>
+	                                            </div>
+	                                        </div>
+	                                        <div class="save-stngs pd2">
+	                                            <ul>
+	                                                <li>
+	                                                    <button type="submit">保存</button>
+	                                                </li>
+	                                                <li>
+	                                                    <button type="reset">重置</button>
+	                                                </li>
+	                                            </ul>
+	                                        </div><!--save-stngs end-->
+	                                    </form>
+	                                </div><!--acc-setting end-->
+	                            </div>
+							</div>
+						</div>
+					</div>
+				</div><!--account-tabs-setting end-->
+			</div>
+		</section>
+
+
+		<div class="chatbox-list" style="display: block;">
+	        <div class="chatbox">
+	            <div class="chat-mg" style="margin: 20px 10px">
+	                <div class="go-top">
+	                    <div class="arrow" style="text-align: center"><i class="fa fa-chevron-up"></i></div>
+	                </div>
+	            </div>
+	        </div>
+	    </div><!--chatbox-list end-->
+
+		<footer class="myfooter">
+	        <div class="footy-sec mn no-margin">
+	            <div class="container text-center">
+	                <p style="float: none;"><span><img style="float: none;" src="/static/images/copy-icon2.png" alt="">Copyright 2020 本归尘博客系统由游马版权所有</span></p>
+	            </div>
+	        </div>
+	    </footer>
+
+	</div><!--theme-layout end-->
+
+
+
+<script src="http://code.jquery.com/jquery-1.10.2.min.js"></script>
+<script type="text/javascript" src="/static/js/popper.js"></script>
+<script type="text/javascript" src="/static/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="/static/js/jquery.mCustomScrollbar.js"></script>
+<script type="text/javascript" src="/static/lib/slick/slick.min.js"></script>
+<script type="text/javascript" src="/static/js/script.js"></script>
+
+<script src="https://cdn.staticfile.org/vue/2.4.2/vue.min.js"></script>
+<script src="https://cdn.staticfile.org/axios/0.18.0/axios.min.js"></script>
+<script src="https://cdn.staticfile.org/vue-resource/1.5.1/vue-resource.min.js"></script>
+<script type="text/javascript">
+	//退出登录
+    function logout(){
+        localStorage.clear();
+        window.location.href = "sign-in.html";
+    }
+	//更新本地token
+    function updateLocalToken(param){
+        localStorage.setItem("Access-control-expose-headers", param.getResponseHeader("Access-control-expose-headers"));
+        localStorage.setItem("Authorization", param.getResponseHeader("Authorization"));
+    }
+</script>
+<script>
+    //回顶部
+    $(function() {
+        $(window).scroll(function() {
+            if ($(window).scrollTop() > 0){
+                $('div.go-top').show();
+            }else{
+                $('div.go-top').hide();
+            }
+        });
+        $('div.go-top').click(function() {
+            $('html, body').animate({scrollTop: 0}, 500);
+        });
+    });
+</script>
+
+</body>
+</html>
