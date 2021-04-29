@@ -64,6 +64,9 @@
                     console.log(data);
                 }
             });
+
+            //知否笔记logo隐藏
+            $("#logoZhifou").hide();
         }
 		//学科
 		subject = new Vue({
@@ -136,7 +139,7 @@
 	<div class="wrapper">
 
 		<header>
-			<div class="container">
+			<div class="container" style="width: 1300px">
 				<div class="header-data">
 					<div class="logo">
 						<a href="index.html" class="logo-text" style="font-weight: bold;font-size: 30px;color: #fff;">知否笔记</a>
@@ -195,13 +198,13 @@
 							<a id="nickName" href="#" title="">John</a>
 							<i class="la la-sort-down"></i>
 						</div>
-						<div class="user-account-settingss">
+						<div id="navUserInfoDropdown" class="user-account-settingss">
 							<a href="person-homepage.html" title=""><div class="custom-user-account-dropdown">个人主页</div></a>
 							<a href="collect.html" title=""><div class="custom-user-account-dropdown">收藏笔记</div></a>
 							<a href="like.html" title=""><div class="custom-user-account-dropdown">喜欢笔记</div></a>
 							<a href="management.html" title=""><div class="custom-user-account-dropdown">管理笔记</div></a>
 							<a href="setting.html" title=""><div class="custom-user-account-dropdown">设置</div></a>
-							<a href="javascript:logout()" title=""><div class="custom-user-account-logout">退出登陆</div></a>
+							<a href="javascript:logout1()" title=""><div class="custom-user-account-logout">退出登陆</div></a>
 						</div><!--user-account-settingss end-->
 					</div>
 				</div><!--header-data end-->
@@ -221,11 +224,21 @@
 
 		<main>
 			<div class="main-section">
-				<div class="container">
+				<div class="container" style="width: 1300px">
 					<div class="main-section-data">
 						<div class="row">
 							<div class="col-lg-3">
-								<div id="subject"class="filter-secs" style="margin-bottom: 20px">
+								<div id="logoZhifou" class="widget widget-about">
+									<!-- <img src="../static/images/wd-logo.png" alt=""> -->
+									<img src="/static/images/logo_zhifou.png" alt="">
+									<!-- <h3>笔记在线分享平台</h3> -->
+									<!-- <span>Pay only for the Hours worked</span> -->
+									<div class="sign_link">
+										<h3><a href="sign-in.html" title="" style="color: #FF6700">注册</a></h3>
+										<a href="sign-in.html" title="" style="font-weight: bolder;color: #FF6700">Learn More</a>
+									</div>
+								</div><!--widget-about end-->
+								<div id="subject" class="filter-secs" style="margin-bottom: 20px">
 									<div class="filter-heading">
 										<h3>学科</h3>
 										<button id="btnSelectByType" type="button" class="btn btn-default pull-right" style="margin-top: -5px;padding: 2px 0px 0px 0px;width: 30px;height: 30px;"><i class="la la-search" style="color: #FF6700;font-size: 23px;font-weight: bolder"></i></button>
@@ -275,7 +288,7 @@
 		                                        </div><!--usr-mg-info end-->
 		                                    </div>
 		                                    <!-- <span>11篇</span> -->
-		                                    <span><img src="/static/images/price1.png" alt="">55</span>
+		                                    <span><img src="/static/images/price1.png" alt="">1552</span>
 		                                </li>
 		                                <li>
 
@@ -285,7 +298,7 @@
 		                                        </div><!--usr-mg-info end-->
 		                                    </div>
 		                                    <!-- <span>11篇</span> -->
-		                                    <span><img src="/static/images/price2.png" alt="">43</span>
+		                                    <span><img src="/static/images/price2.png" alt="">1436</span>
 		                                </li>
 		                                <li>
 
@@ -295,7 +308,7 @@
 		                                        </div><!--usr-mg-info end-->
 		                                    </div>
 		                                    <!-- <span>11篇</span> -->
-		                                    <span><img src="/static/images/price3.png" alt="">36</span>
+		                                    <span><img src="/static/images/price3.png" alt="">1328</span>
 		                                </li>
 		                                <li>
 
@@ -305,15 +318,146 @@
 		                                        </div><!--usr-mg-info end-->
 		                                    </div>
 		                                    <!-- <span>11篇</span> -->
-		                                    <span><img src="/static/images/price4.png" alt="">21</span>
+		                                    <span><img src="/static/images/price4.png" alt="">1127</span>
 		                                </li>
 
 		                            </ul>
 		                        </div><!--widget-adver end-->
+		                        <div class="suggestions full-width">
+									<div class="sd-title">
+										<h3>推荐作者</h3>
+										<i id="custom-refresh" class="la la-refresh"></i>
+										<!-- <i class="la la-ellipsis-v"></i> -->
+									</div><!--sd-title end-->
+									<div class="suggestions-list">
+										<div class="suggestion-usd">
+											<img src="/static/images/resources/s3.png" alt="">
+											<div class="sgt-text">
+												<h4><a href="user-homepage.html" style="color: black;">张小明</a></h4>
+												<span>5000获赞 &nbsp 5000粉丝</span>
+											</div>
+											<span><i class="la la-plus"></i></span>
+										</div>
+										<div class="suggestion-usd">
+											<img src="/static/images/resources/s3.png" alt="">
+											<div class="sgt-text">
+												<h4><a href="user-homepage.html" style="color: black;">张小明</a></h4>
+												<span>5000获赞 &nbsp 5000粉丝</span>
+											</div>
+											<span><i class="la la-plus"></i></span>
+										</div>
+										<div class="suggestion-usd">
+											<img src="/static/images/resources/s3.png" alt="">
+											<div class="sgt-text">
+												<h4><a href="user-homepage.html" style="color: black;">张小明</a></h4>
+												<span>5000获赞 &nbsp 5000粉丝</span>
+											</div>
+											<span><i class="la la-plus"></i></span>
+										</div>
+										<div class="suggestion-usd">
+											<img src="/static/images/resources/s3.png" alt="">
+											<div class="sgt-text">
+												<h4><a href="user-homepage.html" style="color: black;">张小明</a></h4>
+												<span>5000获赞 &nbsp 5000粉丝</span>
+											</div>
+											<span><i class="la la-plus"></i></span>
+										</div>
+										<div class="suggestion-usd">
+											<img src="/static/images/resources/s3.png" alt="">
+											<div class="sgt-text">
+												<h4><a href="user-homepage.html" style="color: black;">张小明</a></h4>
+												<span>5000获赞 &nbsp 5000粉丝</span>
+											</div>
+											<span><i class="la la-plus"></i></span>
+										</div>
+										<div class="suggestion-usd">
+											<img src="/static/images/resources/s3.png" alt="">
+											<div class="sgt-text">
+												<h4><a href="user-homepage.html" style="color: black;">张小明</a></h4>
+												<span>5000获赞 &nbsp 5000粉丝</span>
+											</div>
+											<span><i class="la la-plus"></i></span>
+										</div>
+										<div class="view-more">
+											<a href="writer.html" title="">View More</a>
+										</div>
+									</div><!--suggestions-list end-->
+								</div><!--suggestions end-->
+								<div class="widget widget-adver">
+									<img src="http://via.placeholder.com/370x270" alt="">
+								</div><!--widget-adver end-->
 							</div>
-							<div class="col-lg-6">
+							<div class="col-lg-9">
 								<div class="main-ws-sec">
 									<div class="posts-section">
+										<div class="post-bar">
+											<div class="post_topbar">
+												<div class="usy-dt">
+													<a href="user-homepage.html"><img src="/static/images/resources/us-pic.png" alt=""></a>
+													<div class="usy-name"></a>
+														<h3><a href="user-homepage.html" style="color: black">张小明</h3></a>
+														<span><img src="/static/images/clock.png" alt="">3 min ago</span>
+													</div>
+												</div>
+											</div>
+											
+											<div class="job_descp">
+												<h3><a href="note-detail.html" style="color: black">C语言学习心得</a></h3>
+												<p>c语言作为一种计算机的语言，我们学习它，有助于我们更好的了解计算机，与计算机进行交流，因此，c语言的学习对我们尤其重要... <a href="note-detail.html" title="">view more</a></p>
+												<ul class="skill-tags">
+													<li><a href="#" title="">HTML</a></li>
+													<li><a href="#" title="">PHP</a></li>
+													<li><a href="#" title="">CSS</a></li>
+													<li><a href="#" title="">Javascript</a></li>
+													<li><a href="#" title="">Wordpress</a></li> 	
+												</ul>
+											</div>
+											<div class="job-status-bar">
+												<ul class="like-com">
+													<li>
+														<a href="#"><i class="la la-heart"></i> Like</a>
+														<img src="/static/images/liked-img.png" alt="">
+														<span>25</span>
+													</li> 
+													<li><a href="note-detail.html" title="" class="com"><img src="/static/images/com.png" alt=""> Comment 15</a></li>
+												</ul>
+												<a><i class="la la-eye"></i>Views 50</a>
+											</div>
+										</div><!--post-bar end-->
+										<div class="post-bar">
+											<div class="post_topbar">
+												<div class="usy-dt">
+													<a href="user-homepage.html"><img src="/static/images/resources/us-pic.png" alt=""></a>
+													<div class="usy-name"></a>
+														<h3><a href="user-homepage.html" style="color: black">张小明</h3></a>
+														<span><img src="/static/images/clock.png" alt="">3 min ago</span>
+													</div>
+												</div>
+											</div>
+											
+											<div class="job_descp">
+												<h3><a href="note-detail.html" style="color: black">C语言学习心得</a></h3>
+												<p>c语言作为一种计算机的语言，我们学习它，有助于我们更好的了解计算机，与计算机进行交流，因此，c语言的学习对我们尤其重要... <a href="note-detail.html" title="">view more</a></p>
+												<ul class="skill-tags">
+													<li><a href="#" title="">HTML</a></li>
+													<li><a href="#" title="">PHP</a></li>
+													<li><a href="#" title="">CSS</a></li>
+													<li><a href="#" title="">Javascript</a></li>
+													<li><a href="#" title="">Wordpress</a></li> 	
+												</ul>
+											</div>
+											<div class="job-status-bar">
+												<ul class="like-com">
+													<li>
+														<a href="#"><i class="la la-heart"></i> Like</a>
+														<img src="/static/images/liked-img.png" alt="">
+														<span>25</span>
+													</li> 
+													<li><a href="note-detail.html" title="" class="com"><img src="/static/images/com.png" alt=""> Comment 15</a></li>
+												</ul>
+												<a><i class="la la-eye"></i>Views 50</a>
+											</div>
+										</div><!--post-bar end-->
 										<div class="post-bar">
 											<div class="post_topbar">
 												<div class="usy-dt">
@@ -422,81 +566,7 @@
 									</div><!--posts-section end-->
 								</div><!--main-ws-sec end-->
 							</div>
-							<div class="col-lg-3">
-								<div class="widget widget-about">
-									<!-- <img src="/static/images/wd-logo.png" alt=""> -->
-									<img src="/static/images/logo_zhifou.png" alt="">
-									<!-- <h3>笔记在线分享平台</h3> -->
-									<!-- <span>Pay only for the Hours worked</span> -->
-									<div class="sign_link">
-										<h3><a href="sign-in.html" title="" style="color: #FF6700">注册</a></h3>
-										<a href="sign-in.html" title="" style="font-weight: bolder;color: #FF6700">Learn More</a>
-									</div>
-								</div><!--widget-about end-->
-								<div class="suggestions full-width">
-									<div class="sd-title">
-										<h3>推荐作者</h3>
-										<i id="custom-refresh" class="la la-refresh"></i>
-										<!-- <i class="la la-ellipsis-v"></i> -->
-									</div><!--sd-title end-->
-									<div class="suggestions-list">
-										<div class="suggestion-usd">
-											<img src="/static/images/resources/s3.png" alt="">
-											<div class="sgt-text">
-												<h4><a href="user-homepage.html" style="color: black;">张小明</a></h4>
-												<span>500获赞 &nbsp 500粉丝</span>
-											</div>
-											<span><i class="la la-plus"></i></span>
-										</div>
-										<div class="suggestion-usd">
-											<img src="/static/images/resources/s3.png" alt="">
-											<div class="sgt-text">
-												<h4><a href="user-homepage.html" style="color: black;">张小明</a></h4>
-												<span>500获赞 &nbsp 500粉丝</span>
-											</div>
-											<span><i class="la la-plus"></i></span>
-										</div>
-										<div class="suggestion-usd">
-											<img src="/static/images/resources/s3.png" alt="">
-											<div class="sgt-text">
-												<h4><a href="user-homepage.html" style="color: black;">张小明</a></h4>
-												<span>500获赞 &nbsp 500粉丝</span>
-											</div>
-											<span><i class="la la-plus"></i></span>
-										</div>
-										<div class="suggestion-usd">
-											<img src="/static/images/resources/s3.png" alt="">
-											<div class="sgt-text">
-												<h4><a href="user-homepage.html" style="color: black;">张小明</a></h4>
-												<span>500获赞 &nbsp 500粉丝</span>
-											</div>
-											<span><i class="la la-plus"></i></span>
-										</div>
-										<div class="suggestion-usd">
-											<img src="/static/images/resources/s3.png" alt="">
-											<div class="sgt-text">
-												<h4><a href="user-homepage.html" style="color: black;">张小明</a></h4>
-												<span>500获赞 &nbsp 500粉丝</span>
-											</div>
-											<span><i class="la la-plus"></i></span>
-										</div>
-										<div class="suggestion-usd">
-											<img src="/static/images/resources/s3.png" alt="">
-											<div class="sgt-text">
-												<h4><a href="user-homepage.html" style="color: black;">张小明</a></h4>
-												<span>500获赞 &nbsp 500粉丝</span>
-											</div>
-											<span><i class="la la-plus"></i></span>
-										</div>
-										<div class="view-more">
-											<a href="writer.html" title="">View More</a>
-										</div>
-									</div><!--suggestions-list end-->
-								</div><!--suggestions end-->
-								<div class="widget widget-adver">
-									<img src="http://via.placeholder.com/370x270" alt="">
-								</div><!--widget-adver end-->
-							</div>
+							
 						</div>
 					</div><!-- main-section-data end-->
 				</div> 
@@ -555,6 +625,12 @@
     function logout(){
         localStorage.clear();
         window.location.href = "sign-in.html";
+    }
+    function logout1(){
+        localStorage.clear();
+        $("#navUserInfo").hide();
+        $("#navUserInfoDropdown").hide();
+        $("#navUserLogin").show();
     }
 	//更新本地token
     function updateLocalToken(param){

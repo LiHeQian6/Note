@@ -125,7 +125,7 @@
         $.ajax({
             type: "GET",
             url: noteListUrl,
-            data: {page:1, size:notePageSize},
+            data: {page:0, size:notePageSize},
             dataType: "json",
             success: function(data){
                 if(data.status == "SUCCESS"){
@@ -145,15 +145,29 @@
                         singlePageHide: false,
                         disabled: true,
                         currentChange: function(index) {
+                            var newIndex = index-1;
+                            var resultData1;
                             $.ajax({
                                 type: "GET",
                                 url: noteListUrl,
-                                data: {page:index, size:notePageSize},
+                                data: {page:newIndex, size:notePageSize},
                                 dataType: "json",
                                 success: function(data1){
-                                    result = data1.data;
-                                    totalNumber = result.totalElements;
-                                    noteList.notes = result.content;
+                                    resultData1 = data1.status;
+                                    if(resultData1 == "SUCCESS"){
+                                        result = data1.data;
+                                        totalNumber = result.totalElements;
+                                        noteList.notes = result.content;
+                                        return;
+                                    }
+                                    console.log(resultData1);
+                                },
+                                complete: function(xhr,data1){
+                                    if(resultData1 == "SUCCESS" && data1 == "success"){
+                                        updateLocalToken(xhr);
+                                        return;
+                                    } 
+                                    console.log(data1); 
                                 }
                             });
                         }
@@ -163,7 +177,6 @@
                 console.log(data.status);
             }
         });
-        
     }
 </script>
 </head> 
@@ -274,7 +287,7 @@
                                 <div class="acc-setting">
                                     <form>
                                         <div class="cp-field">
-                                            <button id="btnChange" class="btn btn-primary">转换</button>
+                                            <!-- <button id="btnChange" class="btn btn-primary">转换</button> -->
                                             <h5>标题</h5>
                                             <div class="cpp-fiel">
                                                 <input id="noteTitle" type="text" name="title" placeholder="描述一下标题吧！" class="form-control">
@@ -300,7 +313,7 @@
                                         <div class="cp-field">
                                             <h5>标签</h5>
                                             <div class="cpp-fiel row" style="position: relative;">
-                                                <input id="selectTag" class="col-md-12 col-xs-4 form-control" type="text" name="title" placeholder="" dir="ltr" spellcheck=false autocorrect="off" autocomplete="off" autocapitalize="off">
+                                                <input id="selectTag" class="form-control" type="text" name="title" placeholder="" dir="ltr" spellcheck=false autocorrect="off" autocomplete="off" autocapitalize="off">
                                                 <!-- <i class="la la-dollar"></i> -->
                                                 <button id="createTag" type="button" class="btn btn-outline-info" style="position: absolute;top: 0px;right: 0px;display: none;">
                                                     创建一个标签
@@ -371,24 +384,20 @@
                                 <div class="acc-setting">
                                     <div class="cp-field">
                                         <div class="cpp-fiel row">
-                                            <input id="textNoteTitle" class="col-md-10 col-xs-8 form-control" style="width: 90%" type="text" name="title" placeholder="输入笔记标题进行查询！">
-                                            <div class="save-stngs col-md-2 col-xs-4" style="width: auto;float: right;padding: 0px">
-                                                <ul style="float: right">
-                                                    <li>
-                                                        <button id="btnSelectByTitle" type="button" class="btn btn-primary">笔记查询</button>
-                                                    </li>
-                                                </ul>
-                                            </div>
+                                            <input id="textNoteTitle" style="position: relative;" class="form-control" type="text" name="title" placeholder="输入笔记标题进行查询！">
+                                            <button id="btnSelectByTitle" type="button" class="btn btn-primary" style="position: absolute;top: 0px;right: 0px;font-size: 16px;font-weight: 600">
+                                                    查询笔记
+                                            </button>
                                         </div>
                                     </div>
                                     <div id="noteList" class="requests-list">
                                         <div v-for="site in notes" class="request-details" data-toggle="collapse" data-target="#demo1">
-                                            <div class="request-info">
-                                                <h2 style="font-size: 20px;font-weight: 900;">{{site.title}}</h2>
-                                                <span style="margin-left: 10px;">{{site.createTime}}</span>
+                                            <div class="request-info" style="width: 80%;">
+                                                <h2 style="font-size: 15px;font-weight: 600;margin-bottom: 10px">{{site.title}}</h2>
+                                                <span>{{site.createTime}}</span>
                                             </div>
-                                            <div class="accept-feat">
-                                                <ul>
+                                            <div class="accept-feat" style="width:20%;">
+                                                <ul style="float: right;">
                                                     <li>
                                                         <button type="button" class="btn btn-primary accept-req">编辑</button>
                                                     </li>
@@ -397,6 +406,14 @@
                                                     </li>
                                                 </ul>
                                             </div><!--accept-feat end-->
+                                            <div id="demo1" style="float: left" class="collapse"> 
+                                                <div style="padding: 20px;">
+                                                    <p>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp c语言作为一种计算机的语言，我们学习它，有助于我们更好的了解计算机，与计算机进行交流，因此，c语言的学习对我们尤其重要。</p>
+                                                    <p>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp 在这个星期里，我们专业的学生在专业老师的带领下进行了c语言程序实践学习。在这之前，我们已经对c语言这门课程学习了一个学期，对其有了一定的了解，但是也仅仅是停留在了解的范围，对里面的好多东西还是很陌生，的在运用起来的时候还是感到很棘手，毕竟，万事开头难嘛。</p>
+                                                    <p>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp 由于时间的关系，我们的这次实践课程老师并没有给我们详细的介绍，只是给我们简单的介绍了几个比较重要的实际操作。包括了程序模块处理。简单界面程序。高级界面程序。程序的添加修改。用程序做一元线性回归处理以及用c语言程序来画粒度分布图等这几样比较重要的时间操作。</p>
+                                                    <p>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp 上机实验是学习程序设计语言必不可少的实践环节，特别是c语言灵活、简洁，更需要通过编程的实践来真正掌握它。对于程序设计语言的学习目的，可以概括为学习语法规定、掌握程序设计方法、提高程序开发能力，这些都必须通过充分的实际上机操作才能完成。</p>
+                                                </div>
+                                            </div>
                                         </div><!--request-detailse end-->
                                         <div id="pages_1" class="request-details"></div>
                                     </div><!--requests-list end-->
@@ -645,66 +662,80 @@
 
     //根据标题查询笔记
     $("#btnSelectByTitle").click(function(){
-        var resultData;
-        var textNoteTitle = $("#textNoteTitle").val();
-        $.ajax({
-            type: "GET",
-            headers: {
-               "Access-control-expose-headers": header1,
-               "Authorization": header2
-            },
-            url: "/findByTitle",
-            data: {page:1,size:notePageSize,title:textNoteTitle},
-            dataType: "json",
-            success: function(data){
-                resultData = data.status;
-                if(resultData == "SUCCESS"){
-                    var result = data.data;
-                    var totalNumber = result.totalElements;
-                    noteList.notes = result.content;
-                    //分页
-                    notePage = null;
-                    $("#pages_1").text("");
-                    notePage = new Pagination({
-                        element: '#pages_1',
-                        type: 2,
-                        pageIndex: 1,
-                        pageSize: notePageSize,
-                        pageCount: 9,
-                        total: totalNumber,
-                        jumper: true,
-                        singlePageHide: false,
-                        disabled: true,
-                        currentChange: function(index) {
-                            $.ajax({
-                                type: "GET",
-                                headers: {
-                                   "Access-control-expose-headers": header1,
-                                   "Authorization": header2
-                                },
-                                url: "/findByTitle",
-                                data: {page:index, size:notePageSize,title:textNoteTitle},
-                                dataType: "json",
-                                success: function(data1){
-                                    result = data1.data;
-                                    totalNumber = result.totalElements;
-                                    noteList.notes = result.content;
-                                }
-                            });
-                        }
-                    });
-                    return;
-                }
-                console.log(data.message);
-            },
-            complete: function(xhr,data){
-                if(resultData == "SUCCESS" && data == "success"){
-                    updateLocalToken(xhr);
-                    return;
-                } 
-                console.log(data); 
-            }
-        });
+        // var resultData;
+        // var textNoteTitle = $("#textNoteTitle").val();
+        // $.ajax({
+        //     type: "GET",
+        //     headers: {
+        //        "Access-control-expose-headers": header1,
+        //        "Authorization": header2
+        //     },
+        //     url: "/findByTitle",
+        //     data: {page:0,size:notePageSize,title:textNoteTitle},
+        //     dataType: "json",
+        //     success: function(data){
+        //         resultData = data.status;
+        //         if(resultData == "SUCCESS"){
+        //             var result = data.data;
+        //             var totalNumber = result.totalElements;
+        //             noteList.notes = result.content;
+        //             //分页
+        //             notePage = null;
+        //             $("#pages_1").text("");
+        //             notePage = new Pagination({
+        //                 element: '#pages_1',
+        //                 type: 2,
+        //                 pageIndex: 1,
+        //                 pageSize: notePageSize,
+        //                 pageCount: 9,
+        //                 total: totalNumber,
+        //                 jumper: true,
+        //                 singlePageHide: false,
+        //                 disabled: true,
+        //                 currentChange: function(index) {
+        //                     var newIndex = index-1;
+        //                     var resultData1;
+        //                     $.ajax({
+        //                         type: "GET",
+        //                         headers: {
+        //                            "Access-control-expose-headers": header1,
+        //                            "Authorization": header2
+        //                         },
+        //                         url: "/findByTitle",
+        //                         data: {page:newIndex, size:notePageSize, title:textNoteTitle},
+        //                         dataType: "json",
+        //                         success: function(data1){
+        //                             resultData1 = data1.status;
+        //                             if(resultData1 == "SUCCESS"){
+        //                                 result = data1.data;
+        //                                 totalNumber = result.totalElements;
+        //                                 noteList.notes = result.content;
+        //                                 return;
+        //                             }
+        //                             console.log(resultData1);
+        //                         },
+        //                         complete: function(xhr,data1){
+        //                             if(resultData1 == "SUCCESS" && data1 == "success"){
+        //                                 updateLocalToken(xhr);
+        //                                 return;
+        //                             } 
+        //                             console.log(data1); 
+        //                         }
+        //                     });
+        //                 }
+        //             });
+        //             return;
+        //         }
+        //         console.log(resultData);
+        //     },
+        //     complete: function(xhr,data){
+        //         if(resultData == "SUCCESS" && data == "success"){
+        //             updateLocalToken(xhr);
+        //             return;
+        //         } 
+        //         console.log(data); 
+        //     }
+        // });
     });
 
     //暂存笔记

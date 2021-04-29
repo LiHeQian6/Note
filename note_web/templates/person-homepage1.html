@@ -63,8 +63,7 @@
                 }
             });
         }else{
-        	//关注按钮隐藏
-            $("#btnFollow").hide();
+            window.location.href = "sign-in.html";
         }
 	}
 </script>
@@ -137,23 +136,24 @@
 							<a id="nickName" href="#" title="">John</a>
 							<i class="la la-sort-down"></i>
 						</div>
-						<div id="navUserInfoDropdown" class="user-account-settingss">
+						<div class="user-account-settingss">
 							<a href="person-homepage.html" title=""><div class="custom-user-account-dropdown">个人主页</div></a>
 							<a href="collect.html" title=""><div class="custom-user-account-dropdown">收藏笔记</div></a>
 							<a href="like.html" title=""><div class="custom-user-account-dropdown">喜欢笔记</div></a>
 							<a href="management.html" title=""><div class="custom-user-account-dropdown">管理笔记</div></a>
 							<a href="setting.html" title=""><div class="custom-user-account-dropdown">设置</div></a>
-							<a href="javascript:logout1()" title=""><div class="custom-user-account-logout">退出登陆</div></a>
+							<a href="javascript:logout()" title=""><div class="custom-user-account-logout">退出登陆</div></a>
 						</div><!--user-account-settingss end-->
 					</div>
 				</div><!--header-data end-->
 			</div>
-		</header>	<!--header end-->	
+		</header>	<!--header end-->	 
 
 
-		<section class="cover-sec">
+		<!-- <section class="cover-sec">
 			<img src="https://picsum.photos/id/321/1600/400" alt="">
-		</section>
+			<a href="#" title=""><i class="fa fa-camera"></i> Change Image</a>
+		</section> -->
 
 
 		<main>
@@ -162,16 +162,20 @@
 					<div class="main-section-data">
 						<div class="row">
 							<div class="col-lg-4">
-								<div class="main-left-sidebar no-margin">
-									<div class="user_profile" style="margin-top: -50px">
-										<div class="user-pro-img">
-											<img src="/static/images/resources/user-pro-img.png" alt="">
-										</div><!--user-pro-img end-->
+								<div class="main-left-sidebar">
+									<div class="user-data full-width">
+										<div class="user-profile">
+											<div class="username-dt" style="background-color: #FF6700">
+												<div class="usr-pic">
+													<img src="/static/images/resources/user-pic.png" alt="">
+												</div>
+											</div><!--username-dt end-->
+											<div class="user-specs">
+												<h3>张小明</h3>
+												<!-- <span>Graphic Designer at Self Employed</span> -->
+											</div>
+										</div><!--user-profile end-->
 										<div class="user_pro_status">
-											<ul id="btnFollow" class="flw-hr">
-												<li><a href="#" title="" class="flww">关注</a></li>
-												<!-- <li><a href="#" title="" class="hre">已关注</a></li> -->
-											</ul>
 											<ul class="flw-status">
 												<li>
 													<span>获赞</span>
@@ -188,13 +192,11 @@
 											</ul>
 										</div><!--user_pro_status end-->
 										<ul class="social_links">
-											<li><a href="#" title=""><i class="fa fa-google-plus-square"></i> Http://www.googleplus.com/john...</a></li>
-											<li><a href="#" title=""><i class="fa fa-behance-square"></i> Http://www.behance.com/john...</a></li>
-											<li><a href="#" title=""><i class="fa fa-pinterest"></i> Http://www.pinterest.com/john...</a></li>
-											<li><a href="#" title=""><i class="fa fa-instagram"></i> Http://www.instagram.com/john...</a></li>
-											<li><a href="#" title=""><i class="fa fa-youtube"></i> Http://www.youtube.com/john...</a></li>
-										</ul>
-									</div><!--user_profile end-->
+	                                        <li><a href="#" title=""><i class="la la-globe"></i> www.example.com</a></li>
+	                                        <li><a href="#" title=""><i class="fa fa-github-square"></i>
+	                                            Http://www.GitHub.com/john...</a></li>
+	                                    </ul>
+									</div><!--user-data end-->
                                 	<div class="widget widget-user">
 			                            <h3 class="title-wd">标签</h3>
 			                            <ul class="classification quest-tags1">
@@ -239,7 +241,7 @@
 			                        </div><!--widget-adver end-->
 									<div class="suggestions full-width">
 										<div class="sd-title">
-											<h3>最近访问</h3>
+											<h3>推荐作者</h3>
 											<i id="custom-refresh" class="la la-refresh"></i>
 											<!-- <i class="la la-ellipsis-v"></i> -->
 										</div><!--sd-title end-->
@@ -327,6 +329,24 @@
 														<span style="font-size: 16px;font-weight: 590;">热门</span>
 													</a>
 												</li>
+												<!-- <li data-tab="like-notes">
+													<a href="#" title="">
+														<img src="/static/images/ic5.png" alt="">
+														<span style="font-size: 16px;font-weight: 590;">喜欢</span>
+													</a>
+												</li>
+												<li data-tab="collect-notes">
+													<a href="#" title="">
+														<img src="/static/images/ic6.png" alt="">
+														<span style="font-size: 16px;font-weight: 590;">收藏</span>
+													</a>
+												</li> -->
+												<!-- <li data-tab="info-notes">
+													<a href="#" title="">
+														<img src="/static/images/ic4.png" alt="">
+														<span style="font-size: 16px;font-weight: 590;">Info</span>
+													</a>
+												</li> -->
 											</ul>
 										</div><!-- tab-feed end-->
 									</div><!--user-tab-sec end-->
@@ -341,39 +361,12 @@
 															<span><img src="/static/images/clock.png" alt="">3 min ago</span>
 														</div>
 													</div>
-												</div>
-												
-												<div class="job_descp">
-													<h3><a href="note-detail.html" style="color: black">C语言学习心得</a></h3>
-													<p>c语言作为一种计算机的语言，我们学习它，有助于我们更好的了解计算机，与计算机进行交流，因此，c语言的学习对我们尤其重要... <a href="note-detail.html" title="">view more</a></p>
-													<ul class="skill-tags">
-														<li><a href="#" title="">HTML</a></li>
-														<li><a href="#" title="">PHP</a></li>
-														<li><a href="#" title="">CSS</a></li>
-														<li><a href="#" title="">Javascript</a></li>
-														<li><a href="#" title="">Wordpress</a></li> 	
-													</ul>
-												</div>
-												<div class="job-status-bar">
-													<ul class="like-com">
-														<li>
-															<a href="#"><i class="la la-heart"></i> Like</a>
-															<img src="/static/images/liked-img.png" alt="">
-															<span>25</span>
-														</li> 
-														<li><a href="note-detail.html" title="" class="com"><img src="/static/images/com.png" alt=""> Comment 15</a></li>
-													</ul>
-													<a><i class="la la-eye"></i>Views 50</a>
-												</div>
-											</div><!--post-bar end-->
-											<div class="post-bar">
-												<div class="post_topbar">
-													<div class="usy-dt">
-														<a href="user-homepage.html"><img src="/static/images/resources/us-pic.png" alt=""></a>
-														<div class="usy-name"></a>
-															<h3><a href="user-homepage.html" style="color: black">张小明</h3></a>
-															<span><img src="/static/images/clock.png" alt="">3 min ago</span>
-														</div>
+													<div class="ed-opts">
+														<a href="#" title="" class="ed-opts-open"><i class="la la-ellipsis-v"></i></a>
+														<ul class="ed-options">
+															<li><a href="#" title="">Edit Note</a></li>
+															<li><a href="#" title="">Delete Note</a></li>
+														</ul>
 													</div>
 												</div>
 												
@@ -409,6 +402,13 @@
 															<span><img src="/static/images/clock.png" alt="">3 min ago</span>
 														</div>
 													</div>
+													<div class="ed-opts">
+														<a href="#" title="" class="ed-opts-open"><i class="la la-ellipsis-v"></i></a>
+														<ul class="ed-options">
+															<li><a href="#" title="">Edit Note</a></li>
+															<li><a href="#" title="">Delete Note</a></li>
+														</ul>
+													</div>
 												</div>
 												
 												<div class="job_descp">
@@ -442,6 +442,54 @@
 															<h3><a href="user-homepage.html" style="color: black">张小明</h3></a>
 															<span><img src="/static/images/clock.png" alt="">3 min ago</span>
 														</div>
+													</div>
+													<div class="ed-opts">
+														<a href="#" title="" class="ed-opts-open"><i class="la la-ellipsis-v"></i></a>
+														<ul class="ed-options">
+															<li><a href="#" title="">Edit Note</a></li>
+															<li><a href="#" title="">Delete Note</a></li>
+														</ul>
+													</div>
+												</div>
+												
+												<div class="job_descp">
+													<h3><a href="note-detail.html" style="color: black">C语言学习心得</a></h3>
+													<p>c语言作为一种计算机的语言，我们学习它，有助于我们更好的了解计算机，与计算机进行交流，因此，c语言的学习对我们尤其重要... <a href="note-detail.html" title="">view more</a></p>
+													<ul class="skill-tags">
+														<li><a href="#" title="">HTML</a></li>
+														<li><a href="#" title="">PHP</a></li>
+														<li><a href="#" title="">CSS</a></li>
+														<li><a href="#" title="">Javascript</a></li>
+														<li><a href="#" title="">Wordpress</a></li> 	
+													</ul>
+												</div>
+												<div class="job-status-bar">
+													<ul class="like-com">
+														<li>
+															<a href="#"><i class="la la-heart"></i> Like</a>
+															<img src="/static/images/liked-img.png" alt="">
+															<span>25</span>
+														</li> 
+														<li><a href="note-detail.html" title="" class="com"><img src="/static/images/com.png" alt=""> Comment 15</a></li>
+													</ul>
+													<a><i class="la la-eye"></i>Views 50</a>
+												</div>
+											</div><!--post-bar end-->
+											<div class="post-bar">
+												<div class="post_topbar">
+													<div class="usy-dt">
+														<a href="user-homepage.html"><img src="/static/images/resources/us-pic.png" alt=""></a>
+														<div class="usy-name"></a>
+															<h3><a href="user-homepage.html" style="color: black">张小明</h3></a>
+															<span><img src="/static/images/clock.png" alt="">3 min ago</span>
+														</div>
+													</div>
+													<div class="ed-opts">
+														<a href="#" title="" class="ed-opts-open"><i class="la la-ellipsis-v"></i></a>
+														<ul class="ed-options">
+															<li><a href="#" title="">Edit Note</a></li>
+															<li><a href="#" title="">Delete Note</a></li>
+														</ul>
 													</div>
 												</div>
 												
@@ -484,39 +532,12 @@
 															<span><img src="/static/images/clock.png" alt="">3 min ago</span>
 														</div>
 													</div>
-												</div>
-												
-												<div class="job_descp">
-													<h3><a href="note-detail.html" style="color: black">C语言学习心得</a></h3>
-													<p>c语言作为一种计算机的语言，我们学习它，有助于我们更好的了解计算机，与计算机进行交流，因此，c语言的学习对我们尤其重要... <a href="note-detail.html" title="">view more</a></p>
-													<ul class="skill-tags">
-														<li><a href="#" title="">HTML</a></li>
-														<li><a href="#" title="">PHP</a></li>
-														<li><a href="#" title="">CSS</a></li>
-														<li><a href="#" title="">Javascript</a></li>
-														<li><a href="#" title="">Wordpress</a></li> 	
-													</ul>
-												</div>
-												<div class="job-status-bar">
-													<ul class="like-com">
-														<li>
-															<a href="#"><i class="la la-heart"></i> Like</a>
-															<img src="/static/images/liked-img.png" alt="">
-															<span>25</span>
-														</li> 
-														<li><a href="note-detail.html" title="" class="com"><img src="/static/images/com.png" alt=""> Comment 15</a></li>
-													</ul>
-													<a><i class="la la-eye"></i>Views 50</a>
-												</div>
-											</div><!--post-bar end-->
-											<div class="post-bar">
-												<div class="post_topbar">
-													<div class="usy-dt">
-														<a href="user-homepage.html"><img src="/static/images/resources/us-pic.png" alt=""></a>
-														<div class="usy-name"></a>
-															<h3><a href="user-homepage.html" style="color: black">张小明</h3></a>
-															<span><img src="/static/images/clock.png" alt="">3 min ago</span>
-														</div>
+													<div class="ed-opts">
+														<a href="#" title="" class="ed-opts-open"><i class="la la-ellipsis-v"></i></a>
+														<ul class="ed-options">
+															<li><a href="#" title="">Edit Note</a></li>
+															<li><a href="#" title="">Delete Note</a></li>
+														</ul>
 													</div>
 												</div>
 												
@@ -552,6 +573,13 @@
 															<span><img src="/static/images/clock.png" alt="">3 min ago</span>
 														</div>
 													</div>
+													<div class="ed-opts">
+														<a href="#" title="" class="ed-opts-open"><i class="la la-ellipsis-v"></i></a>
+														<ul class="ed-options">
+															<li><a href="#" title="">Edit Note</a></li>
+															<li><a href="#" title="">Delete Note</a></li>
+														</ul>
+													</div>
 												</div>
 												
 												<div class="job_descp">
@@ -585,6 +613,54 @@
 															<h3><a href="user-homepage.html" style="color: black">张小明</h3></a>
 															<span><img src="/static/images/clock.png" alt="">3 min ago</span>
 														</div>
+													</div>
+													<div class="ed-opts">
+														<a href="#" title="" class="ed-opts-open"><i class="la la-ellipsis-v"></i></a>
+														<ul class="ed-options">
+															<li><a href="#" title="">Edit Note</a></li>
+															<li><a href="#" title="">Delete Note</a></li>
+														</ul>
+													</div>
+												</div>
+												
+												<div class="job_descp">
+													<h3><a href="note-detail.html" style="color: black">C语言学习心得</a></h3>
+													<p>c语言作为一种计算机的语言，我们学习它，有助于我们更好的了解计算机，与计算机进行交流，因此，c语言的学习对我们尤其重要... <a href="note-detail.html" title="">view more</a></p>
+													<ul class="skill-tags">
+														<li><a href="#" title="">HTML</a></li>
+														<li><a href="#" title="">PHP</a></li>
+														<li><a href="#" title="">CSS</a></li>
+														<li><a href="#" title="">Javascript</a></li>
+														<li><a href="#" title="">Wordpress</a></li> 	
+													</ul>
+												</div>
+												<div class="job-status-bar">
+													<ul class="like-com">
+														<li>
+															<a href="#"><i class="la la-heart"></i> Like</a>
+															<img src="/static/images/liked-img.png" alt="">
+															<span>25</span>
+														</li> 
+														<li><a href="note-detail.html" title="" class="com"><img src="/static/images/com.png" alt=""> Comment 15</a></li>
+													</ul>
+													<a><i class="la la-eye"></i>Views 50</a>
+												</div>
+											</div><!--post-bar end-->
+											<div class="post-bar">
+												<div class="post_topbar">
+													<div class="usy-dt">
+														<a href="user-homepage.html"><img src="/static/images/resources/us-pic.png" alt=""></a>
+														<div class="usy-name"></a>
+															<h3><a href="user-homepage.html" style="color: black">张小明</h3></a>
+															<span><img src="/static/images/clock.png" alt="">3 min ago</span>
+														</div>
+													</div>
+													<div class="ed-opts">
+														<a href="#" title="" class="ed-opts-open"><i class="la la-ellipsis-v"></i></a>
+														<ul class="ed-options">
+															<li><a href="#" title="">Edit Note</a></li>
+															<li><a href="#" title="">Delete Note</a></li>
+														</ul>
 													</div>
 												</div>
 												
@@ -616,6 +692,323 @@
 											</div><!--process-comm end-->
 										</div><!--posts-section end-->
 									</div><!--product-feed-tab end-->
+									<!-- <div class="product-feed-tab" id="like-notes">
+										<div class="posts-section">
+											<div class="post-bar">
+												<div class="post_topbar">
+													<div class="usy-dt">
+														<img src="/static/images/resources/us-pic.png" alt="">
+														<div class="usy-name">
+															<h3>张小明</h3>
+															<span><img src="/static/images/clock.png" alt="">3 min ago</span>
+														</div>
+													</div>
+												</div>
+												<div class="job_descp">
+													<h3>我是标题</h3>
+													<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam luctus hendrerit metus, ut ullamcorper quam finibus at. Etiam id magna sit amet... <a href="#" title="">view more</a></p>
+													<ul class="skill-tags">
+														<li><a href="#" title="">HTML</a></li>
+														<li><a href="#" title="">PHP</a></li>
+														<li><a href="#" title="">CSS</a></li>
+														<li><a href="#" title="">Javascript</a></li>
+														<li><a href="#" title="">Wordpress</a></li> 	
+													</ul>
+												</div>
+												<div class="job-status-bar">
+													<ul class="like-com">
+														<li>
+															<a href="#"><i class="la la-heart"></i> Like</a>
+															<img src="/static/images/liked-img.png" alt="">
+															<span>25</span>
+														</li> 
+														<li><a href="#" title="" class="com"><img src="/static/images/com.png" alt=""> Comment 15</a></li>
+													</ul>
+													<a><i class="la la-eye"></i>Views 50</a>
+												</div>
+											</div>
+											<div class="post-bar">
+												<div class="post_topbar">
+													<div class="usy-dt">
+														<img src="/static/images/resources/us-pic.png" alt="">
+														<div class="usy-name">
+															<h3>张小明</h3>
+															<span><img src="/static/images/clock.png" alt="">3 min ago</span>
+														</div>
+													</div>
+												</div>
+												<div class="job_descp">
+													<h3>我是标题</h3>
+													<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam luctus hendrerit metus, ut ullamcorper quam finibus at. Etiam id magna sit amet... <a href="#" title="">view more</a></p>
+													<ul class="skill-tags">
+														<li><a href="#" title="">HTML</a></li>
+														<li><a href="#" title="">PHP</a></li>
+														<li><a href="#" title="">CSS</a></li>
+														<li><a href="#" title="">Javascript</a></li>
+														<li><a href="#" title="">Wordpress</a></li> 	
+													</ul>
+												</div>
+												<div class="job-status-bar">
+													<ul class="like-com">
+														<li>
+															<a href="#"><i class="la la-heart"></i> Like</a>
+															<img src="/static/images/liked-img.png" alt="">
+															<span>25</span>
+														</li> 
+														<li><a href="#" title="" class="com"><img src="/static/images/com.png" alt=""> Comment 15</a></li>
+													</ul>
+													<a><i class="la la-eye"></i>Views 50</a>
+												</div>
+											</div>
+											<div class="post-bar">
+												<div class="post_topbar">
+													<div class="usy-dt">
+														<img src="/static/images/resources/us-pic.png" alt="">
+														<div class="usy-name">
+															<h3>张小明</h3>
+															<span><img src="/static/images/clock.png" alt="">3 min ago</span>
+														</div>
+													</div>
+												</div>
+												<div class="job_descp">
+													<h3>我是标题</h3>
+													<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam luctus hendrerit metus, ut ullamcorper quam finibus at. Etiam id magna sit amet... <a href="#" title="">view more</a></p>
+													<ul class="skill-tags">
+														<li><a href="#" title="">HTML</a></li>
+														<li><a href="#" title="">PHP</a></li>
+														<li><a href="#" title="">CSS</a></li>
+														<li><a href="#" title="">Javascript</a></li>
+														<li><a href="#" title="">Wordpress</a></li> 	
+													</ul>
+												</div>
+												<div class="job-status-bar">
+													<ul class="like-com">
+														<li>
+															<a href="#"><i class="la la-heart"></i> Like</a>
+															<img src="/static/images/liked-img.png" alt="">
+															<span>25</span>
+														</li> 
+														<li><a href="#" title="" class="com"><img src="/static/images/com.png" alt=""> Comment 15</a></li>
+													</ul>
+													<a><i class="la la-eye"></i>Views 50</a>
+												</div>
+											</div>
+											<div class="post-bar">
+												<div class="post_topbar">
+													<div class="usy-dt">
+														<img src="/static/images/resources/us-pic.png" alt="">
+														<div class="usy-name">
+															<h3>张小明</h3>
+															<span><img src="/static/images/clock.png" alt="">3 min ago</span>
+														</div>
+													</div>
+												</div>
+												<div class="job_descp">
+													<h3>我是标题</h3>
+													<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam luctus hendrerit metus, ut ullamcorper quam finibus at. Etiam id magna sit amet... <a href="#" title="">view more</a></p>
+													<ul class="skill-tags">
+														<li><a href="#" title="">HTML</a></li>
+														<li><a href="#" title="">PHP</a></li>
+														<li><a href="#" title="">CSS</a></li>
+														<li><a href="#" title="">Javascript</a></li>
+														<li><a href="#" title="">Wordpress</a></li> 	
+													</ul>
+												</div>
+												<div class="job-status-bar">
+													<ul class="like-com">
+														<li>
+															<a href="#"><i class="la la-heart"></i> Like</a>
+															<img src="/static/images/liked-img.png" alt="">
+															<span>25</span>
+														</li> 
+														<li><a href="#" title="" class="com"><img src="/static/images/com.png" alt=""> Comment 15</a></li>
+													</ul>
+													<a><i class="la la-eye"></i>Views 50</a>
+												</div>
+											</div>
+											<div class="process-comm">
+												<a href="#" title=""><img src="/static/images/process-icon.png" alt=""></a>
+											</div>
+										</div>
+									</div>
+									<div class="product-feed-tab" id="collect-notes">
+										<div class="posts-section">
+											<div class="post-bar">
+												<div class="post_topbar">
+													<div class="usy-dt">
+														<img src="/static/images/resources/us-pic.png" alt="">
+														<div class="usy-name">
+															<h3>张小明</h3>
+															<span><img src="/static/images/clock.png" alt="">3 min ago</span>
+														</div>
+													</div>
+												</div>
+												<div class="job_descp">
+													<h3>我是标题</h3>
+													<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam luctus hendrerit metus, ut ullamcorper quam finibus at. Etiam id magna sit amet... <a href="#" title="">view more</a></p>
+													<ul class="skill-tags">
+														<li><a href="#" title="">HTML</a></li>
+														<li><a href="#" title="">PHP</a></li>
+														<li><a href="#" title="">CSS</a></li>
+														<li><a href="#" title="">Javascript</a></li>
+														<li><a href="#" title="">Wordpress</a></li> 	
+													</ul>
+												</div>
+												<div class="job-status-bar">
+													<ul class="like-com">
+														<li>
+															<a href="#"><i class="la la-heart"></i> Like</a>
+															<img src="/static/images/liked-img.png" alt="">
+															<span>25</span>
+														</li> 
+														<li><a href="#" title="" class="com"><img src="/static/images/com.png" alt=""> Comment 15</a></li>
+													</ul>
+													<a><i class="la la-eye"></i>Views 50</a>
+												</div>
+											</div>
+											<div class="post-bar">
+												<div class="post_topbar">
+													<div class="usy-dt">
+														<img src="/static/images/resources/us-pic.png" alt="">
+														<div class="usy-name">
+															<h3>张小明</h3>
+															<span><img src="/static/images/clock.png" alt="">3 min ago</span>
+														</div>
+													</div>
+												</div>
+												<div class="job_descp">
+													<h3>我是标题</h3>
+													<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam luctus hendrerit metus, ut ullamcorper quam finibus at. Etiam id magna sit amet... <a href="#" title="">view more</a></p>
+													<ul class="skill-tags">
+														<li><a href="#" title="">HTML</a></li>
+														<li><a href="#" title="">PHP</a></li>
+														<li><a href="#" title="">CSS</a></li>
+														<li><a href="#" title="">Javascript</a></li>
+														<li><a href="#" title="">Wordpress</a></li> 	
+													</ul>
+												</div>
+												<div class="job-status-bar">
+													<ul class="like-com">
+														<li>
+															<a href="#"><i class="la la-heart"></i> Like</a>
+															<img src="/static/images/liked-img.png" alt="">
+															<span>25</span>
+														</li> 
+														<li><a href="#" title="" class="com"><img src="/static/images/com.png" alt=""> Comment 15</a></li>
+													</ul>
+													<a><i class="la la-eye"></i>Views 50</a>
+												</div>
+											</div>
+											<div class="post-bar">
+												<div class="post_topbar">
+													<div class="usy-dt">
+														<img src="/static/images/resources/us-pic.png" alt="">
+														<div class="usy-name">
+															<h3>张小明</h3>
+															<span><img src="/static/images/clock.png" alt="">3 min ago</span>
+														</div>
+													</div>
+												</div>
+												<div class="job_descp">
+													<h3>我是标题</h3>
+													<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam luctus hendrerit metus, ut ullamcorper quam finibus at. Etiam id magna sit amet... <a href="#" title="">view more</a></p>
+													<ul class="skill-tags">
+														<li><a href="#" title="">HTML</a></li>
+														<li><a href="#" title="">PHP</a></li>
+														<li><a href="#" title="">CSS</a></li>
+														<li><a href="#" title="">Javascript</a></li>
+														<li><a href="#" title="">Wordpress</a></li> 	
+													</ul>
+												</div>
+												<div class="job-status-bar">
+													<ul class="like-com">
+														<li>
+															<a href="#"><i class="la la-heart"></i> Like</a>
+															<img src="/static/images/liked-img.png" alt="">
+															<span>25</span>
+														</li> 
+														<li><a href="#" title="" class="com"><img src="/static/images/com.png" alt=""> Comment 15</a></li>
+													</ul>
+													<a><i class="la la-eye"></i>Views 50</a>
+												</div>
+											</div>
+											<div class="post-bar">
+												<div class="post_topbar">
+													<div class="usy-dt">
+														<img src="/static/images/resources/us-pic.png" alt="">
+														<div class="usy-name">
+															<h3>张小明</h3>
+															<span><img src="/static/images/clock.png" alt="">3 min ago</span>
+														</div>
+													</div>
+												</div>
+												<div class="job_descp">
+													<h3>我是标题</h3>
+													<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam luctus hendrerit metus, ut ullamcorper quam finibus at. Etiam id magna sit amet... <a href="#" title="">view more</a></p>
+													<ul class="skill-tags">
+														<li><a href="#" title="">HTML</a></li>
+														<li><a href="#" title="">PHP</a></li>
+														<li><a href="#" title="">CSS</a></li>
+														<li><a href="#" title="">Javascript</a></li>
+														<li><a href="#" title="">Wordpress</a></li> 	
+													</ul>
+												</div>
+												<div class="job-status-bar">
+													<ul class="like-com">
+														<li>
+															<a href="#"><i class="la la-heart"></i> Like</a>
+															<img src="/static/images/liked-img.png" alt="">
+															<span>25</span>
+														</li> 
+														<li><a href="#" title="" class="com"><img src="/static/images/com.png" alt=""> Comment 15</a></li>
+													</ul>
+													<a><i class="la la-eye"></i>Views 50</a>
+												</div>
+											</div>
+											<div class="process-comm">
+												<a href="#" title=""><img src="/static/images/process-icon.png" alt=""></a>
+											</div>
+										</div>
+									</div> -->
+									<!-- <div class="product-feed-tab" id="info-notes">
+										<div class="user-profile-ov">
+											<h3><a href="#" title="" class="overview-open">Overview</a> <a href="#" title="" class="overview-open"><i class="fa fa-pencil"></i></a></h3>
+											<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque tempor aliquam felis, nec condimentum ipsum commodo id. Vivamus sit amet augue nec urna efficitur tincidunt. Vivamus consectetur aliquam lectus commodo viverra. Nunc eu augue nec arcu efficitur faucibus. Aliquam accumsan ac magna convallis bibendum. Quisque laoreet augue eget augue fermentum scelerisque. Vivamus dignissim mollis est dictum blandit. Nam porta auctor neque sed congue. Nullam rutrum eget ex at maximus. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec eget vestibulum lorem.</p>
+										</div>
+										<div class="user-profile-ov st2">
+											<h3><a href="#" title="" class="exp-bx-open">Experience </a><a href="#" title="" class="exp-bx-open"><i class="fa fa-pencil"></i></a> <a href="#" title="" class="exp-bx-open"><i class="fa fa-plus-square"></i></a></h3>
+											<h4>Web designer <a href="#" title=""><i class="fa fa-pencil"></i></a></h4>
+											<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque tempor aliquam felis, nec condimentum ipsum commodo id. Vivamus sit amet augue nec urna efficitur tincidunt. Vivamus consectetur aliquam lectus commodo viverra. </p>
+											<h4>UI / UX Designer <a href="#" title=""><i class="fa fa-pencil"></i></a></h4>
+											<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque tempor aliquam felis, nec condimentum ipsum commodo id.</p>
+											<h4>PHP developer <a href="#" title=""><i class="fa fa-pencil"></i></a></h4>
+											<p class="no-margin">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque tempor aliquam felis, nec condimentum ipsum commodo id. Vivamus sit amet augue nec urna efficitur tincidunt. Vivamus consectetur aliquam lectus commodo viverra. </p>
+										</div>
+										<div class="user-profile-ov">
+											<h3><a href="#" title="" class="ed-box-open">Education</a> <a href="#" title="" class="ed-box-open"><i class="fa fa-pencil"></i></a> <a href="#" title=""><i class="fa fa-plus-square"></i></a></h3>
+											<h4>Master of Computer Science</h4>
+											<span>2015 - 2017</span>
+											<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque tempor aliquam felis, nec condimentum ipsum commodo id. Vivamus sit amet augue nec urna efficitur tincidunt. Vivamus consectetur aliquam lectus commodo viverra. </p>
+										</div>
+										<div class="user-profile-ov">
+											<h3><a href="#" title="" class="lct-box-open">Location</a> <a href="#" title="" class="lct-box-open"><i class="fa fa-pencil"></i></a> <a href="#" title=""><i class="fa fa-plus-square"></i></a></h3>
+											<h4>India</h4>
+											<p>151/4 BT Chownk, Delhi </p>
+										</div>
+										<div class="user-profile-ov">
+											<h3><a href="#" title="" class="skills-open">Skills</a> <a href="#" title="" class="skills-open"><i class="fa fa-pencil"></i></a> <a href="#"><i class="fa fa-plus-square"></i></a></h3>
+											<ul>
+												<li><a href="#" title="">HTML</a></li>
+												<li><a href="#" title="">PHP</a></li>
+												<li><a href="#" title="">CSS</a></li>
+												<li><a href="#" title="">Javascript</a></li>
+												<li><a href="#" title="">Wordpress</a></li>
+												<li><a href="#" title="">Photoshop</a></li>
+												<li><a href="#" title="">Illustrator</a></li>
+												<li><a href="#" title="">Corel Draw</a></li>
+											</ul>
+										</div>
+									</div> -->
 								</div><!--main-ws-sec end-->
 							</div>
 							
@@ -789,13 +1182,6 @@
     function logout(){
         localStorage.clear();
         window.location.href = "sign-in.html";
-    }
-    function logout1(){
-        localStorage.clear();
-        $("#navUserInfo").hide();
-        $("#navUserInfoDropdown").hide();
-        $("#btnFollow").hide();
-        $("#navUserLogin").show();
     }
 	//更新本地token
     function updateLocalToken(param){
