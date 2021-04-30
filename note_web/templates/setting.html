@@ -42,8 +42,8 @@
                 dataType: "json",
                 success: function(data){
                     resultData = data.status;
-                    if(resultData == "TOKEN_EXPIRED"){
-                        alert("请重新登录！");
+                    if(resultData == "TOKEN_EXPIRED" || resultData == "USER_NOT_LOGIN"){
+                        alert("请登录！");
                         logout();
                         return;    
                     }else if(resultData == "SUCCESS"){

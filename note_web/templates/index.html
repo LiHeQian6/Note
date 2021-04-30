@@ -29,6 +29,7 @@
 		localStorage = window.localStorage;
         header1 = localStorage.getItem("Access-control-expose-headers");
         header2 = localStorage.getItem("Authorization");
+        
 		//用户信息展示
         if(header1 != null && header2 != null){
             var resultData;
@@ -43,8 +44,8 @@
                 dataType: "json",
 				success: function(data){
                     resultData = data.status;
-                    if(resultData == "TOKEN_EXPIRED"){
-                        alert("请重新登录！");
+                    if(resultData == "TOKEN_EXPIRED" || resultData == "USER_NOT_LOGIN"){
+                        alert("请登录！");
                         logout();
                         return;    
                     }else if(resultData == "SUCCESS"){
