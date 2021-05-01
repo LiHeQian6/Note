@@ -62,9 +62,8 @@
                     console.log(data);
                 }
             });
-        }else{
-        	//关注按钮隐藏
-            $("#btnFollow").hide();
+            //关注按钮隐藏
+            $("#btnFollow").show();
         }
 	}
 </script>
@@ -168,7 +167,7 @@
 											<img src="/static/images/resources/user-pro-img.png" alt="">
 										</div><!--user-pro-img end-->
 										<div class="user_pro_status">
-											<ul id="btnFollow" class="flw-hr">
+											<ul id="btnFollow" class="flw-hr" style="display: none;">
 												<li><a href="#" title="" class="flww">关注</a></li>
 												<!-- <li><a href="#" title="" class="hre">已关注</a></li> -->
 											</ul>
@@ -188,11 +187,7 @@
 											</ul>
 										</div><!--user_pro_status end-->
 										<ul class="social_links">
-											<li><a href="#" title=""><i class="fa fa-google-plus-square"></i> Http://www.googleplus.com/john...</a></li>
-											<li><a href="#" title=""><i class="fa fa-behance-square"></i> Http://www.behance.com/john...</a></li>
-											<li><a href="#" title=""><i class="fa fa-pinterest"></i> Http://www.pinterest.com/john...</a></li>
-											<li><a href="#" title=""><i class="fa fa-instagram"></i> Http://www.instagram.com/john...</a></li>
-											<li><a href="#" title=""><i class="fa fa-youtube"></i> Http://www.youtube.com/john...</a></li>
+											<li><a href="#" title=""><i class="fa fa-github-square"></i>Http://www.GitHub.com/john...</a></li>
 										</ul>
 									</div><!--user_profile end-->
                                 	<div class="widget widget-user">
@@ -303,15 +298,18 @@
 								<div class="main-ws-sec">
 									<div class="user-tab-sec">
 										<h3>张小明</h3>
-										<div class="star-descp">
-											<span>个人简介：</span>
-											<ul>
+										<div class="star-descp" style="margin-top: 15px;margin-bottom: 50px">
+											<p style="float: left;color: #686868;">
+												<span style="font-size: 18px;font-weight: 600;margin-right: 0px">个人简介：</span>
+												<span style="font-size: 14px;font-weight: 600;margin-right: 0px">大家好我是练习时长两年半的个人练习生，擅长唱跳rap篮球</span>
+											</p>
+											<!-- <ul>
 												<li><i class="fa fa-star"></i></li>
 												<li><i class="fa fa-star"></i></li>
 												<li><i class="fa fa-star"></i></li>
 												<li><i class="fa fa-star"></i></li>
 												<li><i class="fa fa-star-half-o"></i></li>
-											</ul>
+											</ul> -->
 										</div><!--star-descp end-->
 										<div class="tab-feed st2" style="margin-bottom: 25px">
 											<ul>
@@ -794,8 +792,8 @@
         localStorage.clear();
         $("#navUserInfo").hide();
         $("#navUserInfoDropdown").hide();
-        $("#btnFollow").hide();
         $("#navUserLogin").show();
+        $("#btnFollow").hide();
     }
 	//更新本地token
     function updateLocalToken(param){

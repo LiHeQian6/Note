@@ -157,15 +157,11 @@
                       noteFlag:[]
                   },
                   methods:{
-                    change: function (message) {
-                        if(this.noteFlag[message] == 1){
-                            var customerId1 = "#noteItemContent"+message;
-                            var customerId2 = "noteItemDivContent"+message;
-                            console.log(customerId1);
-                            console.log(customerId2);
-                            console.log(this.notes[message].content);
-                            $(customerId1).val(this.notes[message].content);
-                            console.log($(customerId1).val());
+                    change: function (index) {
+                        if(this.noteFlag[index] == 1){
+                            var customerId1 = "#noteItemContent"+index;
+                            var customerId2 = "noteItemDivContent"+index;
+                            $(customerId1).val(this.notes[index].content);
                             editormd.markdownToHTML(customerId2, {
                                 htmlDecode: "style,script,iframe", //可以过滤标签解码
                                 emoji: true,
@@ -173,8 +169,44 @@
                                 tex: true  // 默认不解析
                             });
 
-                            this.noteFlag[message] = 0;
+                            this.noteFlag[index] = 0;
                         }
+                    },
+                    editNote: function (noteId){
+                        localStorage.setItem("NoteId", noteId);
+                        window.location.href = "edit-note.html";
+                    },
+                    deleteNote: function (index){
+                        var deleteNoteUrl = "/note/"+index;
+                        $.ajax({
+                            type: "DELETE",
+                            url: deleteNoteUrl,
+                            headers: {
+                               "Access-control-expose-headers": header1,
+                               "Authorization": header2
+                            },
+                            contentType: "application/json;charset=UTF-8",
+                            data: {},
+                            dataType: "json",
+                            success: function(data){
+                                resultData = data.status;
+                                if(resultData == "SUCCESS"){
+                                    var noteListItemId = "#noteListItem"+index;
+                                    console.log("noteListItemId");
+                                    $(noteListItemId).hide();
+                                    console.log("删除成功！");
+                                    return;
+                                }
+                                console.log(resultData);
+                            },
+                            complete: function(xhr,data){
+                                if(resultData == "SUCCESS" && data == "success"){
+                                    updateLocalToken(xhr);
+                                    return;
+                                } 
+                                console.log(data);
+                            }
+                        });
                     }
                   }
             });
@@ -347,9 +379,8 @@
                                 <a class="nav-item nav-link" id="nav-requests-tab" data-toggle="tab"
                                    href="#nav-requests" role="tab" aria-controls="nav-requests" aria-selected="false">
                                     <i class="fa fa-book"></i>笔记管理</a>
-                                <a class="nav-item nav-link" id="nav-status-tab" data-toggle="tab" href="#nav-status"
-                                   role="tab" aria-controls="nav-status" aria-selected="false">
-                                    <i class="fa fa-line-chart"></i>统计</a>
+                                
+                                
                             </div>
                         </div><!--acc-leftbar end-->
                     </div>
@@ -357,9 +388,11 @@
                 <div class="row">
                     <div class="col-12">
                         <div class="tab-content" id="nav-tabContent">
+                            
                             <div class="tab-pane fade show active" id="nav-deactivate" role="tabpanel" aria-labelledby="nav-deactivate-tab">
                                 <div class="acc-setting">
                                     <form>
+                                        <!-- <button id="btnChange" class="btn btn-primary" type="button">提取</button> -->
                                         <div class="cp-field">
                                             <h5>标题</h5>
                                             <div class="cpp-fiel">
@@ -406,7 +439,8 @@
                                             </div>
                                         </div>
                                         <div id="test-editormd">
-                                            <textarea id="noteContent" style="display:none;">[TOC]
+                                            <textarea id="noteContent" style="display:none;">
+[TOC]
 
 #### Disabled options
 
@@ -455,7 +489,7 @@
                             </div>
                             <div class="tab-pane fade" id="nav-requests" role="tabpanel" aria-labelledby="nav-requests-tab">
                                 <div class="acc-setting">
-                                    <div class="cp-field">
+                                    <div class="cp-field" style="margin-bottom: 20px">
                                         <div class="cpp-fiel row">
                                             <input id="textNoteTitle" style="position: relative;" class="form-control" type="text" name="title" placeholder="输入笔记标题进行查询！">
                                             <button id="btnSelectByTitle" type="button" class="btn btn-primary" style="position: absolute;top: 0px;right: 0px;font-size: 16px;font-weight: 600">
@@ -464,7 +498,7 @@
                                         </div>
                                     </div>
                                     <div id="noteList" class="requests-list">
-                                        <div v-for="site,noteIndex in notes" class="request-details">
+                                        <div v-for="site,noteIndex in notes" v-bind:id="'noteListItem'+noteIndex" class="request-details">
                                             <div v-on:click="change(noteIndex)" class="request-info" style="width: 80%;" data-toggle="collapse" v-bind:href="'#noteItemDivContent'+noteIndex">
                                                 <h2 style="font-size: 15px;font-weight: 600;margin-bottom: 10px">{{site.title}}</h2>
                                                 <span>{{site.createTime}}</span>
@@ -472,14 +506,14 @@
                                             <div class="accept-feat" style="width:20%;">
                                                 <ul style="float: right;">
                                                     <li>
-                                                        <button type="button" class="btn btn-primary accept-req">编辑</button>
+                                                        <button id="btnEditNote" v-on:click="editNote(site.id)" type="button" class="btn btn-primary accept-req">编辑</button>
                                                     </li>
                                                     <li>
-                                                        <button type="button" class="close-req"><i class="la la-close"></i></button>
+                                                        <button id="btnDeleteNote" v-on:click="deleteNote(noteIndex)" type="button" class="close-req"><i class="la la-close"></i></button>
                                                     </li>
                                                 </ul>
                                             </div><!--accept-feat end-->
-                                            <div v-bind:id="'noteItemDivContent'+noteIndex" style="float: left;height: 350px" class="collapse pre-scrollable">
+                                            <div v-bind:id="'noteItemDivContent'+noteIndex" style="float: left;" class="collapse pre-scrollable">
                                                 <div class="personal-mybuluo-head">
                                                     <div class="personal-mybuluo-wording" style="font-weight: 600">笔记正文</div>
                                                     <div class="personal-border jmu-border-1px border-bottom"></div>
@@ -490,42 +524,6 @@
                                         </div><!--request-detailse end-->
                                         <div id="pages_1" class="request-details"></div>
                                     </div><!--requests-list end-->
-                                </div><!--acc-setting end-->
-                            </div>
-                            <div class="tab-pane fade" id="nav-status" role="tabpanel" aria-labelledby="nav-status-tab">
-                                <div class="acc-setting">
-                                    <h3>流量统计</h3>
-                                    <div class="profile-bx-details">
-                                        <div class="row">
-                                            <div class="widget widget-feat">
-                                                <ul>
-                                                    <li class="col-lg-3 col-md-6 col-sm-12">
-                                                        <h2 class="h3">获赞</h2>
-                                                        <i class="fa fa-heart"></i>
-                                                        <span>1185</span>
-                                                    </li>
-                                                    <li>
-                                                        <h2 class="h3">评论</h2>
-                                                        <i class="fa fa-comment"></i>
-                                                        <span>1165</span>
-                                                    </li>
-                                                    <li>
-                                                        <h2 class="h3">分享</h2>
-                                                        <i class="fa fa-share-alt"></i>
-                                                        <span>1120</span>
-                                                    </li>
-                                                    <li>
-                                                        <h2 class="h3">浏览</h2>
-                                                        <i class="fa fa-eye"></i>
-                                                        <span>1009</span>
-                                                    </li>
-                                                </ul>
-                                            </div><!--widget-feat end-->
-                                        </div>
-                                    </div><!--profile-bx-details end-->
-                                    <div class="pro-work-status">
-                                        <!-- <h4>Work Status  -  Last Months Working Status</h4> -->
-                                    </div><!--pro-work-status end-->
                                 </div><!--acc-setting end-->
                             </div>
                         </div>
@@ -547,13 +545,13 @@
         </div>
     </div><!--chatbox-list end-->
 
-<footer class="myfooter">
-    <div class="footy-sec mn no-margin">
-        <div class="container text-center">
-            <p style="float: none;"><span><img style="float: none;" src="/static/images/copy-icon2.png" alt="">Copyright 2020 本归尘博客系统由游马版权所有</span></p>
+    <footer class="myfooter">
+        <div class="footy-sec mn no-margin">
+            <div class="container text-center">
+                <p style="float: none;"><span><img style="float: none;" src="/static/images/copy-icon2.png" alt="">Copyright 2020 本归尘博客系统由游马版权所有</span></p>
+            </div>
         </div>
-    </div>
-</footer>
+    </footer>
 
 
 <script src="http://code.jquery.com/jquery-1.10.2.min.js"></script>
@@ -570,6 +568,13 @@
 <script src="https://cdn.staticfile.org/vue-resource/1.5.1/vue-resource.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/tarekraafat-autocomplete.js/9.0.3/js/autoComplete.min.js"></script>
 <script type="text/javascript">
+    $("#btnChange").click(function(){
+        var data = $("#noteContent").val();
+        data = data.replace(/#*.*#/g, '').replace(/[^a-z0-9\u4e00-\u9fa5]/, '').replace(/[\r\n]/g, "").replace(/\s+/g, ""); // .substring(0, 200)
+
+        console.log(data);
+    });
+
     var tagArray = [];
 
     //标签输入框提示
