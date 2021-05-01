@@ -29,14 +29,15 @@
             localStorage = window.localStorage;
             header1 = localStorage.getItem("Access-control-expose-headers");
             header2 = localStorage.getItem("Authorization");
-            noteId = localStorage.getItem("NoteId");
+            noteId = GetQueryString("noteId");
+            
+            if(noteId == null){
+                window.location.href = "index.html";
+                return;
+            }
             
             //用户信息展示
             if(header1 != null && header2 != null){
-                if(noteId == null){
-                    alert("非法访问！");
-                    window.location.href = "index.html";
-                }
                 var resultData;
                 $.ajax({
                     type: "GET",
@@ -50,7 +51,6 @@
                     success: function(data){
                         resultData = data.status;
                         if(resultData == "TOKEN_EXPIRED" || resultData == "USER_NOT_LOGIN"){
-                            alert("请登录！");
                             logout();
                             return;    
                         }else if(resultData == "SUCCESS"){
@@ -256,6 +256,16 @@
     function updateLocalToken(param){
         localStorage.setItem("Access-control-expose-headers", param.getResponseHeader("Access-control-expose-headers"));
         localStorage.setItem("Authorization", param.getResponseHeader("Authorization"));
+    }
+
+    //获取参数
+    function GetQueryString(name) { 
+        var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)","i"); 
+        var r = window.location.search.substr(1).match(reg); 
+        if (r!=null){
+            return (r[2]); 
+        }
+        return null; 
     }
 
     //markdown编辑

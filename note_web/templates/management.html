@@ -102,7 +102,6 @@
                     success: function(data){
                         resultData = data.status;
                         if(resultData == "TOKEN_EXPIRED" || resultData == "USER_NOT_LOGIN"){
-                            alert("请登录！");
                             logout();
                             return;    
                         }else if(resultData == "SUCCESS"){
@@ -173,11 +172,11 @@
                         }
                     },
                     editNote: function (noteId){
-                        localStorage.setItem("NoteId", noteId);
-                        window.location.href = "edit-note.html";
+                        var editNoteUrl = "edit-note.html?noteId="+noteId;
+                        window.location.href = editNoteUrl;
                     },
-                    deleteNote: function (index){
-                        var deleteNoteUrl = "/note/"+index;
+                    deleteNote: function (noteId,index){
+                        var deleteNoteUrl = "/note/"+noteId;
                         $.ajax({
                             type: "DELETE",
                             url: deleteNoteUrl,
@@ -192,9 +191,10 @@
                                 resultData = data.status;
                                 if(resultData == "SUCCESS"){
                                     var noteListItemId = "#noteListItem"+index;
-                                    console.log("noteListItemId");
-                                    $(noteListItemId).hide();
-                                    console.log("删除成功！");
+                                    $(noteListItemId).remove();
+                                    this.noteFlag.splice(index, 1);
+
+                                    alert("删除成功！");
                                     return;
                                 }
                                 console.log(resultData);
@@ -264,7 +264,6 @@
                                     success: function(data1){
                                         if(data1.status == "SUCCESS"){
                                             result = data1.data;
-                                            totalNumber = result.totalElements;
                                             noteList.notes = result.content;
 
                                             noteList.noteFlag = [];
@@ -509,7 +508,7 @@
                                                         <button id="btnEditNote" v-on:click="editNote(site.id)" type="button" class="btn btn-primary accept-req">编辑</button>
                                                     </li>
                                                     <li>
-                                                        <button id="btnDeleteNote" v-on:click="deleteNote(noteIndex)" type="button" class="close-req"><i class="la la-close"></i></button>
+                                                        <button id="btnDeleteNote" v-on:click="deleteNote(site.id,noteIndex)" type="button" class="close-req"><i class="la la-close"></i></button>
                                                     </li>
                                                 </ul>
                                             </div><!--accept-feat end-->

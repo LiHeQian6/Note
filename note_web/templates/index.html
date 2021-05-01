@@ -45,8 +45,6 @@
 				success: function(data){
                     resultData = data.status;
                     if(resultData == "TOKEN_EXPIRED" || resultData == "USER_NOT_LOGIN"){
-                        alert("请登录！");
-                        logout();
                         return;    
                     }else if(resultData == "SUCCESS"){
                     	localStorage.setItem("UserId", data.data.id);
