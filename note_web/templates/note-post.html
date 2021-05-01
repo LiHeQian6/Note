@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>归尘博客管理系统</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content=""/>
+    <meta name="keywords" content=""/>
+    <link rel="stylesheet" type="text/css" href="/static/css/animate.css">
+    <link href="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/4.2.1/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="/static/css/line-awesome.css">
+    <link rel="stylesheet" type="text/css" href="/static/css/line-awesome-font-awesome.min.css">
+    <link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/font-awesome/4.7.0/css/font-awesome.css">
+    <link rel="stylesheet" type="text/css" href="/static/css/jquery.mCustomScrollbar.min.css">
+    <link rel="stylesheet" type="text/css" href="/static/lib/slick/slick.css">
+    <link rel="stylesheet" type="text/css" href="/static/lib/slick/slick-theme.css">
+    <link rel="stylesheet" type="text/css" href="/static/css/style.css">
+    <link rel="stylesheet" type="text/css" href="/static/css/responsive.css">
+    <link rel="stylesheet" type="text/css" href="/static/lib/editor/css/editormd.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tarekraafat-autocomplete.js/9.0.3/css/autoComplete.min.css">
+
+    <script type="text/javascript">
+        var localStorage;
+        var header1;
+        var header2;
+        var subject;
+
+        window.onload = function(){
+            localStorage = window.localStorage;
+            header1 = localStorage.getItem("Access-control-expose-headers");
+            header2 = localStorage.getItem("Authorization");
+
+            //用户信息展示
+            if(header1 != null && header2 != null){
+                var resultData;
+                $.ajax({
+                    type: "GET",
+                    url: "/getInfo",
+                    headers: {
+                       "Access-control-expose-headers": header1,
+                       "Authorization": header2
+                    },
+                    data: {},
+                    dataType: "json",
+                    success: function(data){
+                        resultData = data.status;
+                        if(resultData == "TOKEN_EXPIRED" || resultData == "USER_NOT_LOGIN"){
+                            logout();
+                            return;    
+                        }else if(resultData == "SUCCESS"){
+                            return;
+                        }
+                        console.log(resultData);
+                    },
+                    complete: function(xhr,data){
+                        if(resultData == "SUCCESS" && data == "success"){
+                            updateLocalToken(xhr);
+                            return;
+                        } 
+                        console.log(data);
+                    }
+                });
+            }else{
+                window.location.href = "sign-in.html";
+            }
+            //学科
+            subject = new Vue({
+                  el: '#subject',
+                  data:{
+                      subjects1:[],//一级学科
+                      subjects2:[],//二级学科
+                      subject1:-1, //一级学科选中
+                      subject2:-1, //二级学科选中
+                  },
+                  watch:{ //监听学科
+                    subject1:function(val) {
+                        if(val == -1){
+                            this.subject2 = -1;
+                            return;
+                        }
+                        for (var i = this.subjects1.length - 1; i >= 0; i--) {
+                            if(val == this.subjects1[i].id){
+                                this.subjects2 = this.subjects1[i].child;
+                                this.subject2 = -1;
+                                return;
+                            }
+                        }
+                    }
+                 }
+            });
+
+            //学科加载
+            $.ajax({
+                type: "GET",
+                url: "/types",
+                data: {},
+                dataType: "json",
+                success: function(data){
+                    if(data.status == "SUCCESS"){
+                        subject.subjects1 = data.data;
+                        return;
+                    }
+                    console.log(data.status);
+                }
+            });
+        }
+    </script>
+</head> 
+
+<body>
+
+
+<div class="wrapper row"> 
+    <form>
+        <div class="cp-field" style="padding: 0px 10px;margin-top: 20px;margin-bottom: 10px;position: relative">
+            <div style="display: flex;align-items: center">
+                <a href="management.html" style="display: flex;align-items: center;color: #686868;font-size: 24px;font-weight: 600;"><img src="/static/images/note_edit_return.png" style="width: 20px;height: 20px">&nbsp笔记管理
+                </a>
+            </div>
+            <button id="noteSave" onclick="noteSubmit()" type="button" class="btn btn-danger pull-right" style="position: absolute;top: 0px;right:20px;color: #ffffff;font-size: 16px;font-weight: 600;">发布
+            </button>
+        </div>
+        <div class="cp-field" style="padding: 0px 40px">
+            <h5>标题</h5>
+            <div class="cpp-fiel">
+                <input id="noteTitle" type="text" name="title" placeholder="描述一下标题吧！" class="form-control">
+            </div>
+        </div>
+        <div id="subject" class="cp-field" style="padding: 0px 40px">
+            <h5>学科</h5>
+            <div class="inp-field row">
+                <select id="subject1" class="col-md-6 form-control" v-model="subject1">
+                    <option v-bind:value="-1">请选择一级学科</option>
+                    <option v-for="site in subjects1" v-bind:value="site.id">
+                        {{site.name}}
+                    </option>
+                </select>
+                <select id="subject2" class="col-md-6 form-control" v-model="subject2">
+                    <option v-bind:value="-1">请选择二级学科</option>
+                    <option v-for="site in subjects2" v-bind:value="site.id">
+                        {{site.name}}
+                    </option>
+                </select>
+            </div>
+        </div>
+        <div class="cp-field" style="padding: 0px 40px">
+            <h5>标签</h5>
+            <div class="cpp-fiel row" style="position: relative;">
+                <input id="selectTag" class="form-control" type="text" name="title" placeholder="" dir="ltr" spellcheck=false autocorrect="off" autocomplete="off" autocapitalize="off">
+                <!-- <i class="la la-dollar"></i> -->
+                <button id="createTag" type="button" class="btn btn-outline-info" style="position: absolute;top: 0px;right: 0px;display: none;">创建一个标签
+                </button>
+            </div>
+        </div>
+        <div id="warningDiv" class="cp-field" style="padding: 0px 40px;display: none;margin-top: 0px">
+            <div class="alert alert-danger" style="margin-bottom: 0px">
+                <a href="javascript:hideWarning()" class="pull-right" style="color: #000000;font-size: 24px;font-weight: bolder;">&times;</a>
+                <strong id="warningContent" style="font-weight: bolder;">警告！</strong>
+            </div>
+        </div>
+        <div class="cp-field" style="padding: 0px 40px;margin-top: 15px;">
+            <div class="select-tab row align-items-center">
+                <ul class="quest-tags-b" style="float:left;margin-top: 0;width: auto">
+                </ul>
+            </div>
+        </div>
+        <div class="cp-field" style="padding: 0px 40px">
+            <h5>正文</h5>
+            <div id="test-editormd">
+                <textarea id="noteContent" style="display:none;"></textarea>
+            </div>
+        </div>
+    </form>
+</div><!--theme-layout end-->
+
+<div class="chatbox-list" style="display: block;">
+    <div class="chatbox">
+        <div class="chat-mg" style="margin: 20px 10px">
+            <div class="go-top">
+                <div class="arrow" style="text-align: center"><i class="fa fa-chevron-up"></i></div>
+            </div>
+        </div>
+    </div>
+</div><!--chatbox-list end-->
+
+<footer class="myfooter">
+    <div class="footy-sec mn no-margin">
+        <div class="container text-center">
+            <p style="float: none;"><span><img style="float: none;" src="/static/images/copy-icon2.png" alt="">Copyright 2020 本归尘博客系统由游马版权所有</span></p>
+        </div>
+    </div>
+</footer>
+
+
+<script src="http://code.jquery.com/jquery-1.10.2.min.js"></script>
+<script type="text/javascript" src="/static/js/popper.js"></script>
+<script type="text/javascript" src="/static/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="/static/js/jquery.mCustomScrollbar.js"></script>
+<script type="text/javascript" src="/static/lib/slick/slick.min.js"></script>
+<script type="text/javascript" src="/static/js/script.js"></script>
+<script type="text/javascript" src="/static/lib/editor/editormd.min.js"></script>
+
+<script src="https://cdn.staticfile.org/vue/2.4.2/vue.min.js"></script>
+<script src="https://cdn.staticfile.org/axios/0.18.0/axios.min.js"></script>
+<script src="https://cdn.staticfile.org/vue-resource/1.5.1/vue-resource.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/tarekraafat-autocomplete.js/9.0.3/js/autoComplete.min.js"></script>
+<script type="text/javascript">
+    $("#btnChange").click(function(){
+        var data = $("#noteContent").val();
+        data = data.replace(/#*.*#/g, '').replace(/[^a-z0-9\u4e00-\u9fa5]/, '').replace(/[\r\n]/g, "").replace(/\s+/g, ""); // .substring(0, 200)
+
+        console.log(data);
+    });
+
+    var tagArray = [];
+
+    //标签输入框提示
+    var tagAuto = new autoComplete({
+        selector: "#selectTag",
+        placeHolder: "请选择标签名！",
+        data: {
+            // src: ["Sauce - Thousand Island", "Wild Boar - Tenderloin", "Goat - Whole Cut"]
+            src: async function () {
+                var url = "/tags/" + $("#selectTag").val();
+                const source = await fetch(url);
+                const result = await source.json();
+                var data = eval(result).data;
+
+                if(data.length != 0){
+                    $("#createTag").hide();
+                }
+                return data;
+            },
+            key: ["id", "name"]
+        },
+        resultsList: {
+            noResults: (list, query) => {
+                const message = document.createElement("li");
+                message.setAttribute("class", "no_result");
+                message.innerHTML = `<span>not found <span class="autoComplete_highlighted">"${query}"</span></span>`;
+                list.appendChild(message);
+
+                $("#createTag").show();
+            },
+        },
+        resultItem: {
+            highlight: {
+                render: true
+            }
+        },
+        onSelection: (feedback) => {
+            onClickDropdownItem(feedback.selection.value.id, feedback.selection.value.name);
+        },
+    });   
+
+    //点击标签项
+    function onClickDropdownItem(value, name) {
+        if(tagArray.length >= 5){
+            $("#warningDiv").show();
+            $("#warningContent").text("警告！标签最多可添加5个！");
+            return;
+        }else{
+            if(tagArray.indexOf(value) > -1){
+                $("#warningDiv").show();
+                $("#warningContent").text("警告！不可添加重复标签！");
+                return;
+            }
+            var tab=document.createElement("li");
+            var tabi=document.createElement("i");
+            tab.innerHTML=name;
+            tabi.className = "fa fa-times-circle";
+            tabi.setAttribute("onclick", "onClickClose(this)");
+            tabi.setAttribute("value", value);
+            tabi.style="margin-left:5px;margin-right: -2px;cursor:pointer";
+            tab.append(tabi);
+            $(".quest-tags-b").append(tab);
+            $("#warningDiv").hide();
+            
+            tagArray.push(value);
+        }
+    }
+    //点击标签'X'按钮
+    function onClickClose(x) {
+        x.parentNode.remove();
+        var index = tagArray.indexOf(x.getAttribute("value"));
+        tagArray.splice(index, 1);
+    }
+
+    //创建标签
+    $("#createTag").click(function(){
+        var tagName = $("#selectTag").val();
+        if(tagName == ""){
+            $("#warningDiv").show();
+            $("#warningContent").text("警告！标签名不可为空！");
+            return;
+        }
+
+        var resultData;
+        $.ajax({
+            type: "POST",
+            headers: {
+               "Access-control-expose-headers": header1,
+               "Authorization": header2
+            },
+            url: "/tag",
+            contentType: "application/json;charset=UTF-8",
+            data: JSON.stringify({name: tagName}),
+            dataType: "json",
+            success: function(data){
+                resultData = data.status;
+                if(resultData == "SUCCESS"){
+                    alert("创建成功");
+                    $("#selectTag").val("");
+                    $("#createTag").hide();
+                    return;
+                }
+                console.log(resultData);
+            },
+            complete: function(xhr,data){
+                if(resultData == "SUCCESS" && data == "success"){
+                    updateLocalToken(xhr);
+                    return;
+                } 
+                console.log(data); 
+            }
+        });
+    });
+
+    //隐藏警告框
+    function hideWarning() {
+        $("#warningDiv").hide();
+    }
+    
+    //发布笔记
+    function noteSubmit(){
+        if(subject.subject2 == -1){
+            alert("请选择学科！");
+            return;
+        }
+        if(tagArray.length == 0){
+            alert("请添加标签！");
+            return;
+        }
+        var newTagArray = [];
+        for (var i = tagArray.length - 1; i >= 0; i--) {
+            newTagArray[i] = {id: tagArray[i]};
+        }
+        var resultData;
+        $.ajax({
+            type: "POST",
+            headers: {
+               "Access-control-expose-headers": header1,
+               "Authorization": header2
+            },
+            url: "/note",
+            contentType: "application/json;charset=UTF-8",
+            data: JSON.stringify({title: $("#noteTitle").val(), content:$("#noteContent").val(), type:{id:subject.subject2}, tags:newTagArray}),
+            dataType: "json",
+            success: function(data){
+                resultData = data.status;
+                if(resultData == "SUCCESS"){
+                    alert("发布成功！");
+                    window.location.href = "management.html";
+                    return;
+                }
+                console.log(resultData);
+            },
+            complete: function(xhr,data){
+                if(resultData == "SUCCESS" && data == "success"){
+                    updateLocalToken(xhr);
+                    return;
+                } 
+                console.log(data);
+            }
+        });
+    }
+    // $("#noteSubmit").click(function(){
+    //     if(subject.subject2 == -1){
+    //         alert("请选择学科！");
+    //         return;
+    //     }
+    //     if(tagArray.length == 0){
+    //         alert("请添加标签！");
+    //         return;
+    //     }
+    //     var newTagArray = [];
+    //     for (var i = tagArray.length - 1; i >= 0; i--) {
+    //         newTagArray[i] = {id: tagArray[i]};
+    //     }
+    //     var resultData;
+    //     $.ajax({
+    //         type: "POST",
+    //         headers: {
+    //            "Access-control-expose-headers": header1,
+    //            "Authorization": header2
+    //         },
+    //         url: "/note",
+    //         contentType: "application/json;charset=UTF-8",
+    //         data: JSON.stringify({title: $("#noteTitle").val(), content:$("#noteContent").val(), type:{id:subject.subject2}, tags:newTagArray}),
+    //         dataType: "json",
+    //         success: function(data){
+    //             resultData = data.status;
+    //             if(resultData == "SUCCESS"){
+    //                 alert("发布成功！");
+    //                 window.location.href = "management.html";
+    //                 return;
+    //             }
+    //             console.log(resultData);
+    //         },
+    //         complete: function(xhr,data){
+    //             if(resultData == "SUCCESS" && data == "success"){
+    //                 updateLocalToken(xhr);
+    //                 return;
+    //             } 
+    //             console.log(data);
+    //         }
+    //     });
+    // });
+
+    //退出登录
+    function logout(){
+        localStorage.clear();
+        window.location.href = "sign-in.html";
+    }
+    //更新本地token
+    function updateLocalToken(param){
+        localStorage.setItem("Access-control-expose-headers", param.getResponseHeader("Access-control-expose-headers"));
+        localStorage.setItem("Authorization", param.getResponseHeader("Authorization"));
+    }
+
+    //markdown编辑
+    var testEditor;
+    $(function() {
+        testEditor = editormd("test-editormd", {
+            width   : "100%",
+            height  : 640,
+            syncScrolling : "single",
+            path    : "/static/lib/editor/lib/"
+        });
+        /*
+        // or
+        testEditor = editormd({
+            id      : "test-editormd",
+            width   : "90%",
+            height  : 640,
+            path    : "../lib/"
+        });
+        */
+    });
+</script>
+<script>
+    //回顶部
+    $(function() {
+        $(window).scroll(function() {
+            if ($(window).scrollTop() > 0){
+                $('div.go-top').show();
+            }else{
+                $('div.go-top').hide();
+            }
+        });
+        $('div.go-top').click(function() {
+            $('html, body').animate({scrollTop: 0}, 500);
+        });
+    });
+</script>
+</body>
+</html>
