@@ -54,14 +54,15 @@ class PersonFragment : Fragment(),View.OnClickListener {
     override fun onResume() {
         super.onResume()
         StateBarUtils.customFullScreen(requireActivity())
-        if(StateUtil.IF_LOGIN && StateUtil.initInfo(requireContext())) {
-            root.user_name?.setText(StateUtil.USER_INFO?.nickname)
-            Glide.with(requireContext()).load(StateUtil.USER_INFO?.figureurl_qq_2)
-                    .error(R.drawable.head_img)
-                    .placeholder(R.drawable.head_img)
-                    .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
-                    .dontAnimate()
-                    .into(root.person_image)
+        if(StateUtil.IF_LOGIN) {
+            root.user_name?.text = StateUtil.SYSTEM_USER_INFO?.nickName
+            root.user_signature?.text = StateUtil.SYSTEM_USER_INFO?.introduction
+//            Glide.with(requireContext()).load(StateUtil.USER_INFO?.figureurl_qq_2)
+//                    .error(R.drawable.head_img)
+//                    .placeholder(R.drawable.head_img)
+//                    .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
+//                    .dontAnimate()
+//                    .into(root.person_image)
         }else{
             root.user_name?.setText("立即登录")
         }
@@ -96,9 +97,10 @@ class PersonFragment : Fragment(),View.OnClickListener {
 
     private fun checkLogin() {
         if(!StateUtil.IF_LOGIN){
-            root.user_name?.setText("立即登录")
+            root.user_name?.text = "立即登录"
         }else{
-            root.user_name?.setText(StateUtil.USER_INFO?.nickname)
+            root.user_name?.text = StateUtil.SYSTEM_USER_INFO?.nickName
+            root.user_signature?.text = StateUtil.SYSTEM_USER_INFO?.introduction
         }
     }
 
@@ -107,21 +109,19 @@ class PersonFragment : Fragment(),View.OnClickListener {
     }
 
     private fun initView() {
-
         root.person_image.isCircle = true
     }
 
-//    private fun logout(){
-//        if(!StateUtil.IF_LOGIN)
-//            return
-//        var editor = requireContext().getSharedPreferences(resources.getString(R.string.LoginInfo),
-//            Context.MODE_PRIVATE).edit()
-//        editor?.clear()
-//        editor?.apply()
-//        root.user_name?.setText("立即登录")
-//        StateUtil.IF_LOGIN = false
-//        mTencent.logout(requireContext())
-//    }
+    private fun logout(){
+        if(!StateUtil.IF_LOGIN)
+            return
+        var editor = requireContext().getSharedPreferences(resources.getString(R.string.LoginInfo),
+            Context.MODE_PRIVATE).edit()
+        editor?.clear()
+        editor?.apply()
+        root.user_name?.setText("立即登录")
+        StateUtil.IF_LOGIN = false
+    }
 
     override fun onClick(v: View?) {
         when(v?.id){

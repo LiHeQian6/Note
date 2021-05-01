@@ -17,6 +17,9 @@ class HttpAddressUtil {
         private const val LOGOUT = "logout"
         private const val FORGET_PASSWORD = "forgotPassword"
         private const val PUBLISH_NOTE = "note"
+        private const val TYPES = "types"
+        private const val TAGS = "tags"
+        private const val USER_INFO = "getInfo"
 
         fun getVerifyCodeIP(): String{
             return this.IP+this.GET_VERIFY_CODE
@@ -44,6 +47,18 @@ class HttpAddressUtil {
 
         fun publishNote(): String{
             return this.IP+this.PUBLISH_NOTE
+        }
+
+        fun getTypes(): String{
+            return this.IP+this.TYPES
+        }
+
+        fun getTags(): String{
+            return this.IP+this.TAGS
+        }
+
+        fun getUserInfo(): String{
+            return this.IP+this.USER_INFO
         }
     }
 }

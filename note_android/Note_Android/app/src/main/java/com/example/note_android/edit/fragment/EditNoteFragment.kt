@@ -24,6 +24,8 @@ import com.example.note_android.bean.NoteType
 import com.example.note_android.bean.Tag
 import com.example.note_android.edit.util.SoftKeyBoardListener
 import com.example.note_android.login.CountDownTimer
+import com.example.note_android.login.LoginActivity
+import com.example.note_android.util.ActivityUtil
 import com.example.note_android.util.HttpAddressUtil
 import com.example.note_android.util.StateUtil
 import com.google.gson.Gson
@@ -51,7 +53,7 @@ class EditNoteFragment: Fragment(),View.OnClickListener {
     private lateinit var noteTitle: String
     private lateinit var noteContent: String
     private lateinit var handler: Handler
-    private var tags:MutableList<Tag> = ArrayList()
+    private var tags:MutableList<NoteType> = ArrayList()
     private lateinit var type:NoteType
     private lateinit var gson:Gson
     private lateinit var note:Note
@@ -63,6 +65,7 @@ class EditNoteFragment: Fragment(),View.OnClickListener {
         savedInstanceState: Bundle?
     ): View {
         rootView = inflater.inflate(R.layout.fragment_edit_note,container,false)
+        //checkLogin()
         initTool()
         initEditor()
         initView()
@@ -81,6 +84,23 @@ class EditNoteFragment: Fragment(),View.OnClickListener {
         return rootView
     }
 
+    private fun checkLogin() {
+        if(!StateUtil.IF_LOGIN){
+            DialogLoader.getInstance().showConfirmDialog(
+                    requireContext(),
+                    "请先登录才能编写笔记，是否跳转到登录页面？",
+                    "去登陆",
+                    { dialog: DialogInterface?, which: Int ->
+                        ActivityUtil.get().goActivityKill(requireContext(),LoginActivity::class.java)
+                    },
+                    "算了吧",
+                    { dialog: DialogInterface, which: Int ->
+                        requireActivity().finish()
+                    }
+            )
+        }
+    }
+
     private fun initEditor() {
         var markwon = Markwon.builder(requireContext()).usePlugin(object : AbstractMarkwonPlugin() {
             override fun configureTheme(builder: MarkwonTheme.Builder) {
@@ -97,6 +117,8 @@ class EditNoteFragment: Fragment(),View.OnClickListener {
         rootView.mk_head.setOnClickListener(this)
         rootView.mk_bold.setOnClickListener(this)
         rootView.mk_list.setOnClickListener(this)
+        rootView.select_note_type.setOnClickListener(this)
+        rootView.select_note_tag.setOnClickListener(this)
 
         rootView.edit_markdown.setText("## 什么是模式？\n" +
                 "\n" +
@@ -166,18 +188,10 @@ class EditNoteFragment: Fragment(),View.OnClickListener {
     }
 
     private fun publishNote(){
-        noteTitle = rootView.edit_note_title.text.toString()
-        noteContent = rootView.edit_markdown.text.toString()
         var httpClient = OkHttpClient()
         var mediaType = "application/json".toMediaTypeOrNull()
-        //TODO 实例数据
-        var tag = Tag(8,"")
-        tags.add(tag)
-        var tag1 = Tag(9,"")
-        tags.add(tag1)
-        var type = NoteType(null,15,"")
         var json = JSONObject()
-        note = Note(noteTitle,noteContent,tags,type)
+        note = Note(noteTitle,noteContent,tags,type!!)
         gson = Gson()
         json.put("note", gson.toJson(note))
         var requestBody = RequestBody.create(mediaType,json.get("note").toString())
@@ -210,6 +224,14 @@ class EditNoteFragment: Fragment(),View.OnClickListener {
         })
     }
 
+    private fun checkData(): Boolean{
+        if(noteTitle == "" || tags.size == 0 || type == null){
+            Toast.makeText(requireContext(),"请完善文章信息！", Toast.LENGTH_SHORT).show()
+            return false
+        }
+        return true
+    }
+
     private fun initTool() {
         SoftKeyBoardListener.setListener(requireActivity(),object : SoftKeyBoardListener.OnSoftKeyBoardChangeListener{
             override fun keyBoardShow(height: Int) {
@@ -225,6 +247,7 @@ class EditNoteFragment: Fragment(),View.OnClickListener {
 
     override fun onClick(v: View?) {
         when(v?.id){
+            //预览文章
             R.id.preview_note -> {
                 var manager =  requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
                 manager.hideSoftInputFromWindow(rootView.edit_markdown.windowToken,InputMethodManager.HIDE_NOT_ALWAYS)
@@ -235,19 +258,39 @@ class EditNoteFragment: Fragment(),View.OnClickListener {
                     .add(R.id.fragment_edit_note,PreviewNoteFragment(rootView.edit_markdown.text.toString()))
                     .commit()
             }
+            //发布文章
             R.id.publish_note -> {
+                noteTitle = rootView.edit_note_title.text.toString()
+                noteContent = rootView.edit_markdown.text.toString()
                 dialog = DialogLoader.getInstance().showConfirmDialog(
                     requireContext(),
                     "确定发布这篇文章吗",
                     "发布",
                     { dialog: DialogInterface?, which: Int ->
-                        publishNote()
+                        if(checkData())
+                            publishNote()
                     },
                     "再想想",
                     { dialog: DialogInterface, which: Int ->
                         dialog.dismiss()
                     }
                 )
+            }
+            R.id.select_note_type -> {
+                requireActivity().supportFragmentManager
+                        .beginTransaction()
+                        .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
+                        .addToBackStack(null)
+                        .add(R.id.fragment_edit_note,SelectTypeFragment("选择类别",HttpAddressUtil.getTypes()))
+                        .commit()
+            }
+            R.id.select_note_tag -> {
+                requireActivity().supportFragmentManager
+                        .beginTransaction()
+                        .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
+                        .addToBackStack(null)
+                        .add(R.id.fragment_edit_note,SelectTypeFragment("选择标签",HttpAddressUtil.getTags()))
+                        .commit()
             }
             R.id.mk_head -> {
                 rootView.edit_markdown.editableText.insert(rootView.edit_markdown.selectionStart,"#")
@@ -259,6 +302,23 @@ class EditNoteFragment: Fragment(),View.OnClickListener {
             R.id.mk_list -> {
                 rootView.edit_markdown.editableText.insert(rootView.edit_markdown.selectionStart,"-")
             }
+        }
+    }
+
+    fun setData(optionType: String?,tags:MutableList<NoteType>){
+        this.tags = tags
+        var selectedTags = "";
+        if(optionType != "选择标签" && tags.size > 0) {
+            rootView.select_note_type.text = tags[0].name
+            type = tags[0]
+            return
+        }
+        if(tags.size > 0){
+            selectedTags += tags[0].name
+            for (i in 1 until tags.size){
+                selectedTags += "，${tags[i].name}"
+            }
+            rootView.select_note_tag.text = selectedTags
         }
     }
 }
