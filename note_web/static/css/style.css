@@ -5643,6 +5643,11 @@ div .go-top div .arrow {
         -moz-transform:rotate(360deg);
     }
 }
+@media (min-width: 1200px) {
+    .container{
+        max-width: 1200px;
+    }
+}
 
 .custom-camera {
 	position: relative;

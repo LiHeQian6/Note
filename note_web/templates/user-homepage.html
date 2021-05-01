@@ -42,9 +42,7 @@
                 dataType: "json",
                 success: function(data){
                     resultData = data.status;
-                    if(resultData == "TOKEN_EXPIRED"){
-                        alert("请重新登录！");
-                        logout();
+                    if(resultData == "TOKEN_EXPIRED" || resultData == "USER_NOT_LOGIN"){
                         return;    
                     }else if(resultData == "SUCCESS"){
                         $("#navUserLogin").hide();
@@ -62,8 +60,8 @@
                     console.log(data);
                 }
             });
-        }else{
-            window.location.href = "sign-in.html";
+            //关注按钮隐藏
+            $("#btnFollow").show();
         }
 	}
 </script>
@@ -136,13 +134,13 @@
 							<a id="nickName" href="#" title="">John</a>
 							<i class="la la-sort-down"></i>
 						</div>
-						<div class="user-account-settingss">
+						<div id="navUserInfoDropdown" class="user-account-settingss">
 							<a href="person-homepage.html" title=""><div class="custom-user-account-dropdown">个人主页</div></a>
 							<a href="collect.html" title=""><div class="custom-user-account-dropdown">收藏笔记</div></a>
 							<a href="like.html" title=""><div class="custom-user-account-dropdown">喜欢笔记</div></a>
 							<a href="management.html" title=""><div class="custom-user-account-dropdown">管理笔记</div></a>
 							<a href="setting.html" title=""><div class="custom-user-account-dropdown">设置</div></a>
-							<a href="javascript:logout()" title=""><div class="custom-user-account-logout">退出登陆</div></a>
+							<a href="javascript:logout1()" title=""><div class="custom-user-account-logout">退出登陆</div></a>
 						</div><!--user-account-settingss end-->
 					</div>
 				</div><!--header-data end-->
@@ -150,10 +148,9 @@
 		</header>	<!--header end-->	
 
 
-		<!-- <section class="cover-sec">
+		<section class="cover-sec">
 			<img src="https://picsum.photos/id/321/1600/400" alt="">
-			<a href="#" title=""><i class="fa fa-camera"></i> Change Image</a>
-		</section> -->
+		</section>
 
 
 		<main>
@@ -163,20 +160,12 @@
 						<div class="row">
 							<div class="col-lg-4">
 								<div class="main-left-sidebar no-margin">
-									<div class="user-data full-width">
-										<div class="user-profile">
-											<div class="username-dt" style="background-color: #FF6700">
-												<div class="usr-pic">
-													<img src="/static/images/resources/user-pic.png" alt="">
-												</div>
-											</div><!--username-dt end-->
-											<div class="user-specs">
-												<h3>张小明</h3>
-												<!-- <span>Graphic Designer at Self Employed</span> -->
-											</div>
-										</div><!--user-profile end-->
+									<div class="user_profile" style="margin-top: -50px">
+										<div class="user-pro-img">
+											<img src="/static/images/resources/user-pro-img.png" alt="">
+										</div><!--user-pro-img end-->
 										<div class="user_pro_status">
-											<ul class="flw-hr">
+											<ul id="btnFollow" class="flw-hr" style="display: none;">
 												<li><a href="#" title="" class="flww">关注</a></li>
 												<!-- <li><a href="#" title="" class="hre">已关注</a></li> -->
 											</ul>
@@ -196,11 +185,9 @@
 											</ul>
 										</div><!--user_pro_status end-->
 										<ul class="social_links">
-	                                        <li><a href="#" title=""><i class="la la-globe"></i> www.example.com</a></li>
-	                                        <li><a href="#" title=""><i class="fa fa-github-square"></i>
-	                                            Http://www.GitHub.com/john...</a></li>
-	                                    </ul>
-									</div><!--user-data end-->
+											<li><a href="#" title=""><i class="fa fa-github-square"></i>Http://www.GitHub.com/john...</a></li>
+										</ul>
+									</div><!--user_profile end-->
                                 	<div class="widget widget-user">
 			                            <h3 class="title-wd">标签</h3>
 			                            <ul class="classification quest-tags1">
@@ -246,14 +233,15 @@
 									<div class="suggestions full-width">
 										<div class="sd-title">
 											<h3>最近访问</h3>
-											<i class="la la-ellipsis-v"></i>
+											<i id="custom-refresh" class="la la-refresh"></i>
+											<!-- <i class="la la-ellipsis-v"></i> -->
 										</div><!--sd-title end-->
 										<div class="suggestions-list">
 											<div class="suggestion-usd">
 												<img src="/static/images/resources/s3.png" alt="">
 												<div class="sgt-text">
 													<h4><a href="user-homepage.html" style="color: black;">张小明</a></h4>
-													<span>C & C++ Developer</span>
+													<span>5000获赞 &nbsp 5000粉丝</span>
 												</div>
 												<span><i class="la la-plus"></i></span>
 											</div>
@@ -261,7 +249,7 @@
 												<img src="/static/images/resources/s3.png" alt="">
 												<div class="sgt-text">
 													<h4><a href="user-homepage.html" style="color: black;">张小明</a></h4>
-													<span>C & C++ Developer</span>
+													<span>5000获赞 &nbsp 5000粉丝</span>
 												</div>
 												<span><i class="la la-plus"></i></span>
 											</div>
@@ -269,7 +257,7 @@
 												<img src="/static/images/resources/s3.png" alt="">
 												<div class="sgt-text">
 													<h4><a href="user-homepage.html" style="color: black;">张小明</a></h4>
-													<span>C & C++ Developer</span>
+													<span>5000获赞 &nbsp 5000粉丝</span>
 												</div>
 												<span><i class="la la-plus"></i></span>
 											</div>
@@ -277,7 +265,7 @@
 												<img src="/static/images/resources/s3.png" alt="">
 												<div class="sgt-text">
 													<h4><a href="user-homepage.html" style="color: black;">张小明</a></h4>
-													<span>C & C++ Developer</span>
+													<span>5000获赞 &nbsp 5000粉丝</span>
 												</div>
 												<span><i class="la la-plus"></i></span>
 											</div>
@@ -285,7 +273,7 @@
 												<img src="/static/images/resources/s3.png" alt="">
 												<div class="sgt-text">
 													<h4><a href="user-homepage.html" style="color: black;">张小明</a></h4>
-													<span>C & C++ Developer</span>
+													<span>5000获赞 &nbsp 5000粉丝</span>
 												</div>
 												<span><i class="la la-plus"></i></span>
 											</div>
@@ -293,7 +281,7 @@
 												<img src="/static/images/resources/s3.png" alt="">
 												<div class="sgt-text">
 													<h4><a href="user-homepage.html" style="color: black;">张小明</a></h4>
-													<span>C & C++ Developer</span>
+													<span>5000获赞 &nbsp 5000粉丝</span>
 												</div>
 												<span><i class="la la-plus"></i></span>
 											</div>
@@ -308,15 +296,18 @@
 								<div class="main-ws-sec">
 									<div class="user-tab-sec">
 										<h3>张小明</h3>
-										<div class="star-descp">
-											<span>个人简介：</span>
-											<ul>
+										<div class="star-descp" style="margin-top: 15px;margin-bottom: 50px">
+											<p style="float: left;color: #686868;">
+												<span style="font-size: 18px;font-weight: 600;margin-right: 0px">个人简介：</span>
+												<span style="font-size: 14px;font-weight: 600;margin-right: 0px">大家好我是练习时长两年半的个人练习生，擅长唱跳rap篮球</span>
+											</p>
+											<!-- <ul>
 												<li><i class="fa fa-star"></i></li>
 												<li><i class="fa fa-star"></i></li>
 												<li><i class="fa fa-star"></i></li>
 												<li><i class="fa fa-star"></i></li>
 												<li><i class="fa fa-star-half-o"></i></li>
-											</ul>
+											</ul> -->
 										</div><!--star-descp end-->
 										<div class="tab-feed st2" style="margin-bottom: 25px">
 											<ul>
@@ -330,18 +321,6 @@
 													<a href="#" title="">
 														<img src="/static/images/ic1.png" alt="">
 														<span style="font-size: 16px;font-weight: 590;">热门</span>
-													</a>
-												</li>
-												<!-- <li data-tab="like-notes">
-													<a href="#" title="">
-														<img src="/static/images/ic5.png" alt="">
-														<span style="font-size: 16px;font-weight: 590;">喜欢</span>
-													</a>
-												</li> -->
-												<li data-tab="info-notes">
-													<a href="#" title="">
-														<img src="/static/images/ic4.png" alt="">
-														<span style="font-size: 16px;font-weight: 590;">Info</span>
 													</a>
 												</li>
 											</ul>
@@ -633,184 +612,6 @@
 											</div><!--process-comm end-->
 										</div><!--posts-section end-->
 									</div><!--product-feed-tab end-->
-									<!-- <div class="product-feed-tab" id="like-notes">
-										<div class="posts-section">
-											<div class="post-bar">
-												<div class="post_topbar">
-													<div class="usy-dt">
-														<img src="/static/images/resources/us-pic.png" alt="">
-														<div class="usy-name">
-															<h3>John Doe</h3>
-															<span><img src="/static/images/clock.png" alt="">3 min ago</span>
-														</div>
-													</div>
-												</div>
-												<div class="job_descp">
-													<h3>我是标题</h3>
-													<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam luctus hendrerit metus, ut ullamcorper quam finibus at. Etiam id magna sit amet... <a href="#" title="">view more</a></p>
-													<ul class="skill-tags">
-														<li><a href="#" title="">HTML</a></li>
-														<li><a href="#" title="">PHP</a></li>
-														<li><a href="#" title="">CSS</a></li>
-														<li><a href="#" title="">Javascript</a></li>
-														<li><a href="#" title="">Wordpress</a></li> 	
-													</ul>
-												</div>
-												<div class="job-status-bar">
-													<ul class="like-com">
-														<li>
-															<a href="#"><i class="la la-heart"></i> Like</a>
-															<img src="/static/images/liked-img.png" alt="">
-															<span>25</span>
-														</li> 
-														<li><a href="#" title="" class="com"><img src="/static/images/com.png" alt=""> Comment 15</a></li>
-													</ul>
-													<a><i class="la la-eye"></i>Views 50</a>
-												</div>
-											</div>
-											<div class="post-bar">
-												<div class="post_topbar">
-													<div class="usy-dt">
-														<img src="/static/images/resources/us-pic.png" alt="">
-														<div class="usy-name">
-															<h3>John Doe</h3>
-															<span><img src="/static/images/clock.png" alt="">3 min ago</span>
-														</div>
-													</div>
-												</div>
-												<div class="job_descp">
-													<h3>我是标题</h3>
-													<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam luctus hendrerit metus, ut ullamcorper quam finibus at. Etiam id magna sit amet... <a href="#" title="">view more</a></p>
-													<ul class="skill-tags">
-														<li><a href="#" title="">HTML</a></li>
-														<li><a href="#" title="">PHP</a></li>
-														<li><a href="#" title="">CSS</a></li>
-														<li><a href="#" title="">Javascript</a></li>
-														<li><a href="#" title="">Wordpress</a></li> 	
-													</ul>
-												</div>
-												<div class="job-status-bar">
-													<ul class="like-com">
-														<li>
-															<a href="#"><i class="la la-heart"></i> Like</a>
-															<img src="/static/images/liked-img.png" alt="">
-															<span>25</span>
-														</li> 
-														<li><a href="#" title="" class="com"><img src="/static/images/com.png" alt=""> Comment 15</a></li>
-													</ul>
-													<a><i class="la la-eye"></i>Views 50</a>
-												</div>
-											</div>
-											<div class="post-bar">
-												<div class="post_topbar">
-													<div class="usy-dt">
-														<img src="/static/images/resources/us-pic.png" alt="">
-														<div class="usy-name">
-															<h3>John Doe</h3>
-															<span><img src="/static/images/clock.png" alt="">3 min ago</span>
-														</div>
-													</div>
-												</div>
-												<div class="job_descp">
-													<h3>我是标题</h3>
-													<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam luctus hendrerit metus, ut ullamcorper quam finibus at. Etiam id magna sit amet... <a href="#" title="">view more</a></p>
-													<ul class="skill-tags">
-														<li><a href="#" title="">HTML</a></li>
-														<li><a href="#" title="">PHP</a></li>
-														<li><a href="#" title="">CSS</a></li>
-														<li><a href="#" title="">Javascript</a></li>
-														<li><a href="#" title="">Wordpress</a></li> 	
-													</ul>
-												</div>
-												<div class="job-status-bar">
-													<ul class="like-com">
-														<li>
-															<a href="#"><i class="la la-heart"></i> Like</a>
-															<img src="/static/images/liked-img.png" alt="">
-															<span>25</span>
-														</li> 
-														<li><a href="#" title="" class="com"><img src="/static/images/com.png" alt=""> Comment 15</a></li>
-													</ul>
-													<a><i class="la la-eye"></i>Views 50</a>
-												</div>
-											</div>
-											<div class="post-bar">
-												<div class="post_topbar">
-													<div class="usy-dt">
-														<img src="/static/images/resources/us-pic.png" alt="">
-														<div class="usy-name">
-															<h3>John Doe</h3>
-															<span><img src="/static/images/clock.png" alt="">3 min ago</span>
-														</div>
-													</div>
-												</div>
-												<div class="job_descp">
-													<h3>我是标题</h3>
-													<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam luctus hendrerit metus, ut ullamcorper quam finibus at. Etiam id magna sit amet... <a href="#" title="">view more</a></p>
-													<ul class="skill-tags">
-														<li><a href="#" title="">HTML</a></li>
-														<li><a href="#" title="">PHP</a></li>
-														<li><a href="#" title="">CSS</a></li>
-														<li><a href="#" title="">Javascript</a></li>
-														<li><a href="#" title="">Wordpress</a></li> 	
-													</ul>
-												</div>
-												<div class="job-status-bar">
-													<ul class="like-com">
-														<li>
-															<a href="#"><i class="la la-heart"></i> Like</a>
-															<img src="/static/images/liked-img.png" alt="">
-															<span>25</span>
-														</li> 
-														<li><a href="#" title="" class="com"><img src="/static/images/com.png" alt=""> Comment 15</a></li>
-													</ul>
-													<a><i class="la la-eye"></i>Views 50</a>
-												</div>
-											</div>
-											<div class="process-comm">
-												<a href="#" title=""><img src="/static/images/process-icon.png" alt=""></a>
-											</div>
-										</div>
-									</div> -->
-									<div class="product-feed-tab" id="info-notes">
-										<div class="user-profile-ov">
-											<h3>Overview</h3>
-											<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque tempor aliquam felis, nec condimentum ipsum commodo id. Vivamus sit amet augue nec urna efficitur tincidunt. Vivamus consectetur aliquam lectus commodo viverra. Nunc eu augue nec arcu efficitur faucibus. Aliquam accumsan ac magna convallis bibendum. Quisque laoreet augue eget augue fermentum scelerisque. Vivamus dignissim mollis est dictum blandit. Nam porta auctor neque sed congue. Nullam rutrum eget ex at maximus. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec eget vestibulum lorem.</p>
-										</div><!--user-profile-ov end
-										<div class="user-profile-ov st2">
-											<h3>Experience</h3>
-											<h4>Web designer</h4>
-											<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque tempor aliquam felis, nec condimentum ipsum commodo id. Vivamus sit amet augue nec urna efficitur tincidunt. Vivamus consectetur aliquam lectus commodo viverra. </p>
-											<h4>UI / UX Designer</h4>
-											<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque tempor aliquam felis, nec condimentum ipsum commodo id.</p>
-											<h4>PHP developer</h4>
-											<p class="no-margin">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque tempor aliquam felis, nec condimentum ipsum commodo id. Vivamus sit amet augue nec urna efficitur tincidunt. Vivamus consectetur aliquam lectus commodo viverra. </p>
-										</div><!--user-profile-ov end-->
-										<div class="user-profile-ov">
-											<h3>Education</h3>
-											<h4>Master of Computer Science</h4>
-											<span>2015 - 2017</span>
-											<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque tempor aliquam felis, nec condimentum ipsum commodo id. Vivamus sit amet augue nec urna efficitur tincidunt. Vivamus consectetur aliquam lectus commodo viverra. </p>
-										</div><!--user-profile-ov end-->
-										<div class="user-profile-ov">
-											<h3>Location</h3>
-											<h4>India</h4>
-											<p>151/4 BT Chownk, Delhi </p>
-										</div><!--user-profile-ov end-->
-										<div class="user-profile-ov">
-											<h3>Skills</h3>
-											<ul>
-												<li><a href="#" title="">HTML</a></li>
-												<li><a href="#" title="">PHP</a></li>
-												<li><a href="#" title="">CSS</a></li>
-												<li><a href="#" title="">Javascript</a></li>
-												<li><a href="#" title="">Wordpress</a></li>
-												<li><a href="#" title="">Photoshop</a></li>
-												<li><a href="#" title="">Illustrator</a></li>
-												<li><a href="#" title="">Corel Draw</a></li>
-											</ul>
-										</div><!--user-profile-ov end-->
-									</div><!--product-feed-tab end-->
 								</div><!--main-ws-sec end-->
 							</div>
 							
@@ -984,6 +785,13 @@
     function logout(){
         localStorage.clear();
         window.location.href = "sign-in.html";
+    }
+    function logout1(){
+        localStorage.clear();
+        $("#navUserInfo").hide();
+        $("#navUserInfoDropdown").hide();
+        $("#navUserLogin").show();
+        $("#btnFollow").hide();
     }
 	//更新本地token
     function updateLocalToken(param){

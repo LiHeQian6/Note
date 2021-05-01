@@ -18,154 +18,237 @@
     <link rel="stylesheet" type="text/css" href="/static/css/responsive.css">
     <link rel="stylesheet" type="text/css" href="/static/lib/editor/css/editormd.css">
     <link rel="stylesheet" type="text/css" href="/static/css/pagination.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tarekraafat-autocomplete.js/9.0.3/css/autoComplete.min.css">
 
-<script type="text/javascript">
-    var localStorage;
-    var header1;
-    var header2;
-    var userId;
-    var subject;
-    var noteList;
-    var notePage;
-
-    window.onload = function(){
-        localStorage = window.localStorage;
-        header1 = localStorage.getItem("Access-control-expose-headers");
-        header2 = localStorage.getItem("Authorization");
-        userId = localStorage.getItem("UserId");
-
-        //用户信息展示
-        if(header1 != null && header2 != null){
-            var resultData;
-            $.ajax({
-                type: "GET",
-                url: "/getInfo",
-                headers: {
-                   "Access-control-expose-headers": header1,
-                   "Authorization": header2
-                },
-                data: {},
-                dataType: "json",
-                success: function(data){
-                    resultData = data.status;
-                    if(resultData == "TOKEN_EXPIRED"){
-                        alert("请重新登录！");
-                        logout();
-                        return;    
-                    }else if(resultData == "SUCCESS"){
-                        $("#navUserLogin").hide();
-                        $("#navUserInfo").show();
-                        $("#nickName").text(data.data.nickName);
-                        return;
-                    }
-                    console.log(resultData);
-                },
-                complete: function(xhr,data){
-                    if(resultData == "SUCCESS" && data == "success"){
-                        updateLocalToken(xhr);
-                        return;
-                    } 
-                    console.log(data);
-                }
-            });
-        }else{
-            window.location.href = "sign-in.html";
+    <style type="text/css">
+        .personal-mybuluo-head {
+            height: 14px;
+            position: relative;
+            margin-bottom: 20px;
         }
-        //学科
-        subject = new Vue({
-              el: '#subject',
-              data:{
-                  subjects1:[],//一级学科
-                  subjects2:[],//二级学科
-                  subject1:-1, //一级学科选中
-                  subject2:-1, //二级学科选中
-              },
-              watch:{ //监听学科
-                subject1:function(val) {
-                    if(val == -1){
-                        this.subject2 = -1;
-                        return;
-                    }
-                    for (var i = this.subjects1.length - 1; i >= 0; i--) {
-                        if(val == this.subjects1[i].id){
-                            this.subjects2 = this.subjects1[i].child;
-                            this.subject2 = -1;
+        .personal-mybuluo-wording {
+            position: absolute;
+            top: 0;
+            z-index: 2;
+            left: 50%;
+            background-color: #fff;
+            color: #777;
+            text-align: center;
+            -webkit-transform: translate(-50%,0);
+            transform: translate(-50%,0);
+            padding: 0 10px;
+        }
+        .personal-border {
+            position: absolute;
+            top: 0px;
+            left: 0;
+            width: 100%;
+            height: 14px;
+            z-index: 1;
+        }
+        .jmu-border-1px {
+            position: relative;
+        }
+        .jmu-border-1px.border-bottom:after {
+            border-bottom: 1px solid #dedfe0;
+        }
+        @media only screen and (-webkit-min-device-pixel-ratio: 2)
+        .jmu-border-1px:after {
+            right: -100%;
+            bottom: -100%;
+            -webkit-transform: scale(0.5);
+        }
+        .jmu-border-1px:after {
+            display: block;
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            -webkit-transform-origin: 0 0;
+            -webkit-transform: scale(1);
+            pointer-events: none;
+        }
+    </style>
+
+    <script type="text/javascript">
+        var localStorage;
+        var header1;
+        var header2;
+        var userId;
+        var noteList;
+        var notePage;
+        var currentNotePage;
+
+        window.onload = function(){
+            localStorage = window.localStorage;
+            header1 = localStorage.getItem("Access-control-expose-headers");
+            header2 = localStorage.getItem("Authorization");
+            userId = localStorage.getItem("UserId");
+            currentNotePage = GetQueryString("page");
+
+            //用户信息展示
+            if(header1 != null && header2 != null){
+                var resultData;
+                $.ajax({
+                    type: "GET",
+                    url: "/getInfo",
+                    headers: {
+                       "Access-control-expose-headers": header1,
+                       "Authorization": header2
+                    },
+                    data: {},
+                    dataType: "json",
+                    success: function(data){
+                        resultData = data.status;
+                        if(resultData == "TOKEN_EXPIRED" || resultData == "USER_NOT_LOGIN"){
+                            logout();
+                            return;    
+                        }else if(resultData == "SUCCESS"){
+                            $("#navUserLogin").hide();
+                            $("#navUserInfo").show();
+                            $("#nickName").text(data.data.nickName);
                             return;
                         }
+                        console.log(resultData);
+                    },
+                    complete: function(xhr,data){
+                        if(resultData == "SUCCESS" && data == "success"){
+                            updateLocalToken(xhr);
+                            return;
+                        } 
+                        console.log(data);
                     }
-                }
-             }
-        });
-        //笔记列表
-        noteList = new Vue({
-              el: '#noteList',
-              data:{
-                  notes:[]
-              }
-        });
-
-        //学科加载
-        $.ajax({
-            type: "GET",
-            url: "/types",
-            data: {},
-            dataType: "json",
-            success: function(data){
-                if(data.status == "SUCCESS"){
-                    subject.subjects1 = data.data;
-                    return;
-                }
-                console.log(data.status);
+                });
+            }else{
+                window.location.href = "sign-in.html";
             }
-        });
-        //笔记列表加载
-        var noteListUrl = "/notes/user/" + userId;
-        var notePageSize = 5;
-        $.ajax({
-            type: "GET",
-            url: noteListUrl,
-            data: {page:1, size:notePageSize},
-            dataType: "json",
-            success: function(data){
-                if(data.status == "SUCCESS"){
-                    var result = data.data;
-                    var totalNumber = result.totalElements;
-                    noteList.notes = result.content;
-
-                    //分页
-                    notePage = new Pagination({
-                        element: '#pages_1',
-                        type: 2,
-                        pageIndex: 1,
-                        pageSize: notePageSize,
-                        pageCount: 9,
-                        total: totalNumber,
-                        jumper: true,
-                        singlePageHide: false,
-                        disabled: true,
-                        currentChange: function(index) {
-                            $.ajax({
-                                type: "GET",
-                                url: noteListUrl,
-                                data: {page:index, size:notePageSize},
-                                dataType: "json",
-                                success: function(data1){
-                                    result = data1.data;
-                                    totalNumber = result.totalElements;
-                                    noteList.notes = result.content;
-                                }
+            //笔记列表
+            noteList = new Vue({
+                  el: '#noteList',
+                  data:{
+                      notes:[],
+                      noteFlag:[]
+                  },
+                  methods:{
+                    change: function (index) {
+                        if(this.noteFlag[index] == 1){
+                            var customerId1 = "#noteItemContent"+index;
+                            var customerId2 = "noteItemDivContent"+index;
+                            $(customerId1).val(this.notes[index].content);
+                            editormd.markdownToHTML(customerId2, {
+                                htmlDecode: "style,script,iframe", //可以过滤标签解码
+                                emoji: true,
+                                taskList:true,
+                                tex: true  // 默认不解析
                             });
+
+                            this.noteFlag[index] = 0;
                         }
-                    });
-                    return;
-                }
-                console.log(data.status);
+                    },
+                    editNote: function (noteId){
+                        var editNoteUrl = "note-edit.html?noteId="+noteId;
+                        window.location.href = editNoteUrl;
+                    },
+                    deleteNote: function (noteId){
+                        var deleteNoteUrl = "/note/"+noteId;
+                        $.ajax({
+                            type: "DELETE",
+                            url: deleteNoteUrl,
+                            headers: {
+                               "Access-control-expose-headers": header1,
+                               "Authorization": header2
+                            },
+                            contentType: "application/json;charset=UTF-8",
+                            data: {},
+                            dataType: "json",
+                            success: function(data){
+                                resultData = data.status;
+                                if(resultData == "SUCCESS"){
+                                    if(noteList.notes.length == 1){
+                                        currentNotePage--;
+                                    }
+                                    var manageNoteUrl = "management.html?page="+currentNotePage;
+                                    window.location.href = manageNoteUrl;
+                                    alert("删除成功！");
+                                    return;
+                                }
+                                console.log(resultData);
+                            },
+                            complete: function(xhr,data){
+                                if(resultData == "SUCCESS" && data == "success"){
+                                    updateLocalToken(xhr);
+                                    return;
+                                } 
+                                console.log(data);
+                            }
+                        });
+                    }
+                  }
+            });
+
+            //笔记列表加载
+            if(currentNotePage == null || currentNotePage <= 0){
+                currentNotePage = 1;
             }
-        });
-        
-    }
-</script>
+            var noteListUrl = "/notes/user/" + userId;
+            var notePageSize = 5;
+            $.ajax({
+                type: "GET",
+                url: noteListUrl,
+                data: {page:currentNotePage-1, size:notePageSize},
+                dataType: "json",
+                success: function(data){
+                    if(data.status == "SUCCESS"){
+                        var result = data.data;
+                        var totalNumber = result.totalElements;
+                        noteList.notes = result.content;
+
+                        for (var i = noteList.notes.length - 1; i >= 0; i--) {
+                            noteList.noteFlag[i] = 1;
+                        }
+
+                        //分页
+                        notePage = new Pagination({
+                            element: '#pages_1',
+                            type: 2,
+                            pageIndex: currentNotePage,
+                            pageSize: notePageSize,
+                            pageCount: 9,
+                            total: totalNumber,
+                            jumper: true,
+                            singlePageHide: false,
+                            disabled: true,
+                            currentChange: function(index) {
+                                currentNotePage = index;
+                                $.ajax({
+                                    type: "GET",
+                                    url: noteListUrl,
+                                    data: {page:currentNotePage-1, size:notePageSize},
+                                    dataType: "json",
+                                    success: function(data1){
+                                        if(data1.status == "SUCCESS"){
+                                            result = data1.data;
+                                            noteList.notes = result.content;
+
+                                            noteList.noteFlag = [];
+                                            for (var i = noteList.notes.length - 1; i >= 0; i--) {
+                                                noteList.noteFlag[i] = 1;
+                                            }
+                                            return;
+                                        }
+                                        console.log(data1.status);
+                                    }
+                                });
+                            }
+                        });
+                        return;
+                    }
+                    console.log(data.status);
+                }
+            });
+        }
+    </script>
 </head> 
 
 <body>
@@ -254,15 +337,18 @@
                     <div class="col-12">
                         <div class="acc-leftbar">
                             <div class="nav nav-tabs" id="nav-tab" role="tablist">
-                                <a class="nav-item nav-link active" id="nav-deactivate-tab" data-toggle="tab"
-                                     href="#nav-deactivate" role="tab" aria-controls="nav-deactivate" aria-selected="false">
-                                    <i class="fa fa-pencil"></i>发布笔记</a>
-                                <a class="nav-item nav-link" id="nav-requests-tab" data-toggle="tab"
-                                   href="#nav-requests" role="tab" aria-controls="nav-requests" aria-selected="false">
-                                    <i class="fa fa-book"></i>笔记管理</a>
-                                <a class="nav-item nav-link" id="nav-status-tab" data-toggle="tab" href="#nav-status"
-                                   role="tab" aria-controls="nav-status" aria-selected="false">
-                                    <i class="fa fa-line-chart"></i>统计</a>
+                                <a class="nav-item nav-link active" id="nav-all-tab" data-toggle="tab"
+                                   href="#nav-note-all" role="tab" aria-controls="nav-requests" aria-selected="false">
+                                    <i class="fa fa-pencil"></i>全部笔记
+                                </a>
+                                <!-- <a class="nav-item nav-link" id="nav-public-tab" data-toggle="tab"
+                                   href="#nav-note-public" role="tab" aria-controls="nav-requests" aria-selected="false">
+                                    <i class="fa fa-book"></i>公开
+                                </a> -->
+                                <a class="nav-item nav-link" id="nav-private-tab" data-toggle="tab"
+                                   href="#nav-note-private" role="tab" aria-controls="nav-requests" aria-selected="false">
+                                    <i class="fa fa-book"></i>私密笔记
+                                </a>
                             </div>
                         </div><!--acc-leftbar end-->
                     </div>
@@ -270,173 +356,51 @@
                 <div class="row">
                     <div class="col-12">
                         <div class="tab-content" id="nav-tabContent">
-                            <div class="tab-pane fade show active" id="nav-deactivate" role="tabpanel" aria-labelledby="nav-deactivate-tab">
+                            <div class="tab-pane fade show active" id="nav-note-all" role="tabpanel" aria-labelledby="nav-deactivate-tab">
                                 <div class="acc-setting">
-                                    <form>
-                                        <div class="cp-field">
-                                            <button id="btnChange" class="btn btn-primary">转换</button>
-                                            <h5>标题</h5>
-                                            <div class="cpp-fiel">
-                                                <input id="noteTitle" type="text" name="title" placeholder="描述一下标题吧！" class="form-control">
-                                            </div>
-                                        </div>
-                                        <div id="subject" class="cp-field">
-                                            <h5>学科</h5>
-                                            <div class="inp-field row">
-                                                <select id="subject1" class="col-md-6 form-control" v-model="subject1">
-                                                    <option v-bind:value="-1">请选择一级学科</option>
-                                                    <option v-for="site in subjects1" v-bind:value="site.id">
-                                                        {{site.name}}
-                                                    </option>
-                                                </select>
-                                                <select id="subject2" class="col-md-6 form-control" v-model="subject2">
-                                                    <option v-bind:value="-1">请选择二级学科</option>
-                                                    <option v-for="site in subjects2" v-bind:value="site.id">
-                                                        {{site.name}}
-                                                    </option>
-                                                </select>
-                                            </div>
-                                        </div>
-                                        <div class="cp-field">
-                                            <h5>标签</h5>
-                                            <div class="cpp-fiel row" style="position: relative;">
-                                                <input id="selectTag" class="col-md-12 col-xs-4 form-control" type="text" name="title" placeholder="" dir="ltr" spellcheck=false autocorrect="off" autocomplete="off" autocapitalize="off">
-                                                <!-- <i class="la la-dollar"></i> -->
-                                                <button id="createTag" type="button" class="btn btn-outline-info" style="position: absolute;top: 0px;right: 0px;display: none;">
-                                                    创建一个标签
-                                                </button>
-                                            </div>
-                                        </div>
-                                        <div id="warningDiv" class="cp-field" style="display: none;margin-top: 0px">
-                                            <div class="alert alert-danger" style="margin-bottom: 0px">
-                                                <a href="javascript:hideWarning()" class="pull-right" style="color: #000000;font-size: 24px;font-weight: bolder;">&times;</a>
-                                                <strong id="warningContent" style="font-weight: bolder;">警告！</strong>
-                                            </div>
-                                        </div>
-                                        <div class="cp-field" style="margin-top: 15px;margin-bottom: 15px">
-                                            <div class="select-tab row align-items-center">
-                                                <ul class="quest-tags-b" style="float:left;margin-top: 0;width: auto">
-                                                </ul>
-                                            </div>
-                                        </div>
-                                        <div id="test-editormd">
-                                            <textarea id="noteContent" style="display:none;">[TOC]
-
-#### Disabled options
-
-- TeX (Based on KaTeX);
-- Emoji;
-- Task lists;
-- HTML tags decode;
-- Flowchart and Sequence Diagram;
-
-#### Editor.md directory
-
-    editor.md/
-            lib/
-            css/
-            scss/
-            tests/
-            fonts/
-            images/
-            plugins/
-            examples/
-            languages/
-            editormd.js
-            ...
-
-```html
-&lt;!-- English --&gt;
-&lt;script src="../dist/js/languages/en.js"&gt;&lt;/script&gt;
-
-&lt;!-- 繁體中文 --&gt;
-&lt;script src="../dist/js/languages/zh-tw.js"&gt;&lt;/script&gt;
-```
-</textarea>
-                                        </div>
-                                        <div class="save-stngs pd3">
-                                            <ul class="row justify-content-center">
-                                                <li>
-                                                    <button id="noteSave" type="button" class="btn btn-primary">暂存一下</button>
-                                                </li>
-                                                <li>
-                                                    <button id="noteSubmit" type="button" class="btn btn-primary">发布</button>
-                                                </li>
-                                            </ul>
-                                        </div><!--save-stngs end-->
-                                    </form>
-                                </div><!--acc-setting end-->
-                            </div>
-                            <div class="tab-pane fade" id="nav-requests" role="tabpanel" aria-labelledby="nav-requests-tab">
-                                <div class="acc-setting">
-                                    <div class="cp-field">
+                                    <div class="cp-field" style="margin-bottom: 20px">
                                         <div class="cpp-fiel row">
-                                            <input id="textNoteTitle" class="col-md-10 col-xs-8 form-control" style="width: 90%" type="text" name="title" placeholder="输入笔记标题进行查询！">
-                                            <div class="save-stngs col-md-2 col-xs-4" style="width: auto;float: right;padding: 0px">
-                                                <ul style="float: right">
-                                                    <li>
-                                                        <button id="btnSelectByTitle" type="button" class="btn btn-primary">笔记查询</button>
-                                                    </li>
-                                                </ul>
-                                            </div>
+                                            <input id="textNoteTitle" style="position: relative;" class="form-control" type="text" name="title" placeholder="输入笔记标题进行查询！">
+                                            <button id="btnSelectByTitle" type="button" class="btn btn-primary" style="position: absolute;top: 0px;right: 0px;font-size: 16px;font-weight: 600">
+                                                    查询笔记
+                                            </button>
                                         </div>
                                     </div>
                                     <div id="noteList" class="requests-list">
-                                        <div v-for="site in notes" class="request-details" data-toggle="collapse" data-target="#demo1">
-                                            <div class="request-info">
-                                                <h2 style="font-size: 20px;font-weight: 900;">{{site.title}}</h2>
-                                                <span style="margin-left: 10px;">{{site.createTime}}</span>
+                                        <div v-for="site,noteIndex in notes" class="request-details">
+                                            <div v-on:click="change(noteIndex)" class="request-info" style="width: 80%;" data-toggle="collapse" v-bind:href="'#noteItemDivContent'+noteIndex">
+                                                <h2 style="font-size: 15px;font-weight: 600;margin-bottom: 10px">{{site.title}}</h2>
+                                                <span>{{site.createTime}}</span>
                                             </div>
-                                            <div class="accept-feat">
-                                                <ul>
+                                            <div class="accept-feat" style="width:20%;">
+                                                <ul style="float: right;">
                                                     <li>
-                                                        <button type="button" class="btn btn-primary accept-req">编辑</button>
+                                                        <button id="btnEditNote" v-on:click="editNote(site.id)" type="button" class="btn btn-primary accept-req">编辑</button>
                                                     </li>
                                                     <li>
-                                                        <button type="button" class="close-req"><i class="la la-close"></i></button>
+                                                        <button id="btnDeleteNote" v-on:click="deleteNote(site.id)" type="button" class="close-req"><i class="la la-close"></i></button>
                                                     </li>
                                                 </ul>
                                             </div><!--accept-feat end-->
+                                            <div v-bind:id="'noteItemDivContent'+noteIndex" style="float: left;" class="collapse pre-scrollable">
+                                                <div class="personal-mybuluo-head">
+                                                    <div class="personal-mybuluo-wording" style="font-weight: 600">笔记正文</div>
+                                                    <div class="personal-border jmu-border-1px border-bottom"></div>
+                                                </div>
+                                                <textarea v-bind:id="'noteItemContent'+noteIndex" style="width: 100%;display: none;">
+                                                </textarea>
+                                            </div>
                                         </div><!--request-detailse end-->
                                         <div id="pages_1" class="request-details"></div>
                                     </div><!--requests-list end-->
+                                    <div id="test-editormd" style="display: none;">
+                                        <textarea style="display:none;"></textarea>
+                                    </div>
                                 </div><!--acc-setting end-->
                             </div>
-                            <div class="tab-pane fade" id="nav-status" role="tabpanel" aria-labelledby="nav-status-tab">
-                                <div class="acc-setting">
-                                    <h3>流量统计</h3>
-                                    <div class="profile-bx-details">
-                                        <div class="row">
-                                            <div class="widget widget-feat">
-                                                <ul>
-                                                    <li class="col-lg-3 col-md-6 col-sm-12">
-                                                        <h2 class="h3">获赞</h2>
-                                                        <i class="fa fa-heart"></i>
-                                                        <span>1185</span>
-                                                    </li>
-                                                    <li>
-                                                        <h2 class="h3">评论</h2>
-                                                        <i class="fa fa-comment"></i>
-                                                        <span>1165</span>
-                                                    </li>
-                                                    <li>
-                                                        <h2 class="h3">分享</h2>
-                                                        <i class="fa fa-share-alt"></i>
-                                                        <span>1120</span>
-                                                    </li>
-                                                    <li>
-                                                        <h2 class="h3">浏览</h2>
-                                                        <i class="fa fa-eye"></i>
-                                                        <span>1009</span>
-                                                    </li>
-                                                </ul>
-                                            </div><!--widget-feat end-->
-                                        </div>
-                                    </div><!--profile-bx-details end-->
-                                    <div class="pro-work-status">
-                                        <!-- <h4>Work Status  -  Last Months Working Status</h4> -->
-                                    </div><!--pro-work-status end-->
-                                </div><!--acc-setting end-->
+                            <!-- <div class="tab-pane fade" id="nav-note-public" role="tabpanel" aria-labelledby="nav-requests-tab">
+                            </div> -->
+                            <div class="tab-pane fade" id="nav-note-private" role="tabpanel" aria-labelledby="nav-requests-tab">
                             </div>
                         </div>
                     </div>
@@ -457,13 +421,13 @@
         </div>
     </div><!--chatbox-list end-->
 
-<footer class="myfooter">
-    <div class="footy-sec mn no-margin">
-        <div class="container text-center">
-            <p style="float: none;"><span><img style="float: none;" src="/static/images/copy-icon2.png" alt="">Copyright 2020 本归尘博客系统由游马版权所有</span></p>
+    <footer class="myfooter">
+        <div class="footy-sec mn no-margin">
+            <div class="container text-center">
+                <p style="float: none;"><span><img style="float: none;" src="/static/images/copy-icon2.png" alt="">Copyright 2020 本归尘博客系统由游马版权所有</span></p>
+            </div>
         </div>
-    </div>
-</footer>
+    </footer>
 
 
 <script src="http://code.jquery.com/jquery-1.10.2.min.js"></script>
@@ -478,239 +442,77 @@
 <script src="https://cdn.staticfile.org/vue/2.4.2/vue.min.js"></script>
 <script src="https://cdn.staticfile.org/axios/0.18.0/axios.min.js"></script>
 <script src="https://cdn.staticfile.org/vue-resource/1.5.1/vue-resource.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/tarekraafat-autocomplete.js/9.0.3/js/autoComplete.min.js"></script>
 <script type="text/javascript">
-    var tagArray = [];
-
-    //标签输入框提示
-    var tagAuto = new autoComplete({
-        selector: "#selectTag",
-        placeHolder: "请选择标签名！",
-        data: {
-            // src: ["Sauce - Thousand Island", "Wild Boar - Tenderloin", "Goat - Whole Cut"]
-            src: async function () {
-                var url = "/tags/" + $("#selectTag").val();
-                const source = await fetch(url);
-                const result = await source.json();
-                var data = eval(result).data;
-
-                if(data.length != 0){
-                    $("#createTag").hide();
-                }
-                return data;
-            },
-            key: ["id", "name"]
-        },
-        resultsList: {
-            noResults: (list, query) => {
-                const message = document.createElement("li");
-                message.setAttribute("class", "no_result");
-                message.innerHTML = `<span>not found <span class="autoComplete_highlighted">"${query}"</span></span>`;
-                list.appendChild(message);
-
-                $("#createTag").show();
-            },
-        },
-        resultItem: {
-            highlight: {
-                render: true
-            }
-        },
-        onSelection: (feedback) => {
-            onClickDropdownItem(feedback.selection.value.id, feedback.selection.value.name);
-        },
-    });   
-
-    //点击标签项
-    function onClickDropdownItem(value, name) {
-        if(tagArray.length >= 5){
-            $("#warningDiv").show();
-            $("#warningContent").text("警告！标签最多可添加5个！");
-            return;
-        }else{
-            if(tagArray.indexOf(value) > -1){
-                $("#warningDiv").show();
-                $("#warningContent").text("警告！不可添加重复标签！");
-                return;
-            }
-            var tab=document.createElement("li");
-            var tabi=document.createElement("i");
-            tab.innerHTML=name;
-            tabi.className = "fa fa-times-circle";
-            tabi.setAttribute("onclick", "onClickClose(this)");
-            tabi.setAttribute("value", value);
-            tabi.style="margin-left:5px;margin-right: -2px;cursor:pointer";
-            tab.append(tabi);
-            $(".quest-tags-b").append(tab);
-            $("#warningDiv").hide();
-            
-            tagArray.push(value);
-        }
-    }
-    //点击标签'X'按钮
-    function onClickClose(x) {
-        x.parentNode.remove();
-        var index = tagArray.indexOf(x.getAttribute("value"));
-        tagArray.splice(index, 1);
-    }
-
-    //创建标签
-    $("#createTag").click(function(){
-        var tagName = $("#selectTag").val();
-        if(tagName == ""){
-            $("#warningDiv").show();
-            $("#warningContent").text("警告！标签名不可为空！");
-            return;
-        }
-
-        var resultData;
-        $.ajax({
-            type: "POST",
-            headers: {
-               "Access-control-expose-headers": header1,
-               "Authorization": header2
-            },
-            url: "/tag",
-            contentType: "application/json;charset=UTF-8",
-            data: JSON.stringify({name: tagName}),
-            dataType: "json",
-            success: function(data){
-                resultData = data.status;
-                if(resultData == "SUCCESS"){
-                    alert("创建成功");
-                    $("#selectTag").val("");
-                    $("#createTag").hide();
-                    return;
-                }
-                console.log(resultData);
-            },
-            complete: function(xhr,data){
-                if(resultData == "SUCCESS" && data == "success"){
-                    updateLocalToken(xhr);
-                    return;
-                } 
-                console.log(data); 
-            }
-        });
-    });
-
-    //隐藏警告框
-    function hideWarning() {
-        $("#warningDiv").hide();
-    }
-    
-    //发布笔记
-    $("#noteSubmit").click(function(){
-        if(subject.subject2 == -1){
-            alert("请选择学科！");
-            return;
-        }
-        if(tagArray.length == 0){
-            alert("请添加标签！");
-            return;
-        }
-        var newTagArray = [];
-        for (var i = tagArray.length - 1; i >= 0; i--) {
-            newTagArray[i] = {id: tagArray[i]};
-        }
-        var resultData;
-        $.ajax({
-            type: "POST",
-            headers: {
-               "Access-control-expose-headers": header1,
-               "Authorization": header2
-            },
-            url: "/note",
-            contentType: "application/json;charset=UTF-8",
-            data: JSON.stringify({title: $("#noteTitle").val(), content:$("#noteContent").val(), type:{id:subject.subject2}, tags:newTagArray}),
-            dataType: "json",
-            success: function(data){
-                resultData = data.status;
-                if(resultData == "SUCCESS"){
-                    alert("发布成功！");
-                    window.location.href = "management.html";
-                    return;
-                }
-                console.log(resultData);
-            },
-            complete: function(xhr,data){
-                if(resultData == "SUCCESS" && data == "success"){
-                    updateLocalToken(xhr);
-                    return;
-                } 
-                console.log(data);
-            }
-        });
-    });
-
     //根据标题查询笔记
     $("#btnSelectByTitle").click(function(){
-        var resultData;
-        var textNoteTitle = $("#textNoteTitle").val();
-        $.ajax({
-            type: "GET",
-            headers: {
-               "Access-control-expose-headers": header1,
-               "Authorization": header2
-            },
-            url: "/findByTitle",
-            data: {page:1,size:notePageSize,title:textNoteTitle},
-            dataType: "json",
-            success: function(data){
-                resultData = data.status;
-                if(resultData == "SUCCESS"){
-                    var result = data.data;
-                    var totalNumber = result.totalElements;
-                    noteList.notes = result.content;
-                    //分页
-                    notePage = null;
-                    $("#pages_1").text("");
-                    notePage = new Pagination({
-                        element: '#pages_1',
-                        type: 2,
-                        pageIndex: 1,
-                        pageSize: notePageSize,
-                        pageCount: 9,
-                        total: totalNumber,
-                        jumper: true,
-                        singlePageHide: false,
-                        disabled: true,
-                        currentChange: function(index) {
-                            $.ajax({
-                                type: "GET",
-                                headers: {
-                                   "Access-control-expose-headers": header1,
-                                   "Authorization": header2
-                                },
-                                url: "/findByTitle",
-                                data: {page:index, size:notePageSize,title:textNoteTitle},
-                                dataType: "json",
-                                success: function(data1){
-                                    result = data1.data;
-                                    totalNumber = result.totalElements;
-                                    noteList.notes = result.content;
-                                }
-                            });
-                        }
-                    });
-                    return;
-                }
-                console.log(data.message);
-            },
-            complete: function(xhr,data){
-                if(resultData == "SUCCESS" && data == "success"){
-                    updateLocalToken(xhr);
-                    return;
-                } 
-                console.log(data); 
-            }
-        });
-    });
+        // var textNoteTitle = $("#textNoteTitle").val();
+        // $.ajax({
+        //     type: "GET",
+        //     headers: {
+        //        "Access-control-expose-headers": header1,
+        //        "Authorization": header2
+        //     },
+        //     url: "/findByTitle",
+        //     data: {page:0,size:notePageSize,title:textNoteTitle},
+        //     dataType: "json",
+        //     success: function(data){
+        //         if(data.status == "SUCCESS"){
+        //             var result = data.data;
+        //             var totalNumber = result.totalElements;
+        //             noteList.notes = result.content;
 
-    //暂存笔记
-    $("#noteSave").click(function(){
-        alert("已保存！");
-        window.location.href = "management.html";
+        //             noteList.noteFlag = [];
+        //             for (var i = noteList.notes.length - 1; i >= 0; i--) {
+        //                 noteList.noteFlag[i] = 1;
+        //             }
+
+        //             //分页
+        //             notePage = null;
+        //             $("#pages_1").text(""); 
+        //             // $("#pages_1").empty();
+        //             notePage = new Pagination({
+        //                 element: '#pages_1',
+        //                 type: 2,
+        //                 pageIndex: 1,
+        //                 pageSize: notePageSize,
+        //                 pageCount: 9,
+        //                 total: totalNumber,
+        //                 jumper: true,
+        //                 singlePageHide: false,
+        //                 disabled: true,
+        //                 currentChange: function(index) {
+        //                     var newIndex = index-1;
+        //                     $.ajax({
+        //                         type: "GET",
+        //                         headers: {
+        //                            "Access-control-expose-headers": header1,
+        //                            "Authorization": header2
+        //                         },
+        //                         url: "/findByTitle",
+        //                         data: {page:newIndex, size:notePageSize, title:textNoteTitle},
+        //                         dataType: "json",
+        //                         success: function(data1){
+        //                             if(data1.status == "SUCCESS"){
+        //                                 result = data1.data;
+        //                                 totalNumber = result.totalElements;
+        //                                 noteList.notes = result.content;
+
+        //                                 noteList.noteFlag = [];
+        //                                 for (var i = noteList.notes.length - 1; i >= 0; i--) {
+        //                                     noteList.noteFlag[i] = 1;
+        //                                 }
+        //                                 return;
+        //                             }
+        //                             console.log(data1.status);
+        //                         }
+        //                     });
+        //                 }
+        //             });
+        //             return;
+        //         }
+        //         console.log(data.status);
+        //     }
+        // });
     });
 
     //退出登录
@@ -723,23 +525,16 @@
         localStorage.setItem("Access-control-expose-headers", param.getResponseHeader("Access-control-expose-headers"));
         localStorage.setItem("Authorization", param.getResponseHeader("Authorization"));
     }
-    
-    //转换
-    $("#btnChange").click(function(){
-        var data = $("#noteContent").val();
-        data = data.replace(/#*.*#/g, '').replace(/[^a-z0-9\u4e00-\u9fa5]/, '').substring(0, 200); // 除去标题部分，截取200个字用来显示
-        alert(data);
-        // var content = $("#noteContent").val();
-        // $("#appendTest").val(content);
-        // editormd.markdownToHTML("testEditorMdview", {
-        //     htmlDecode: "style,script,iframe", //可以过滤标签解码
-        //     emoji: true,
-        //     taskList:true,
-        //     tex: true,               // 默认不解析
-        //     flowChart:true,         // 默认不解析
-        //     sequenceDiagram:true,  // 默认不解析
-        // });
-    });
+
+    //获取参数
+    function GetQueryString(name) { 
+        var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)","i"); 
+        var r = window.location.search.substr(1).match(reg); 
+        if (r!=null){
+            return (r[2]); 
+        }
+        return null; 
+    }
 
     //markdown编辑
     var testEditor;

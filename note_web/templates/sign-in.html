@@ -84,7 +84,7 @@
 														</label>
 														<small style="color: #bcbcbc">记住密码</small>
 													</div><!--fgt-sec end-->
-													<a href="javascript:forgetPassword()" title="" style="color: #bcbcbc">忘记密码？</a>
+													<a href="forget-password.html" title="" style="color: #bcbcbc">忘记密码？</a>
 												</div>
 											</div>
 											<div class="col-lg-12 no-pdd" style="text-align: center;">
@@ -197,6 +197,7 @@
 	            	return;
 	            }
 	            console.log(resultData);
+	            alert(data.message);
 	        },
 	        complete: function(xhr,data){
 	        	if(resultData == "SUCCESS" && data == "success"){
@@ -221,7 +222,7 @@
             data: {mail:$("#mail_register").val()},
             dataType: "json",
             success: function(data){
-            	console.log("发送邮箱验证码成功");
+            	console.log(data.status);        	
 	        }
         });
 
@@ -259,18 +260,13 @@
             	if(data.status == "SUCCESS"){
 	            	alert("注册成功");
 	            	window.location.href = "sign-in.html";
-	            }else{
-	            	console.log(data);
-	            	alert(data.message);
+	            	return;
 	            }
+	            console.log(data.status);
+            	alert(data.message);
 	        }
         });
     });
-
-    //忘记密码跳转
-	function forgetPassword(){
-		window.location.href = "forget-password.html";
-	}
 </script>
 </body>
 </html>
