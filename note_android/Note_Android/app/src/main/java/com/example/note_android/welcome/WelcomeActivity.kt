@@ -2,29 +2,41 @@ package com.example.note_android.welcome
 
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
-import android.os.AsyncTask
-import android.os.Bundle
+import android.os.*
 import android.view.View
 import android.view.animation.AlphaAnimation
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.note_android.MainActivity
 import com.example.note_android.annotation.Page
 import com.example.note_android.R
+import com.example.note_android.bean.Note
+import com.example.note_android.bean.NoteType
+import com.example.note_android.bean.UserInfo
 import com.example.note_android.sql_lite.DataBaseHelper
 import com.example.note_android.util.ActivityUtil
 import com.example.note_android.util.HttpAddressUtil
 import com.example.note_android.util.StateUtil
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import com.tencent.tauth.IUiListener
 import com.tencent.tauth.Tencent
 import com.tencent.tauth.UiError
 import com.xuexiang.xui.XUI
 import kotlinx.android.synthetic.main.activity_welcome.*
+import okhttp3.*
+import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import org.json.JSONObject
+import java.io.IOException
 
 @Page(name = "欢迎页")
 class WelcomeActivity : AppCompatActivity() {
 
     private lateinit var mTencent: Tencent
+    private var a:CustomAsyncTask = CustomAsyncTask()
+    private lateinit var handler: Handler
+    private var gson:Gson = Gson()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,6 +46,21 @@ class WelcomeActivity : AppCompatActivity() {
         mTencent = Tencent.createInstance(resources.getString(R.string.APP_ID),applicationContext)
         initView()
         checkLogin()
+        handler = object : Handler(){
+            override fun handleMessage(msg: Message) {
+                super.handleMessage(msg)
+                var result = JSONObject(msg.obj.toString())
+                if(result != null && result.get("status") == "SUCCESS"){
+                    var userInfo:UserInfo = gson.fromJson(result.get("data").toString(),UserInfo::class.java)
+                    StateUtil.SYSTEM_USER_INFO = userInfo
+                }
+                a.execute()
+                wel_close_button.setOnClickListener(View.OnClickListener {
+                    ActivityUtil.get().goActivityKill(this@WelcomeActivity,MainActivity::class.java)
+                    a.cancel(true)
+                })
+            }
+        }
     }
 
     private fun initView(){
@@ -41,57 +68,47 @@ class WelcomeActivity : AppCompatActivity() {
         val ani = AlphaAnimation(0.2f,1.0f)
         ani.duration = 1000
         welcome_bac.startAnimation(ani)
-
-
-        //启动欢迎页倒计时异步任务
-        val a = CustomAsyncTask()
-        a.execute()
-        wel_close_button.setOnClickListener(View.OnClickListener {
-            ActivityUtil.get().goActivityKill(this@WelcomeActivity,MainActivity::class.java)
-            a.cancel(true)
-        })
     }
 
     private fun checkLogin() {
         var shared = getSharedPreferences(resources.getString(R.string.Login_Type),Context.MODE_PRIVATE)
-        var loginType = shared?.getString(resources.getString(R.string.Login_Type),"")
         StateUtil.AUTHORIZATION = shared?.getString(resources.getString(R.string.Authorization),"").toString()
         StateUtil.AUTHORIZATION = "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiI4NTk2ODQ1ODFAcXEuY29tIiwiY3JlYXRlZCI6MTYxOTU5OTA1NDA3Mywicm9sZXMiOiJST0xFX1VTRVIiLCJleHAiOjE2MjAyMDM4NTR9.4ygTDVAKwiqgEGcK9JgI5PFcPArkrT-AAnn9MzTqPvHujMuBv8XFjK9by977xrLnyo6IayWstWlj0b4Bzms49w"
         StateUtil.AUTHORIZATION_HEADERS = shared?.getString(resources.getString(R.string.Authorization_Header),"").toString()
-        StateUtil.initInfo(this)
-        if (loginType.equals("") ||
-            StateUtil.LOGIN_INFO==null ||
-            StateUtil.USER_INFO == null || StateUtil.AUTHORIZATION_HEADERS == "") {
+        if (StateUtil.AUTHORIZATION == "") {
             StateUtil.IF_LOGIN = false
         }else{
             StateUtil.IF_LOGIN = true
-            StateUtil.LOGIN_TYPE = loginType!!
-            mTencent.openId = StateUtil.LOGIN_INFO?.openid
-            mTencent.setAccessToken(StateUtil.LOGIN_INFO?.access_token,StateUtil.LOGIN_INFO?.expires_in)
-            mTencent.checkLogin(object : IUiListener {
-                override fun onComplete(p0: Any?) {
-                    p0 as JSONObject
-                    if (p0.optInt("ret", -1) == 0) {
-                        mTencent.loadSession(resources.getString(R.string.APP_ID));
-                    } else {
-                        StateUtil.IF_LOGIN = false
-                    }
-                }
-
-                override fun onCancel() {
-                    TODO("Not yet implemented")
-                }
-
-                override fun onWarning(p0: Int) {
-                    TODO("Not yet implemented")
-                }
-
-                override fun onError(p0: UiError?) {
-                    TODO("Not yet implemented")
-                }
-
-            })
+            getUserInfo()
         }
+    }
+
+    private fun getUserInfo(){
+        var httpClient = OkHttpClient()
+        val urlBuilder = HttpAddressUtil.getUserInfo().toHttpUrlOrNull()!!.newBuilder()
+        var request = Request.Builder()
+                .addHeader(resources.getString(R.string.Authorization),StateUtil.AUTHORIZATION)
+                .addHeader(resources.getString(R.string.Authorization_Header),StateUtil.AUTHORIZATION_HEADERS)
+                .get()
+                .url(urlBuilder.build()).build()
+        httpClient.newCall(request).enqueue(object : Callback {
+            override fun onFailure(call: Call, e: IOException) {
+                Looper.prepare()
+                Toast.makeText(this@WelcomeActivity,"网络出了点问题", Toast.LENGTH_SHORT).show()
+                Looper.loop()
+            }
+
+            override fun onResponse(call: Call, response: Response) {
+                var result: String? = response.body?.string()
+                if(result == null || result == ""){
+                    Toast.makeText(this@WelcomeActivity,"网络出了点问题,请重试", Toast.LENGTH_SHORT).show()
+                    return
+                }
+                var mess = Message()
+                mess.obj = result
+                handler.sendMessage(mess)
+            }
+        })
     }
 
     private inner class CustomAsyncTask : AsyncTask<String, Int, Int>(){

@@ -20,7 +20,7 @@ class EditActivity : AppCompatActivity() {
 
     private fun initFragment(){
         supportFragmentManager.beginTransaction()
-            .replace(R.id.fragment_edit_note, EditNoteFragment())
+            .replace(R.id.fragment_edit_note, EditNoteFragment(),"editNoteFragment")
             .commit()
     }
 }

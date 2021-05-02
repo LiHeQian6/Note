@@ -2,6 +2,7 @@ package com.example.note_android.util
 
 import android.content.Context
 import com.example.note_android.R
+import com.example.note_android.bean.UserInfo
 import com.example.note_android.login.bean.QQLoginInfo
 import com.example.note_android.login.bean.QQUserInfo
 import com.google.gson.Gson
@@ -15,20 +16,21 @@ class StateUtil {
         var LOGIN_TYPE:String = ""
         var AUTHORIZATION:String = ""
         var AUTHORIZATION_HEADERS:String = ""
+        var SYSTEM_USER_INFO: UserInfo? = null
 
-        fun initInfo(context: Context): Boolean{
-            var gson = Gson()
-            var editor = context.getSharedPreferences(
-                context.resources.getString(R.string.LoginInfo),
-                Context.MODE_PRIVATE)
-            var userInfo = editor?.getString(context.resources.getString(R.string.QQUserInfo),"")
-            var loginInfo = editor?.getString(context.resources.getString(R.string.QQLoginInfo),"")
-            if (userInfo.equals("") || loginInfo.equals("")){
-                return false
-            }
-            this.LOGIN_INFO = gson.fromJson(loginInfo, QQLoginInfo::class.java)
-            this.USER_INFO = gson.fromJson(userInfo, QQUserInfo::class.java)
-            return true
-        }
+//        fun initInfo(context: Context): Boolean{
+//            var gson = Gson()
+//            var editor = context.getSharedPreferences(
+//                context.resources.getString(R.string.LoginInfo),
+//                Context.MODE_PRIVATE)
+//            var userInfo = editor?.getString(context.resources.getString(R.string.QQUserInfo),"")
+//            var loginInfo = editor?.getString(context.resources.getString(R.string.QQLoginInfo),"")
+//            if (userInfo.equals("") || loginInfo.equals("")){
+//                return false
+//            }
+//            this.LOGIN_INFO = gson.fromJson(loginInfo, QQLoginInfo::class.java)
+//            this.USER_INFO = gson.fromJson(userInfo, QQUserInfo::class.java)
+//            return true
+//        }
     }
 }

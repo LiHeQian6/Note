@@ -16,4 +16,7 @@
     <color name="deep_gray">#515151</color>
     <color name="less_black">#2c2c2c</color>
     <color name="transparent">#00000000</color>
+
+    <drawable name="select_text_color">#FFFFFF</drawable>
+    <drawable name="un_select_text_color">#FF6700</drawable>
 </resources>
