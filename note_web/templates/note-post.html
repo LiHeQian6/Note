@@ -117,7 +117,7 @@
                 <a href="management.html" style="display: flex;align-items: center;color: #686868;font-size: 24px;font-weight: 600;"><img src="/static/images/note_edit_return.png" style="width: 20px;height: 20px">&nbsp笔记管理
                 </a>
             </div>
-            <button id="noteSave" onclick="noteSubmit()" type="button" class="btn btn-danger pull-right" style="position: absolute;top: 0px;right:20px;color: #ffffff;font-size: 16px;font-weight: 600;">发布
+            <button id="noteSubmit" type="button" class="btn btn-danger pull-right" style="position: absolute;top: 0px;right:20px;color: #ffffff;font-size: 16px;font-weight: 600;">发布
             </button>
         </div>
         <div class="cp-field" style="padding: 0px 40px">
@@ -207,8 +207,7 @@
 <script type="text/javascript">
     $("#btnChange").click(function(){
         var data = $("#noteContent").val();
-        data = data.replace(/#*.*#/g, '').replace(/[^a-z0-9\u4e00-\u9fa5]/, '').replace(/[\r\n]/g, "").replace(/\s+/g, ""); // .substring(0, 200)
-
+        data = data.replace(/#*.*#/g, '').replace(/[^a-z0-9\u4e00-\u9fa5]/, '').replace(/[\r\n]/g, " ").replace(/\s+/g, " "); // .substring(0, 200)
         console.log(data);
     });
 
@@ -287,7 +286,7 @@
     }
 
     //创建标签
-    $("#createTag").click(function(){
+    $(document).on('click','#createTag',function(){
         var tagName = $("#selectTag").val();
         if(tagName == ""){
             $("#warningDiv").show();
@@ -332,7 +331,7 @@
     }
     
     //发布笔记
-    function noteSubmit(){
+    $(document).on('click','#noteSubmit',function(){
         if(subject.subject2 == -1){
             alert("请选择学科！");
             return;
@@ -373,49 +372,7 @@
                 console.log(data);
             }
         });
-    }
-    // $("#noteSubmit").click(function(){
-    //     if(subject.subject2 == -1){
-    //         alert("请选择学科！");
-    //         return;
-    //     }
-    //     if(tagArray.length == 0){
-    //         alert("请添加标签！");
-    //         return;
-    //     }
-    //     var newTagArray = [];
-    //     for (var i = tagArray.length - 1; i >= 0; i--) {
-    //         newTagArray[i] = {id: tagArray[i]};
-    //     }
-    //     var resultData;
-    //     $.ajax({
-    //         type: "POST",
-    //         headers: {
-    //            "Access-control-expose-headers": header1,
-    //            "Authorization": header2
-    //         },
-    //         url: "/note",
-    //         contentType: "application/json;charset=UTF-8",
-    //         data: JSON.stringify({title: $("#noteTitle").val(), content:$("#noteContent").val(), type:{id:subject.subject2}, tags:newTagArray}),
-    //         dataType: "json",
-    //         success: function(data){
-    //             resultData = data.status;
-    //             if(resultData == "SUCCESS"){
-    //                 alert("发布成功！");
-    //                 window.location.href = "management.html";
-    //                 return;
-    //             }
-    //             console.log(resultData);
-    //         },
-    //         complete: function(xhr,data){
-    //             if(resultData == "SUCCESS" && data == "success"){
-    //                 updateLocalToken(xhr);
-    //                 return;
-    //             } 
-    //             console.log(data);
-    //         }
-    //     });
-    // });
+    });
 
     //退出登录
     function logout(){
