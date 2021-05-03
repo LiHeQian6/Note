@@ -29,7 +29,7 @@
     var user_recommendSize = 5;
     var currentUserPage = 0;
     var lastUserPage;
-    var notePageSize = 2;
+    var notePageSize = 3;
     var currentNotePage = 0;
     var currentNoteSubject = -1;
     var currentNoteTag = 0;
@@ -186,6 +186,10 @@
 				loadNoteDetail: function(noteId){
 					return "note-detail.html?noteId="+noteId;
 				},
+				//跳转到用户主页
+				loadUserHome: function(writerId){
+					return "user-homepage.html?writerId="+writerId;
+				},
 				//加载更多
 				loadMore: function(){
 					currentNotePage++;
@@ -218,21 +222,15 @@
 				loadMoreUser: function(){
 					currentUserPage++;
 					if(currentUserPage+1 > lastUserPage){
-						currentUserPage = Math.floor(Math.random()*lastUserPage+1)-1;
+						currentUserPage = lastUserPage-1;
+						// currentUserPage = Math.floor(Math.random()*lastUserPage+1)-1;
 					}
-					$.ajax({
-			            type: "GET",
-			            url: "/users/popular",
-			            data: {page:currentUserPage, size:user_recommendSize},
-			            dataType: "json",
-			            success: function(data){
-							if(data.status == "SUCCESS"){
-								this.users = data.data.content;
-			                    return;
-			                }
-			                console.log(data.status);
-				        }
-				    });
+
+					if(header1 == null || header2 == null){
+						request_writer_unLogin();
+					}else{
+						request_writer_login();
+					}
 				},
 				//关注作者
 				followWriter: function(writerId,index){
@@ -281,9 +279,40 @@
 			            }
 				    });
 				},
-				// closeFollowWriter: function(writer){
+				//取消关注
+				closeFollowWriter: function(writerId,index){
+					var resultData;
+					$.ajax({
+			            type: "DELETE",
+			            url: "/follow",
+			            headers: {
+			               "Access-control-expose-headers": header1,
+			               "Authorization": header2
+			            },
+			            data: {targetId:writerId},
+			            dataType: "json",
+			            success: function(data){
+			            	resultData = data.status;
+							if(resultData == "SUCCESS"){
+								alert("取消关注成功！");
 
-				// }
+								var iconId1 = "#icon_follow"+index;
+								var iconId2 = "#icon_close_follow"+index;
+								$(iconId1).show();
+								$(iconId2).hide();
+								return;
+			                }
+			                console.log(resultData);
+				        },
+				        complete: function(xhr,data){
+			                if(resultData == "SUCCESS" && data == "success"){
+			                    updateLocalToken(xhr);
+			                    return;
+			                } 
+			                console.log(data);
+			            }
+				    });
+				}
 			}
 		});
 
@@ -329,49 +358,6 @@
 						noteList.notes[i].content = GetMarkdownText(noteList.notes[i].content);
 					}
 					
-                    return;
-                }
-                console.log(data.status);
-	        }
-	    });
-	}
-
-	function request_writer_unLogin(){
-	    //推荐作者加载
-		$.ajax({
-            type: "GET",
-            url: "/users/popular",
-            data: {page:currentUserPage, size:user_recommendSize},
-            dataType: "json",
-            success: function(data){
-				if(data.status == "SUCCESS"){
-					user_recommend.users = data.data.content;
-					lastUserPage = data.data.totalPages;
-                    return;
-                }
-                console.log(data.status);
-	        }
-	    });
-	}
-	function request_writer_login(){
-	    //推荐作者加载
-		$.ajax({
-            type: "GET",
-            url: "/users/popular",
-            headers: {
-               "Access-control-expose-headers": header1,
-               "Authorization": header2
-            },
-            data: {page:currentUserPage, size:user_recommendSize},
-            dataType: "json",
-            success: function(data){
-				if(data.status == "SUCCESS"){
-					user_recommend.users = data.data.content;
-					lastUserPage = data.data.totalPages;
-
-					for (var i = user_recommend.users.length - 1; i >= 0; i--) {
-						console.log("follow:"+user_recommend.users[i].follow);
-					}
                     return;
                 }
                 console.log(data.status);
@@ -557,7 +543,7 @@
 												<span>{{site.like}}获赞 &nbsp {{site.followee}}粉丝</span>
 											</div>
 											<span v-bind:id="'icon_follow'+index" v-on:click="followWriter(site.id,index)"><i class="la la-plus"></i></span>
-											<span v-bind:id="'icon_close_follow'+index" style="display: none"><i class="fa fa-check"></i></span>
+											<span v-bind:id="'icon_close_follow'+index" v-on:click="closeFollowWriter(site.id,index)" style="display: none"><i class="fa fa-check"></i></span>
 										</div>
 										<div class="view-more">
 											<a href="writer.html" title="">View More</a>
@@ -574,17 +560,17 @@
 										<div v-for="site in notes" class="post-bar">
 											<div class="post_topbar">
 												<div class="usy-dt">
-													<a href="user-homepage.html"><img src="/static/images/resources/us-pic.png" alt=""></a>
+													<a v-bind:href="loadUserHome(site.user.id)"><img src="/static/images/resources/us-pic.png" alt=""></a>
 													<div class="usy-name"></a>
-														<h3><a href="user-homepage.html" style="color: black">{{site.user.nickName}}</h3></a>
+														<h3><a v-bind:href="loadUserHome(site.user.id)" style="color: black">{{site.user.nickName}}</h3></a>
 														<span><img src="/static/images/clock.png" alt="">{{site.createTime}}</span>
 													</div>
 												</div>
 											</div>
 											
 											<div class="job_descp">
-												<h3><a href="note-detail.html" style="color: black">{{site.title}}</a></h3>
-												<p>{{site.content}}<a href="note-detail.html" title=""> &nbspview more</a></p>
+												<h3><a v-bind:href="loadNoteDetail(site.id)" style="color: black">{{site.title}}</a></h3>
+												<p>{{site.content}}<a v-bind:href="loadNoteDetail(site.id)" title=""> &nbspview more</a></p>
 												<ul class="skill-tags">
 													<li v-for="tag in site.tags"><a href="#" title="">{{tag.name}}</a></li> 	
 												</ul>
@@ -684,6 +670,56 @@
                 }
                 console.log(data.status);
 	        }
+	    });
+	}
+
+	//加载推荐作者（未登录）
+	function request_writer_unLogin(){
+	    //推荐作者加载
+		$.ajax({
+	        type: "GET",
+	        url: "/users/popular",
+	        data: {page:currentUserPage, size:user_recommendSize},
+	        dataType: "json",
+	        success: function(data){
+				if(data.status == "SUCCESS"){
+					user_recommend.users = data.data.content;
+					lastUserPage = data.data.totalPages;
+	                return;
+	            }
+	            console.log(data.status);
+	        }
+	    });
+	}
+	//加载推荐作者（已登录）
+	function request_writer_login(){
+		var resultData;
+	    //推荐作者加载
+		$.ajax({
+            type: "GET",
+            url: "/users/popular",
+            headers: {
+               "Access-control-expose-headers": header1,
+               "Authorization": header2
+            },
+            data: {page:currentUserPage, size:user_recommendSize},
+            dataType: "json",
+            success: function(data){
+            	resultData = data.status;
+				if(resultData == "SUCCESS"){
+					user_recommend.users = data.data.content;
+					lastUserPage = data.data.totalPages;
+                    return;
+                }
+                console.log(resultData);
+	        },
+	        complete: function(xhr,data){
+                if(resultData == "SUCCESS" && data == "success"){
+                    updateLocalToken(xhr);
+                    return;
+                } 
+                console.log(data);
+            }
 	    });
 	}
 

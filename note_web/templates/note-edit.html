@@ -81,6 +81,7 @@
                 methods:{
                     noteSave: function(){
                         var resultData;
+                        var that = this;
                         $.ajax({
                             type: "PUT",
                             url: "/note",
@@ -89,7 +90,7 @@
                                "Authorization": header2
                             },
                             contentType: "application/json;charset=UTF-8",
-                            data: JSON.stringify({id:noteId, title:this.title, content:$("#noteContent").val(), type:this.type, tags:this.tags}),
+                            data: JSON.stringify({id:noteId, title:that.title, content:$("#noteContent").val(), type:that.type, tags:that.tags}),
                             dataType: "json",
                             success: function(data){
                                 resultData = data.status;
