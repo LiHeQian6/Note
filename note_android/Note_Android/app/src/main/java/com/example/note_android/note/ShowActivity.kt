@@ -18,7 +18,10 @@ import com.example.note_android.util.StateUtil
 import com.google.gson.Gson
 import com.xuexiang.xui.utils.WidgetUtils
 import com.xuexiang.xui.widget.dialog.MiniLoadingDialog
+import io.noties.markwon.AbstractMarkwonPlugin
 import io.noties.markwon.Markwon
+import io.noties.markwon.SoftBreakAddsNewLinePlugin
+import io.noties.markwon.core.MarkwonTheme
 import kotlinx.android.synthetic.main.activity_show.*
 import kotlinx.android.synthetic.main.activity_welcome.*
 import kotlinx.android.synthetic.main.note_list_item.*
@@ -250,12 +253,20 @@ class ShowActivity : AppCompatActivity(),View.OnClickListener {
     @RequiresApi(Build.VERSION_CODES.M)
     private fun initView() {
         //初始化信息开始
-        markwon = Markwon.create(this)
+        markwon = Markwon.builder(this)
+                .usePlugin(SoftBreakAddsNewLinePlugin())
+                .usePlugin(object : AbstractMarkwonPlugin() {
+                    override fun configureTheme(builder: MarkwonTheme.Builder) {
+                        builder.headingBreakHeight(1)
+                                .bulletWidth(resources.getDimension(R.dimen.dp_6).toInt())
+                    }
+                }).build()
+        current_writer.text = currentNote.user?.nickName
         current_writer_header.isCircle = true
         current_note_title.text = currentNote.title
         var data = SimpleDateFormat("YYYY-MM-dd")
         current_note_time.text = data.format(currentNote.createTime)
-        markwon.setMarkdown(current_note_content,currentNote.content.toString())
+        markwon.setMarkdown(current_note_content, currentNote.content.toString())
         comment_num.text = "评论 ${currentNote.commentNum}条"
         current_zan_num.text = currentNote.like.toString()
         current_save_num.text = currentNote.collect.toString()
@@ -276,6 +287,16 @@ class ShowActivity : AppCompatActivity(),View.OnClickListener {
             follow_this_writer.background = resources.getDrawable(R.drawable.radio_button_select,null)
             follow_this_writer.text = "关 注"
             follow_this_writer.setTextColor(resources.getColor(R.color.white,null))
+        }
+        if(IF_LIKE) {
+            ico_dianzan.setColorFilter(resources.getColor(R.color.orange, null))
+        }else {
+            ico_dianzan.setColorFilter(resources.getColor(R.color.little_gray, null))
+        }
+        if(IF_COLLECT) {
+            ico_save.setColorFilter(resources.getColor(R.color.orange, null))
+        }else{
+            ico_save.setColorFilter(resources.getColor(R.color.little_gray,null))
         }
     }
 

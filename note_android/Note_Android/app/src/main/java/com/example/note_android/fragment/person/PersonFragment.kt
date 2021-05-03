@@ -6,6 +6,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
@@ -138,7 +139,10 @@ class PersonFragment : Fragment(),View.OnClickListener {
 
             }
             R.id.person_image -> {
-                ActivityUtil.get().goActivity(requireContext(),SettingActivity::class.java,MessageBean("Success","UserMessage",null))
+                if (StateUtil.IF_LOGIN)
+                    ActivityUtil.get().goActivity(requireContext(),SettingActivity::class.java,MessageBean("Success","UserMessage",null))
+                else
+                    Toast.makeText(requireContext(), "请先登录！", Toast.LENGTH_SHORT).show()
             }
             R.id.my_note -> {
                 ActivityUtil.get().goActivity(requireContext(),AboutMeActivity::class.java,MessageBean("Success","MyNote",null))

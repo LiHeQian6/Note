@@ -20,6 +20,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
 import com.example.note_android.R
 import com.example.note_android.bean.Note
+import com.example.note_android.bean.NoteInfo
 import com.example.note_android.bean.NoteType
 import com.example.note_android.bean.Tag
 import com.example.note_android.edit.util.SoftKeyBoardListener
@@ -53,11 +54,26 @@ class EditNoteFragment: Fragment(),View.OnClickListener {
     private lateinit var noteTitle: String
     private lateinit var noteContent: String
     private lateinit var handler: Handler
-    private var tags:MutableList<NoteType> = ArrayList()
+    private var tags:MutableList<Tag> = ArrayList()
     private lateinit var type:NoteType
     private lateinit var gson:Gson
     private lateinit var note:Note
     private lateinit var dialog:Dialog
+
+    companion object{
+
+        private var currentNote: NoteInfo? = null
+
+        fun newInstance(noteInfo: NoteInfo?): EditNoteFragment{
+            currentNote = null
+            if (noteInfo != null) {
+                currentNote = noteInfo
+            }else{
+                currentNote = null
+            }
+            return EditNoteFragment();
+        }
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -65,7 +81,8 @@ class EditNoteFragment: Fragment(),View.OnClickListener {
         savedInstanceState: Bundle?
     ): View {
         rootView = inflater.inflate(R.layout.fragment_edit_note,container,false)
-        //checkLogin()
+        initNote()
+        checkLogin()
         initTool()
         initEditor()
         initView()
@@ -82,6 +99,24 @@ class EditNoteFragment: Fragment(),View.OnClickListener {
             }
         }
         return rootView
+    }
+
+    private fun initNote() {
+        if (currentNote == null)
+            return
+        var selectedTags = "";
+        rootView.edit_note_title.setText(currentNote?.title.toString())
+        rootView.select_note_type.text = currentNote?.type?.name
+        if(currentNote?.tags?.size!! > 0){
+            selectedTags += currentNote?.tags?.get(0)?.name
+            for (i in 1 until tags.size){
+                selectedTags += "，${currentNote?.tags?.get(i)?.name}"
+            }
+        }
+        type = currentNote?.type!!
+        tags = currentNote?.tags!!
+        rootView.select_note_tag.text = selectedTags
+        rootView.edit_markdown.setText(currentNote?.content)
     }
 
     private fun checkLogin() {
@@ -145,7 +180,10 @@ class EditNoteFragment: Fragment(),View.OnClickListener {
         var httpClient = OkHttpClient()
         var mediaType = "application/json".toMediaTypeOrNull()
         var json = JSONObject()
-        note = Note(noteTitle,noteContent,tags,type!!)
+        if (currentNote == null)
+            note = Note("0",noteTitle,noteContent,tags,type)
+        else
+            note = Note(currentNote!!.id.toString(),noteTitle,noteContent,tags,type)
         gson = Gson()
         json.put("note", gson.toJson(note))
         var requestBody = RequestBody.create(mediaType,json.get("note").toString())
@@ -154,8 +192,11 @@ class EditNoteFragment: Fragment(),View.OnClickListener {
                 .addHeader(resources.getString(R.string.Authorization),StateUtil.AUTHORIZATION)
                 .addHeader(resources.getString(R.string.Authorization_Header),StateUtil.AUTHORIZATION_HEADERS)
                 .url(urlBuilder.build())
-                .method("POST",requestBody).build()
-        httpClient.newCall(request).enqueue(object : Callback {
+        if (currentNote == null)
+            request.method("POST",requestBody)
+        else
+            request.method("PUT",requestBody)
+        httpClient.newCall(request.build()).enqueue(object : Callback {
             override fun onFailure(call: Call, e: IOException) {
                 Looper.prepare()
                 Toast.makeText(requireContext(),"网络出了点问题", Toast.LENGTH_SHORT).show()
@@ -259,14 +300,14 @@ class EditNoteFragment: Fragment(),View.OnClickListener {
         }
     }
 
-    fun setData(optionType: String?,tags:MutableList<NoteType>){
-        this.tags = tags
-        var selectedTags = "";
-        if(optionType != "选择标签" && tags.size > 0) {
-            rootView.select_note_type.text = tags[0].name
-            type = tags[0]
-            return
-        }
+    fun setNoteType(noteType: NoteType){
+        rootView.select_note_type.text = noteType.name
+        type = noteType
+        return
+    }
+
+    fun setTags(tags:MutableList<Tag>){
+        var selectedTags = ""
         if(tags.size > 0){
             selectedTags += tags[0].name
             for (i in 1 until tags.size){
@@ -274,5 +315,6 @@ class EditNoteFragment: Fragment(),View.OnClickListener {
             }
             rootView.select_note_tag.text = selectedTags
         }
+        this.tags = tags
     }
 }

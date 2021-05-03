@@ -25,8 +25,7 @@
         <activity android:name=".note.ShowActivity" />
         <activity android:name=".scan.ScanActivity" />
         <activity
-            android:name=".edit.EditActivity"
-            android:windowSoftInputMode="adjustPan" />
+            android:name=".edit.EditActivity"/>
         <activity android:name=".MainActivity" android:windowSoftInputMode="adjustPan|stateHidden"></activity>
         <activity android:name=".login.LoginActivity" />
         <activity android:name=".welcome.WelcomeActivity">
