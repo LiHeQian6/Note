@@ -45,6 +45,8 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/dp_5"
         android:text="Android开发"
+        android:maxLines="4"
+        android:ellipsize="end"
         android:textColor="@color/little_gray"
         android:textSize="@dimen/sp_13"
         app:layout_constraintLeft_toLeftOf="parent"
@@ -76,10 +78,10 @@
             android:layout_width="@dimen/dp_17"
             android:layout_height="@dimen/dp_18"
             android:layout_marginLeft="@dimen/dp_5"
-            android:src="@drawable/ico_save" />
+            android:src="@drawable/ico_dianzan" />
 
         <TextView
-            android:id="@+id/save_num"
+            android:id="@+id/dianzan_num"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center"
