@@ -26,6 +26,7 @@
     var user_recommend;
     var user_recommendSize = 5;
     var currentUserPage = 0;
+    var lastUserPage;
     var currentNotePage = 0;
     var notePageSize = 3;
 
@@ -75,6 +76,11 @@
 			el: '#noteList',
 			data:{
 				notes:[]
+			},
+			methods:{
+				loadNoteDetail: function(noteId){
+					return "note-detail.html?noteId="+noteId;
+				}
 			}
 		});
 		//作者
@@ -89,7 +95,7 @@
 	    var noteListLoadResultStatus;
 		$.ajax({
             type: "GET",
-            url: "/notes/follow",
+            url: "/notes/followers",
             headers: {
                "Access-control-expose-headers": header1,
                "Authorization": header2
@@ -100,7 +106,6 @@
             	noteListLoadResultStatus = data.status;
 				if(noteListLoadResultStatus == "SUCCESS"){
 					noteList.notes = data.data.content;
-
 					for (var i = noteList.notes.length - 1; i >= 0; i--) {
 						noteList.notes[i].content = GetMarkdownText(noteList.notes[i].content);
 					}
@@ -126,6 +131,7 @@
             success: function(data){
 				if(data.status == "SUCCESS"){
 					user_recommend.users = data.data.content;
+					lastUserPage = data.data.totalPages;
                     return;
                 }
                 console.log(data.status);
@@ -212,16 +218,16 @@
 					</div>
 				</div><!--header-data end-->
 			</div>
-			<!-- <a href="note-post.html">
+			<a href="note-post.html">
 				<div class="note-post" style="position: absolute;top: 8px;right: 30px;">
 				发布笔记
 				</div>
-			</a> -->
-			<a href="note-post.html">
-				<button class="btn btn-success note-post" type="button" style="position: absolute;top: 8px;right: 30px;">
+			</a>
+			<!-- <a href="note-post.html">
+				<button class="btn btn-info note-post" type="button" style="position: absolute;top: 8px;right: 30px;">
 				发布笔记
 				</button>
-			</a>
+			</a> -->
 		</header>	<!--header end-->
 
 		<div class="search-sec">
@@ -264,16 +270,18 @@
 											<div class="job-status-bar">
 												<ul class="like-com">
 													<li>
-														<a href="#"><i class="la la-heart"></i> </a>
+														<a v-bind:href="loadNoteDetail(site.id)"><i class="la la-heart"></i> </a>
 														<img src="/static/images/liked-img.png" alt="">
-														<span>{{site.like}}</span>
-													</li> 
-													<li v-if="site.comments">
-														<a href="note-detail.html" title="" class="com"><img src="/static/images/com.png" alt=""> {{site.comments.length}}
+														<span>{{site.collect}}</span>
+													</li>
+													<li>
+														<a v-bind:href="loadNoteDetail(site.id)" title="" class="com">
+															<img src="/static/images/note_zan.png" alt=""> {{site.like}}
 														</a>
 													</li>
-													<li v-else>
-														<a href="note-detail.html" title="" class="com"><img src="/static/images/com.png" alt=""> 0
+													<li>
+														<a v-bind:href="loadNoteDetail(site.id)" title="" class="com">
+															<img src="/static/images/com.png" alt=""> {{site.commentNum}}
 														</a>
 													</li>
 												</ul>
@@ -359,7 +367,7 @@
 		var resultData;
 		$.ajax({
             type: "GET",
-            url: "/notes/follow",
+            url: "/notes/followers",
             headers: {
                "Access-control-expose-headers": header1,
                "Authorization": header2
@@ -399,6 +407,9 @@
 	//推荐作者刷新
 	$(document).on('click','#custom-refresh',function(){
 		currentUserPage++;
+		if(currentUserPage+1 > lastUserPage){
+			currentUserPage = Math.floor(Math.random()*lastUserPage+1)-1;
+		}
 		$.ajax({
             type: "GET",
             url: "/users/popular",

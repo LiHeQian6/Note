@@ -137,6 +137,7 @@
                             var customerId1 = "#noteItemContent"+index;
                             var customerId2 = "noteItemDivContent"+index;
                             $(customerId1).val(this.notes[index].content);
+
                             editormd.markdownToHTML(customerId2, {
                                 htmlDecode: "style,script,iframe", //可以过滤标签解码
                                 emoji: true,
@@ -327,16 +328,16 @@
                     </div>
                 </div><!--header-data end-->
             </div>
-            <!-- <a href="note-post.html">
+            <a href="note-post.html">
                 <div class="note-post" style="position: absolute;top: 8px;right: 30px;">
                 发布笔记
                 </div>
-            </a> -->
-            <a href="note-post.html">
-                <button class="btn btn-success note-post" type="button" style="position: absolute;top: 8px;right: 30px;">
+            </a>
+            <!-- <a href="note-post.html">
+                <button class="btn btn-info note-post" type="button" style="position: absolute;top: 8px;right: 30px;">
                 发布笔记
                 </button>
-            </a>
+            </a> -->
         </header>   <!--header end--> 
 
 
