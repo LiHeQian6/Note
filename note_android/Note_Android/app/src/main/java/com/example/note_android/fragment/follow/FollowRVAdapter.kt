@@ -35,7 +35,7 @@ class FollowRVAdapter(var list: MutableList<Any>,
         holder.noteTitle.text = "Android开发"
         holder.noteLittleContent.text = "浅谈Android开发"
         holder.viewNum.text = "1"
-        holder.saveNum.text = "2"
+        holder.dianzanNum.text = "2"
         holder.commonNum.text = "3"
     }
 

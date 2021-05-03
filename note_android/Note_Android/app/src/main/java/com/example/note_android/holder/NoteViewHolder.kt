@@ -13,6 +13,6 @@ class NoteViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
     var noteTitle:TextView = itemView.findViewById(R.id.note_header)
     var noteLittleContent:TextView = itemView.findViewById(R.id.note_little_content)
     var viewNum:TextView = itemView.findViewById(R.id.view_num)
-    var saveNum:TextView = itemView.findViewById(R.id.save_num)
+    var dianzanNum:TextView = itemView.findViewById(R.id.dianzan_num)
     var commonNum:TextView = itemView.findViewById(R.id.common_num)
 }

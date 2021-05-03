@@ -10,7 +10,7 @@ import okhttp3.OkHttpClient
 class HttpAddressUtil {
     companion object{
         //服务器IP
-        private const val IP = "http://192.168.2.160:8080/"
+        private const val IP = "http://192.168.137.1:8080/"
         //获取邮件验证码
         private const val GET_VERIFY_CODE = "getMailCode"
         //注册
@@ -35,6 +35,10 @@ class HttpAddressUtil {
         private const val NOTE_INFO = "notes/popularity"
         //关注
         private const val FOLLOW = "follow"
+        //点赞
+        private const val LIKE = "like"
+        //收藏
+        private const val COLLECT = "collect"
 
         fun getVerifyCodeIP(): String{
             return this.IP+this.GET_VERIFY_CODE
@@ -82,6 +86,14 @@ class HttpAddressUtil {
 
         fun toFollow(): String{
             return this.IP+this.FOLLOW
+        }
+
+        fun toLike(): String{
+            return this.IP+this.LIKE
+        }
+
+        fun toCollect(): String{
+            return this.IP+this.COLLECT
         }
     }
 }

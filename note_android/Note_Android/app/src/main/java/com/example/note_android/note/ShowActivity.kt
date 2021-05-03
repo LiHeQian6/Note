@@ -21,6 +21,7 @@ import com.xuexiang.xui.widget.dialog.MiniLoadingDialog
 import io.noties.markwon.Markwon
 import kotlinx.android.synthetic.main.activity_show.*
 import kotlinx.android.synthetic.main.activity_welcome.*
+import kotlinx.android.synthetic.main.note_list_item.*
 import okhttp3.*
 import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
@@ -40,6 +41,8 @@ class ShowActivity : AppCompatActivity(),View.OnClickListener {
     private var gson: Gson = Gson()
     private lateinit var miniLoadingDialog: MiniLoadingDialog
     private var IF_FOLLOW: Boolean = false
+    private var IF_LIKE: Boolean = false
+    private var IF_COLLECT: Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -72,6 +75,26 @@ class ShowActivity : AppCompatActivity(),View.OnClickListener {
                                 Toast.makeText(this@ShowActivity,"已取消关注", Toast.LENGTH_SHORT).show()
                             changeStatus()
                         }
+                        2 -> {
+                            IF_LIKE = !IF_LIKE
+                            if(IF_LIKE) {
+                                current_zan_num.text = (++currentNote.like).toString()
+                                ico_dianzan.setColorFilter(resources.getColor(R.color.orange, null))
+                            }else {
+                                current_zan_num.text = (--currentNote.like).toString()
+                                ico_dianzan.setColorFilter(resources.getColor(R.color.little_gray, null))
+                            }
+                        }
+                        3 -> {
+                            IF_COLLECT = !IF_COLLECT
+                            if(IF_COLLECT) {
+                                current_save_num.text = (++currentNote.collect).toString()
+                                ico_save.setColorFilter(resources.getColor(R.color.orange, null))
+                            }else{
+                                current_save_num.text = (--currentNote.collect).toString()
+                                ico_save.setColorFilter(resources.getColor(R.color.little_gray,null))
+                            }
+                        }
                     }
                 }else{
                     Toast.makeText(this@ShowActivity,result.get("message").toString(), Toast.LENGTH_SHORT).show()
@@ -82,6 +105,8 @@ class ShowActivity : AppCompatActivity(),View.OnClickListener {
 
     private fun initListener() {
         follow_this_writer.setOnClickListener(this)
+        ico_dianzan.setOnClickListener(this)
+        ico_save.setOnClickListener(this)
     }
 
     private fun initData() {
@@ -151,6 +176,72 @@ class ShowActivity : AppCompatActivity(),View.OnClickListener {
         })
     }
 
+    private fun like(){
+        var httpClient = OkHttpClient()
+        val urlBuilder = HttpAddressUtil.toLike().toHttpUrlOrNull()!!.newBuilder()
+        var formBody = FormBody.Builder()
+        formBody.add("entityId",currentNote.id.toString())
+        formBody.add("entityUserId",currentNote.user?.id.toString())
+        formBody.add("entityType","1")
+        var request = Request.Builder()
+                .addHeader(resources.getString(R.string.Authorization),StateUtil.AUTHORIZATION)
+                .addHeader(resources.getString(R.string.Authorization_Header),StateUtil.AUTHORIZATION_HEADERS)
+                .url(urlBuilder.build())
+        request.post(formBody.build())
+        httpClient.newCall(request.build()).enqueue(object : Callback {
+            override fun onFailure(call: Call, e: IOException) {
+                Looper.prepare()
+                miniLoadingDialog.dismiss()
+                Toast.makeText(this@ShowActivity,"服务器出了点问题", Toast.LENGTH_SHORT).show()
+                Looper.loop()
+            }
+
+            override fun onResponse(call: Call, response: Response) {
+                var result: String? = response.body?.string()
+                if(result == null || result == ""){
+                    Toast.makeText(this@ShowActivity,"网络出了点问题,请重试", Toast.LENGTH_SHORT).show()
+                    return
+                }
+                var mess = Message()
+                mess.obj = result
+                mess.what = 2
+                handler.sendMessage(mess)
+            }
+        })
+    }
+
+    private fun collect(){
+        var httpClient = OkHttpClient()
+        val urlBuilder = HttpAddressUtil.toCollect().toHttpUrlOrNull()!!.newBuilder()
+        var formBody = FormBody.Builder()
+        formBody.add("id",currentNote.id.toString())
+        var request = Request.Builder()
+                .addHeader(resources.getString(R.string.Authorization),StateUtil.AUTHORIZATION)
+                .addHeader(resources.getString(R.string.Authorization_Header),StateUtil.AUTHORIZATION_HEADERS)
+                .url(urlBuilder.build())
+        request.post(formBody.build())
+        httpClient.newCall(request.build()).enqueue(object : Callback {
+            override fun onFailure(call: Call, e: IOException) {
+                Looper.prepare()
+                miniLoadingDialog.dismiss()
+                Toast.makeText(this@ShowActivity,"服务器出了点问题", Toast.LENGTH_SHORT).show()
+                Looper.loop()
+            }
+
+            override fun onResponse(call: Call, response: Response) {
+                var result: String? = response.body?.string()
+                if(result == null || result == ""){
+                    Toast.makeText(this@ShowActivity,"网络出了点问题,请重试", Toast.LENGTH_SHORT).show()
+                    return
+                }
+                var mess = Message()
+                mess.obj = result
+                mess.what = 3
+                handler.sendMessage(mess)
+            }
+        })
+    }
+
     private fun initExListView() {
         adapter = CommentExAdapter(commonList,this)
         common_ex_list.setAdapter(adapter)
@@ -169,6 +260,8 @@ class ShowActivity : AppCompatActivity(),View.OnClickListener {
         current_zan_num.text = currentNote.like.toString()
         current_save_num.text = currentNote.collect.toString()
         IF_FOLLOW = currentNote.user?.follow == true
+        IF_LIKE = currentNote.liked
+        IF_COLLECT = currentNote.collected
         changeStatus()
         //初始化信息结束
     }
@@ -191,6 +284,18 @@ class ShowActivity : AppCompatActivity(),View.OnClickListener {
             R.id.follow_this_writer -> {
                 if (StateUtil.checkLoginStatus())
                     follow()
+                else
+                    Toast.makeText(this@ShowActivity,"你还未登陆哦", Toast.LENGTH_SHORT).show()
+            }
+            R.id.ico_dianzan -> {
+                if (StateUtil.checkLoginStatus())
+                    like()
+                else
+                    Toast.makeText(this@ShowActivity,"你还未登陆哦", Toast.LENGTH_SHORT).show()
+            }
+            R.id.ico_save -> {
+                if (StateUtil.checkLoginStatus())
+                    collect()
                 else
                     Toast.makeText(this@ShowActivity,"你还未登陆哦", Toast.LENGTH_SHORT).show()
             }

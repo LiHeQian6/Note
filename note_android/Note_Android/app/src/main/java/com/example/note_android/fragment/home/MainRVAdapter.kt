@@ -40,7 +40,7 @@ class MainRVAdapter(var list: MutableList<NoteInfo>,
         var content = list[position].content.toString().replace(regex,"")
         holder.noteLittleContent.text = content
         holder.viewNum.text = list[position].look.toString()
-        holder.saveNum.text = list[position].like.toString()
+        holder.dianzanNum.text = list[position].like.toString()
         holder.commonNum.text = "0"
     }
 

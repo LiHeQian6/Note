@@ -18,4 +18,6 @@ data class NoteInfo (
     var user: UserInfo? = null,
     var type: NoteType? = null,
     var tags: MutableList<Tag>? = null,
+    var liked: Boolean = false,
+    var collected: Boolean = false
 ): Serializable
