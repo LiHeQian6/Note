@@ -352,7 +352,7 @@ header {
 }
 .search-bar {
 	float: left;
-	width: 330px;
+	width: 380px;
 	margin-top: 9px;
 }
 .search-bar form {
@@ -386,14 +386,14 @@ header {
 
 nav {
 	float: left;
-	/*width: 60%;*/width: 35%;
+	width: 40%;
 	/*text-align: right;*/text-align: left;
-	padding: 5px 13px 0px 20px;
+	padding: 8px 13px 0px 20px;
 }
 nav ul li {
 	display: inline-block;
 	text-align: center;
-	padding: 13px 10px;
+	padding: 10px 10px;
 	position: relative;
 }
 nav ul li:hover > ul {
@@ -533,6 +533,25 @@ nav ul li a {
 nav > ul > li > a:hover {
 	background-color: #fff;
 	color: #FF6700 !important;
+	-webkit-border-radius: 30px;
+	-moz-border-radius: 30px;
+	-ms-border-radius: 30px;
+	-o-border-radius: 30px;
+}
+.note-post{
+	/*color: #FF6700;
+	font-size: 16px;
+	font-weight: bold;
+	padding: 10px 20px;
+	background-color: #fff;
+	-webkit-border-radius: 5px;
+	-moz-border-radius: 5px;
+	-ms-border-radius: 5px;
+	-o-border-radius: 5px;*/
+
+	font-weight: bolder;
+	padding-right: 20px;
+	padding-left: 20px;
 	-webkit-border-radius: 30px;
 	-moz-border-radius: 30px;
 	-ms-border-radius: 30px;
@@ -959,7 +978,7 @@ main {
 	display: inline-block;
 	color: #b2b2b2;
 	font-size: 13px;
-	font-weight: 500;
+	font-weight: bolder;
 }
 .tags-sec ul li a:hover {
 	color: #e44d3a;
@@ -1732,9 +1751,9 @@ main {
 	float: left;
 	width: 100%;
 	background-color: #fff;
-	border-left: 1px solid #e4e4e4;
+/*	border-left: 1px solid #e4e4e4;
 	border-right: 1px solid #e4e4e4;
-	border-bottom: 1px solid #e4e4e4;
+	border-bottom: 1px solid #e4e4e4;*/
 	margin-bottom: 20px;
 	-webkit-box-shadow: 1px 0px 2px rgba(0,0,0,0.24);
 	-moz-box-shadow: 1px 0px 2px rgba(0,0,0,0.24);
@@ -3704,7 +3723,7 @@ a:hover {
 .filter-ttl {
 	float: left;
 	width: 100%;
-	border-bottom: 1px solid  #e5e5e5;
+	/*border-bottom: 1px solid  #e5e5e5;*/
 	padding: 0 0 8px 0;
 	margin-bottom: 10px;
 }
@@ -5618,8 +5637,8 @@ div .go-top div .arrow {
 
 #custom-refresh:hover {
 	cursor:pointer;
-	animation: rotate 4s infinite;
-    -webkit-animation: rotate 1s infinite; /*Safari and Chrome*/ 
+	/*animation: rotate 4s infinite;
+    -webkit-animation: rotate 1s infinite;*/
 }
 @keyframes rotate {
     0%{
