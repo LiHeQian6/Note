@@ -53,7 +53,9 @@ class WelcomeActivity : AppCompatActivity() {
                 if(result != null && result.get("status") == "SUCCESS"){
                     var userInfo:UserInfo = gson.fromJson(result.get("data").toString(),UserInfo::class.java)
                     StateUtil.SYSTEM_USER_INFO = userInfo
-                }
+                    StateUtil.IF_LOGIN = true
+                }else
+                    StateUtil.IF_LOGIN = false
                 a.execute()
                 wel_close_button.setOnClickListener(View.OnClickListener {
                     ActivityUtil.get().goActivityKill(this@WelcomeActivity,MainActivity::class.java)
@@ -73,7 +75,7 @@ class WelcomeActivity : AppCompatActivity() {
     private fun checkLogin() {
         var shared = getSharedPreferences(resources.getString(R.string.Login_Type),Context.MODE_PRIVATE)
         StateUtil.AUTHORIZATION = shared?.getString(resources.getString(R.string.Authorization),"").toString()
-        StateUtil.AUTHORIZATION = "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiI4NTk2ODQ1ODFAcXEuY29tIiwiY3JlYXRlZCI6MTYxOTU5OTA1NDA3Mywicm9sZXMiOiJST0xFX1VTRVIiLCJleHAiOjE2MjAyMDM4NTR9.4ygTDVAKwiqgEGcK9JgI5PFcPArkrT-AAnn9MzTqPvHujMuBv8XFjK9by977xrLnyo6IayWstWlj0b4Bzms49w"
+        StateUtil.AUTHORIZATION = "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiI4NTk2ODQ1ODFAcXEuY29tIiwiY3JlYXRlZCI6MTYxOTk1ODk0MTY1OSwicm9sZXMiOiJST0xFX0FETUlOLFJPTEVfVVNFUiIsImV4cCI6MTYyMDU2Mzc0MX0.o5B9U3q1D1eYSzGPUGA41uPFiyuLoEJO4RaMogx3s9QIOVJ1JjTuomUIIL5op0GIItpefWHYlz3g62mSdsczqQ"
         StateUtil.AUTHORIZATION_HEADERS = shared?.getString(resources.getString(R.string.Authorization_Header),"").toString()
         if (StateUtil.AUTHORIZATION == "") {
             StateUtil.IF_LOGIN = false

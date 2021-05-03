@@ -46,17 +46,18 @@
                     app:layout_constraintLeft_toRightOf="@+id/current_writer_header"
                     app:layout_constraintTop_toTopOf="@+id/current_writer_header" />
 
-                <com.xuexiang.xui.widget.button.roundbutton.RoundButton
+                <Button
+                    android:id="@+id/follow_this_writer"
                     style="@style/RoundButton.Auto"
-                    android:layout_width="@dimen/dp_45"
+                    android:layout_width="@dimen/dp_55"
                     android:layout_height="@dimen/dp_25"
                     android:text="关 注"
                     android:textColor="@color/white"
                     android:textSize="@dimen/sp_12"
+                    android:background="@drawable/radio_button_select"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintRight_toRightOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:rb_backgroundColor="@color/orange" />
+                    app:layout_constraintTop_toTopOf="parent" />
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <androidx.appcompat.widget.Toolbar
@@ -137,7 +138,7 @@
                 android:groupIndicator="@null"
                 android:listSelector="@android:color/transparent"
                 app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/comment"/>
+                app:layout_constraintTop_toBottomOf="@id/comment" />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.core.widget.NestedScrollView>
 

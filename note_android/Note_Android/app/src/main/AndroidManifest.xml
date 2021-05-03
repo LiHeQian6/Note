@@ -27,7 +27,7 @@
         <activity
             android:name=".edit.EditActivity"
             android:windowSoftInputMode="adjustPan" />
-        <activity android:name=".MainActivity"></activity>
+        <activity android:name=".MainActivity" android:windowSoftInputMode="adjustPan|stateHidden"></activity>
         <activity android:name=".login.LoginActivity" />
         <activity android:name=".welcome.WelcomeActivity">
             <intent-filter>

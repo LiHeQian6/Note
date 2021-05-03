@@ -45,6 +45,8 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/dp_5"
         android:text="Android开发"
+        android:maxLines="4"
+        android:ellipsize="end"
         android:textColor="@color/little_gray"
         android:textSize="@dimen/sp_13"
         app:layout_constraintLeft_toLeftOf="parent"

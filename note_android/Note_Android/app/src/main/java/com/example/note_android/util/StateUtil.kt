@@ -32,5 +32,12 @@ class StateUtil {
 //            this.USER_INFO = gson.fromJson(userInfo, QQUserInfo::class.java)
 //            return true
 //        }
+
+        fun checkLoginStatus(): Boolean{
+            if(this.IF_LOGIN){
+                return true
+            }
+            return false
+        }
     }
 }

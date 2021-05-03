@@ -195,7 +195,7 @@ class EditNoteFragment: Fragment(),View.OnClickListener {
         gson = Gson()
         json.put("note", gson.toJson(note))
         var requestBody = RequestBody.create(mediaType,json.get("note").toString())
-        val urlBuilder = HttpAddressUtil.publishNote().toHttpUrlOrNull()!!.newBuilder()
+        val urlBuilder = HttpAddressUtil.note().toHttpUrlOrNull()!!.newBuilder()
         var request = Request.Builder()
                 .addHeader(resources.getString(R.string.Authorization),StateUtil.AUTHORIZATION)
                 .addHeader(resources.getString(R.string.Authorization_Header),StateUtil.AUTHORIZATION_HEADERS)

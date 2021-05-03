@@ -3,6 +3,8 @@
  */
 package com.example.note_android.bean
 
+import java.io.Serializable
+
 data class UserInfo(
     var id:Int = 0,
     var username: String? = null,
@@ -15,4 +17,4 @@ data class UserInfo(
     var followee:Int = 0,
     var follower:Int = 0,
     var follow:Boolean = false
-)
+): Serializable
