@@ -183,4 +183,54 @@ public class FollowService implements Constant {
         return list;
     }
 
+    /**
+     * @param: userId
+     * @param: noteId
+     * @return void
+     * @description 将用户的粉丝的关注者笔记列表添加发布的笔记的id
+     * @author li
+     * @Date 2021/5/2 17:53
+     */
+    public void publishNoteToFollowee(int userId,int noteId) {
+        redisTemplate.execute(new SessionCallback<Object>() {
+            @Override
+            public Object execute(RedisOperations operations) throws DataAccessException {
+                String followeeKey = RedisKeyUtil.getFolloweeKey(userId);
+                Set<Integer> followees = operations.opsForSet().members(followeeKey);
+                ArrayList<String> keys = new ArrayList<>();
+                for (Integer id : followees) {
+                    String userFollowersNotesKey = RedisKeyUtil.getUserFollowersNotesKey(id);
+                    keys.add(userFollowersNotesKey);
+                }
+                operations.multi();
+                for (String key : keys) {
+                    operations.opsForZSet().add(key,noteId,System.currentTimeMillis());
+                }
+
+                return operations.exec();
+            }
+        });
+    }
+
+    /**
+     * @param:
+     * @return java.util.List<java.lang.Integer>
+     * @description 获取用户的已关注的用户的笔记
+     * @author li
+     * @Date 2021/5/2 18:32
+     */
+    public Set<Integer> getUserFollowersNotes(int userId,int offset, int limit){
+        String userFollowersNotesKey = RedisKeyUtil.getUserFollowersNotesKey(userId);
+        Set<Integer> targetIds = redisTemplate.opsForZSet().reverseRange(userFollowersNotesKey, offset, offset + limit - 1);
+
+        if (targetIds == null) {
+            return null;
+        }
+        return targetIds;
+    }
+
+    public long getUserFollowersNotesTotal(int userId) {
+        String userFollowersNotesKey = RedisKeyUtil.getUserFollowersNotesKey(userId);
+        return redisTemplate.opsForZSet().size(userFollowersNotesKey);
+    }
 }

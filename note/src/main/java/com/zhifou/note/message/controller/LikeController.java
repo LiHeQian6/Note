@@ -58,7 +58,7 @@ public class LikeController implements Constant {
     public Set<NoteVO> getLiked(@ApiParam("第几页") @Min(value = 0,message = "页数最小为0") int page,
                                 @ApiParam("页大小")@Min(value = 1,message = "页尺寸最小为1") int size) throws NoteException {
         User userInfo = jwtUtils.getUserInfo();
-        return likeService.getUserLikedNote(userInfo.getId(),page,size);
+        return likeService.getUserLikedNotes(userInfo.getId(),page,size);
     }
 
 

@@ -6,6 +6,7 @@ import com.zhifou.note.exception.NoteException;
 import com.zhifou.note.note.entity.Note;
 import com.zhifou.note.note.service.NoteService;
 import com.zhifou.note.util.RedisKeyUtil;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.dao.DataAccessException;
 import org.springframework.data.redis.core.RedisOperations;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -29,6 +30,7 @@ public class LikeService implements Constant {
     @Resource
     private RedisTemplate redisTemplate;
     @Resource
+    @Lazy
     private NoteService noteService;
 
     /**
@@ -112,7 +114,16 @@ public class LikeService implements Constant {
     }
 
 
-    public Set<NoteVO> getUserLikedNote(int userId,int page,int size) throws NoteException {
+    /**
+     * @param: userId
+     * @param: page
+     * @param: size
+     * @return java.util.Set<com.zhifou.note.bean.NoteVO>
+     * @description 获取用户赞过的笔记
+     * @author li
+     * @Date 2021/5/2 11:42
+     */
+    public Set<NoteVO> getUserLikedNotes(int userId, int page, int size) throws NoteException {
         int offset=page*size;
         Set<NoteVO> noteVOs = new HashSet<>();
         String userLikedKey = RedisKeyUtil.getUserLikedKey(userId);
@@ -120,7 +131,7 @@ public class LikeService implements Constant {
         if (notes != null) {
             for (Integer noteId : notes) {
                 Note note = noteService.getNote(noteId);
-                NoteVO noteVO = new NoteVO(note);
+                NoteVO noteVO = noteService.getNoteData(note);
                 noteVOs.add(noteVO);
             }
         }

@@ -60,7 +60,7 @@ public class FollowController implements Constant {
     @GetMapping("/followee")
     public List<Map<String, Object>> getFollowee(@ApiParam("第几页") @Min(value = 0,message = "页数最小为0") int page,
                                                  @ApiParam("页大小")@Min(value = 1,message = "页尺寸最小为1") int size) throws UserException {
-        int offset=(page-1)*size;
+        int offset=page*size;
         User userInfo = jwtUtils.getUserInfo();
         return followService.getFollowee(userInfo.getId(),offset,size);
     }
@@ -68,7 +68,7 @@ public class FollowController implements Constant {
     @GetMapping("/follower")
     public List<Map<String, Object>> getFollowers(@ApiParam("第几页") @Min(value = 0,message = "页数最小为0") int page,
                                                   @ApiParam("页大小")@Min(value = 1,message = "页尺寸最小为1") int size) throws UserException {
-        int offset=(page-1)*size;
+        int offset=page*size;
         User userInfo = jwtUtils.getUserInfo();
         return followService.getFollowers(userInfo.getId(),offset,size);
     }

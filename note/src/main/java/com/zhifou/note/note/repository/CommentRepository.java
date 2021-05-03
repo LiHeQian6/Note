@@ -13,6 +13,6 @@ import java.util.Set;
  */
 @Repository
 public interface CommentRepository extends JpaRepository<Comment,Integer>, DataTablesRepository<Comment,Integer> {
-    Set<Comment> findCommentsByNote_Id(int noteId);
+    Set<Comment> findCommentsByNote_IdAndParentIsNull(int noteId);
     Comment findNoteById(int id);
 }

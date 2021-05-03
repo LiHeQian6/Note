@@ -10,12 +10,12 @@ public class RedisKeyUtil {
     private static final String PREFIX_FOLLOWER = "follower";
     private static final String PREFIX_VERIFY_CODE = "verifyCode";
     private static final String PREFIX_TOKEN = "token";
-    private static final String PREFIX_USER = "user";
+    private static final String PREFIX_FOLLOWERS_NOTES = "follower:note";//用户关注者发布的笔记
     private static final String PREFIX_UV = "uv";
     private static final String PREFIX_DAU = "dau";
-    private static final String PREFIX_LOOK = "look";
-    private static final String PREFIX_USER_COLLECT = "collect:user";
-    private static final String PREFIX_NOTE_COLLECT = "collect:note";
+    private static final String PREFIX_LOOK = "look";//笔记浏览
+    private static final String PREFIX_USER_COLLECT = "collect:user";//用户的笔记列表
+    private static final String PREFIX_NOTE_COLLECT = "collect:note";//笔记的收藏者列表
 
     // 某个实体的赞
     // like:entity:entityType:entityId -> set(userId) //entity 指笔记和评论
@@ -95,4 +95,10 @@ public class RedisKeyUtil {
     public static String getUserLikedKey(int userId) {
         return PREFIX_USER_LIKED+SPLIT+userId;
     }
+
+    //用户关注的人发布的笔记
+    public static String getUserFollowersNotesKey(int userId){
+        return PREFIX_FOLLOWERS_NOTES+SPLIT+userId;
+    }
+
 }

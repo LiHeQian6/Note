@@ -37,7 +37,7 @@ public class TokenFilter extends OncePerRequestFilter{
         dataService.recordUV(request.getRemoteAddr());
         if (SecurityContextHolder.getContext().getAuthentication() == null) {
             String token=resolveToken(request);
-            if (StrUtil.isNotBlank(token)) {
+            if (token!=null&&StrUtil.isNotBlank(token)) {
                 String username = jwtUtils.getUserNameFromToken(token);
                 if (StrUtil.isNotBlank(username)) {
                     String refreshToken = jwtUtils.validateToken(token);
@@ -65,9 +65,9 @@ public class TokenFilter extends OncePerRequestFilter{
     private String resolveToken(HttpServletRequest request) {
         // 从请求头中提取 token
         String bearerToken = request.getHeader("Authorization");
-        if (StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer")) {
+        if (StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer ")) {
             // 去掉令牌前缀
-            return bearerToken.replace("Bearer","");
+            return bearerToken.replace("Bearer ","");
         }
         return null;
     }

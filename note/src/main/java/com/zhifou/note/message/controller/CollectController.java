@@ -38,7 +38,7 @@ public class CollectController implements Constant {
 
     @ApiOperation("收藏笔记，再次发送取消")
     @PostMapping("/collect")
-    public void collect(@RequestParam int id) throws JsonProcessingException, NoteException {
+    public void collect(int id) throws JsonProcessingException, NoteException {
         User userInfo = jwtUtils.getUserInfo();
         collectService.collectNote(userInfo.getId(),id);
         MessageEvent collectEvent = new MessageEvent();

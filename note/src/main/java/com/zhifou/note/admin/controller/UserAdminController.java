@@ -107,6 +107,13 @@ public class UserAdminController {
         if(userId== user.getId()){
             return "不能操作自己的账号";
         }
+        Role role=roleService.getRole("ROLE_SUPERADMIN");
+        if (!user.getRoles().contains(role)) {
+            List<Role> roles = userService.findUserById(userId).getRoles();
+            if (roles.contains(role)||roleIds.contains(role.getId())) {
+                return "权限不足";
+            }
+        }
         try {
             userService.changeUserRole(userId,roleIds);
         } catch (UserException e) {

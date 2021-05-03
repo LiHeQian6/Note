@@ -1,10 +1,10 @@
 package com.zhifou.note.note.controller;
 
 import com.zhifou.note.annotation.WordFilter;
-import com.zhifou.note.bean.CommentVO;
 import com.zhifou.note.bean.Constant;
 import com.zhifou.note.bean.NoteVO;
 import com.zhifou.note.exception.NoteException;
+import com.zhifou.note.exception.UserException;
 import com.zhifou.note.message.service.CollectService;
 import com.zhifou.note.message.service.FollowService;
 import com.zhifou.note.message.service.LikeService;
@@ -60,18 +60,14 @@ public class NoteController implements Constant {
     public NoteVO browseNote(@PathVariable int id, HttpServletRequest request) throws NoteException {
         User userInfo = jwtUtils.getUserInfo();
         lookService.look(request.getRemoteAddr(),id);
-        long look = lookService.lookNum(id);
-        long like = likeService.findEntityLikeCount(ENTITY_TYPE_NOTE, id);
-        long collect = collectService.getNoteCollectCount(id);
-        Set<CommentVO> comments = commentService.getNoteComments(id,userInfo!=null?userInfo.getId():0);
         Note note = noteService.getNote(id);
-        NoteVO noteVO = new NoteVO(note, like, look, collect, comments);
+        NoteVO noteVO = noteService.getNoteData(note);
         if (userInfo !=null) {
             dataService.recordDAU(userInfo.getId());
             boolean followed = followService.hasFollowed(userInfo.getId(), note.getUser().getId());
             noteVO.getUser().setFollow(followed);
-            noteVO.setIsLike(likeService.findEntityLikeStatus(userInfo.getId(),ENTITY_TYPE_NOTE, id));
-            noteVO.setIsCollect(collectService.hasCollected(userInfo.getId(),id));
+            noteVO.setLiked(likeService.findEntityLikeStatus(userInfo.getId(),ENTITY_TYPE_NOTE, id));
+            noteVO.setCollected(collectService.hasCollected(userInfo.getId(),id));
         }
         return noteVO;
     }
@@ -146,6 +142,33 @@ public class NoteController implements Constant {
         });
 
         return new PageImpl<>(noteVOList, pageRequest, noteVOList.size());
+    }
+
+    @ApiOperation("获取用户笔记列表")
+    @GetMapping("/notes/user/{userId}")
+    public Page<NoteVO> getNotesByUserId(@PathVariable int userId,
+                                         @ApiParam("第几页") @Min(value = 0, message = "页数最小为0") int page,
+                                        @ApiParam("页大小") @Min(value = 1, message = "页尺寸最小为1") int size) throws UserException {
+        return noteService.getNotesByUser(userId,page,size);
+    }
+
+    @ApiOperation("获取用户热门或最新笔记列表")
+    @GetMapping("/notes/user/type/{userId}/{type}")
+    public Page<NoteVO> getNotesByUserIdAndType(@PathVariable int userId,
+                                        @ApiParam("最新0，热门1") @PathVariable int type,
+                                        @ApiParam("第几页") @Min(value = 0, message = "页数最小为0") int page,
+                                        @ApiParam("页大小") @Min(value = 1, message = "页尺寸最小为1") int size) throws UserException {
+        return noteService.getNotesByUserAndType(userId,page,size,type);
+    }
+
+
+    @ApiOperation("获取用户关注的作者的笔记")
+    @GetMapping("/notes/followers")
+    public Page<NoteVO> getUserFollowersNotes(@ApiParam("第几页") @Min(value = 0, message = "页数最小为0") int page,
+                                              @ApiParam("页大小") @Min(value = 1, message = "页尺寸最小为1") int size){
+        //todo 待测试
+        User userInfo = jwtUtils.getUserInfo();
+        return noteService.getUserFollowersNotes(userInfo.getId(),page,size);
     }
 
 }

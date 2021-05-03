@@ -141,12 +141,13 @@ public class UserDetailsServiceImp implements UserDetailsService {
         return userRepository.count();
     }
 
-    public Page<UserVO> getUsersByPopular(int page, int size) {
+    public Page<UserVO> getUsersByPopular(int id,int page, int size) {
         PageRequest pageRequest = PageRequest.of(page, size);
         Page<User> users = userRepository.findAll(pageRequest);
         ArrayList<UserVO> userVOList = new ArrayList<>();
         for (User user : users) {
             UserVO userVO = new UserVO(user);
+            userVO.setFollow(id==0?false:followService.hasFollowed(id,user.getId()));
             userVOList.add(userVO);
         }
         userVOList.sort(new Comparator<UserVO>() {
@@ -155,6 +156,6 @@ public class UserDetailsServiceImp implements UserDetailsService {
                 return (int) (o1.getLike()-o2.getLike());
             }
         });
-        return new PageImpl<>(userVOList, pageRequest, userVOList.size());
+        return new PageImpl<>(userVOList, pageRequest, users.getTotalElements());
     }
 }

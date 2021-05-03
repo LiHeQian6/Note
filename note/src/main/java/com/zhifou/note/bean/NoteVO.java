@@ -21,11 +21,12 @@ public class NoteVO {
     private String title;
     private String content;
     private long like;
-    private boolean isLike;
     private long look;
     private long collect;
+    private long commentNum;
     private long popularity;
-    private boolean isCollect;
+    private boolean isLiked;
+    private boolean isCollected;
     private Set<CommentVO> comments;
     private String createTime;
     private UserVO user;
@@ -33,35 +34,31 @@ public class NoteVO {
     @JsonIgnoreProperties({"hibernateLazyInitializer","handler"})
     private Set<Tag> tags;
 
-    //笔记详情页使用
-    public NoteVO(Note note,int like,boolean isLike,int look,int collect,boolean isCollect,Set<CommentVO> comments){
-        id=note.getId();
-        title=note.getTitle();
-        content=note.getContent().substring(0, Math.min(note.getContent().length(), 100));
-        this.like=like;
-        this.isLike=isLike;
-        this.look=look;
-        this.collect=collect;
-        this.isCollect=isCollect;
-        this.comments=comments;
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-        createTime= format.format(note.getCreateTime());
-        user=new UserVO(note.getUser());
-        type=note.getType();
-        tags=note.getTags();
+
+    //统计笔记评论数
+    private long countComments() {
+        long num=comments.size();
+        for (CommentVO comment : comments) {
+            Set<CommentVO> child = comment.getChild();
+            if (child!=null) {
+                num+= child.size();
+            }
+        }
+        return num;
     }
 
     //游客笔记详情页使用
     public NoteVO(Note note,long like,long look,long collect,Set<CommentVO> comments){
         id=note.getId();
         title=note.getTitle();
-        content=note.getContent().substring(0, Math.min(note.getContent().length(), 100));
+        content=note.getContent();
         this.like=like;
-        this.isLike=false;
+        this.isLiked=false;
         this.look=look;
         this.collect=collect;
-        this.isCollect=false;
+        this.isCollected=false;
         this.comments=comments;
+        this.commentNum=countComments();
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
         createTime= format.format(note.getCreateTime());
         user=new UserVO(note.getUser());
@@ -69,11 +66,12 @@ public class NoteVO {
         tags=note.getTags();
     }
 
-    //笔记列表展示使用
+    //后台管理系统笔记列表展示使用
     public NoteVO(Note note){
         id=note.getId();
         title=note.getTitle();
-        content=note.getContent().substring(0, Math.min(note.getContent().length(), 100));
+        content=note.getContent();
+        this.commentNum=countComments();
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
         createTime= format.format(note.getCreateTime());
         user=new UserVO(note.getUser());
@@ -81,27 +79,4 @@ public class NoteVO {
         tags=note.getTags();
     }
 
-    public void setLike(long like) {
-        this.like = like;
-    }
-
-    public void setCollect(long collect) {
-        this.collect = collect;
-    }
-
-    public void setIsLike(boolean like) {
-        isLike = like;
-    }
-
-    public void setIsCollect(boolean collect) {
-        isCollect = collect;
-    }
-
-    public boolean isLike() {
-        return isLike;
-    }
-
-    public boolean isCollect() {
-        return isCollect;
-    }
 }
