@@ -22,6 +22,9 @@
     var localStorage;
     var header1;
     var header2;
+    var noteList;
+    var currentNotePage = 0;
+    var notePageSize = 3;
 
 	window.onload = function(){
 		localStorage = window.localStorage;
@@ -64,6 +67,103 @@
         }else{
             window.location.href = "sign-in.html";
         }
+
+        //笔记
+		noteList = new Vue({
+			el: '#noteList',
+			data:{
+				notes:[],
+				totalNumber:0
+			},
+			methods:{
+				//跳转到详情页
+				loadNoteDetail: function(noteId){
+					return "note-detail.html?noteId="+noteId;
+				},
+				//跳转到用户主页
+				loadUserHome: function(writerId){
+					return "user-homepage.html?writerId="+writerId;
+				},
+				//加载更多
+				loadMore: function(){
+					currentNotePage++;
+
+					var resultData;
+					var that = this;
+					$.ajax({
+			            type: "GET",
+			            url: "/like",
+			            headers: {
+			               "Access-control-expose-headers": header1,
+			               "Authorization": header2
+			            },
+			            data: {page:currentNotePage, size:notePageSize},
+			            dataType: "json",
+			            success: function(data){
+			            	resultData = data.status;
+							if(resultData == "SUCCESS"){
+								var result = data.data.content;
+								if(result.length == 0){
+									alert("已经到底了！");
+									return;
+								}
+
+								var length = that.notes.length;
+								for (var i = result.length - 1; i >= 0; i--) {
+									that.notes.push(result[i]);
+									that.notes[length].content = GetMarkdownText(that.notes[length].content);
+									length++;
+								}
+								
+			                    return;
+			                }
+			                console.log(data.status);
+				        },
+				        complete: function(xhr,data){
+			                if(resultData == "SUCCESS" && data == "success"){
+			                    updateLocalToken(xhr);
+			                    return;
+			                } 
+			                console.log(data);
+			            }
+				    });
+				}
+			}
+		});
+
+		//笔记加载
+	    var noteListLoadResultStatus;
+		$.ajax({
+            type: "GET",
+            url: "/like",
+            headers: {
+               "Access-control-expose-headers": header1,
+               "Authorization": header2
+            },
+            data: {page:currentNotePage, size:notePageSize},
+            dataType: "json",
+            success: function(data){
+            	noteListLoadResultStatus = data.status;
+				if(noteListLoadResultStatus == "SUCCESS"){
+					noteList.notes = data.data.content;
+					for (var i = noteList.notes.length - 1; i >= 0; i--) {
+						noteList.notes[i].content = GetMarkdownText(noteList.notes[i].content);
+					}
+
+					noteList.totalNumber = data.data.totalElements;
+					
+                    return;
+                }
+                console.log(data.status);
+	        },
+	        complete: function(xhr,data){
+                if(noteListLoadResultStatus == "SUCCESS" && data == "success"){
+                    updateLocalToken(xhr);
+                    return;
+                } 
+                console.log(data);
+            }
+	    });
 	}
 </script>
 </head> 
@@ -83,7 +183,7 @@
 					<nav style="">
 						<ul>
 							<li>
-								<a href="index.html" title="" class="nav-actived">
+								<a href="index.html" title="">
 									<!-- <span><img src="/static/images/icon1.png" alt=""></span> -->
 									首页
 								</a>
@@ -137,7 +237,7 @@
 						<div class="user-account-settingss">
 							<a href="person-homepage.html" title=""><div class="custom-user-account-dropdown">个人主页</div></a>
 							<a href="collect.html" title=""><div class="custom-user-account-dropdown">收藏笔记</div></a>
-							<a href="like.html" title=""><div class="custom-user-account-dropdown">喜欢笔记</div></a>
+							<a href="like.html" title=""><div class="custom-user-account-dropdown">点赞笔记</div></a>
 							<a href="management.html" title=""><div class="custom-user-account-dropdown">管理笔记</div></a>
 							<a href="setting.html" title=""><div class="custom-user-account-dropdown">设置</div></a>
 							<a href="javascript:logout()" title=""><div class="custom-user-account-logout">退出登陆</div></a>
@@ -159,182 +259,66 @@
 
 		<main>
 			<div class="main-section">
-				<div class="container">
+				<div id="noteList" class="container">
 					<div class="company-title">
-						<h3>喜欢笔记</h3>
+						<h3>点赞笔记（{{totalNumber}}）</h3>
 					</div><!--company-title end-->
 					<div class="main-section-data">
 						<div class="row">
-							<div class="col-lg-8">
+							<div class="col-lg-12">
 								<div class="main-ws-sec">
-									<div class="posts-section">
-										<div class="post-bar">
+									<div  class="posts-section">
+										<div v-for="site in notes" class="post-bar">
 											<div class="post_topbar">
 												<div class="usy-dt">
-													<a href="user-homepage.html"><img src="/static/images/resources/us-pic.png" alt=""></a>
+													<a v-bind:href="loadUserHome(site.user.id)"><img src="/static/images/resources/us-pic.png" alt=""></a>
 													<div class="usy-name"></a>
-														<h3><a href="user-homepage.html" style="color: black">张小明</h3></a>
-														<span><img src="/static/images/clock.png" alt="">3 min ago</span>
+														<h3><a v-bind:href="loadUserHome(site.user.id)" style="color: black">{{site.user.nickName}}</h3></a>
+														<span><img src="/static/images/clock.png" alt="">{{site.createTime}}</span>
 													</div>
 												</div>
 											</div>
 											
 											<div class="job_descp">
-												<h3><a href="note-detail.html" style="color: black">C语言学习心得</a></h3>
-												<p>c语言作为一种计算机的语言，我们学习它，有助于我们更好的了解计算机，与计算机进行交流，因此，c语言的学习对我们尤其重要... <a href="note-detail.html" title="">view more</a></p>
+												<h3><a v-bind:href="loadNoteDetail(site.id)" style="color: black">{{site.title}}</a></h3>
+												<p>{{site.content}}<a v-bind:href="loadNoteDetail(site.id)" title=""> &nbspview more</a></p>
 												<ul class="skill-tags">
-													<li><a href="#" title="">HTML</a></li>
-													<li><a href="#" title="">PHP</a></li>
-													<li><a href="#" title="">CSS</a></li>
-													<li><a href="#" title="">Javascript</a></li>
-													<li><a href="#" title="">Wordpress</a></li> 	
+													<li v-for="tag in site.tags"><a href="#" title="">{{tag.name}}</a></li> 	
 												</ul>
 											</div>
 											<div class="job-status-bar">
-												<ul class="like-com">
+												<ul class="like-com" style="display: flex;align-items: center">
 													<li>
-														<a href="#"><i class="la la-heart"></i> Like</a>
+														<a v-if="site.collected" v-bind:href="loadNoteDetail(site.id)" class="active"><i class="la la-heart"></i> 
+														</a>
+														<a v-else v-bind:href="loadNoteDetail(site.id)"><i class="la la-heart"></i> 
+														</a>
 														<img src="/static/images/liked-img.png" alt="">
-														<span>25</span>
-													</li> 
-													<li><a href="note-detail.html" title="" class="com"><img src="/static/images/com.png" alt=""> Comment 15</a></li>
-												</ul>
-												<a><i class="la la-eye"></i>Views 50</a>
-											</div>
-										</div><!--post-bar end-->
-										<div class="post-bar">
-											<div class="post_topbar">
-												<div class="usy-dt">
-													<a href="user-homepage.html"><img src="/static/images/resources/us-pic.png" alt=""></a>
-													<div class="usy-name"></a>
-														<h3><a href="user-homepage.html" style="color: black">张小明</h3></a>
-														<span><img src="/static/images/clock.png" alt="">3 min ago</span>
-													</div>
-												</div>
-											</div>
-											
-											<div class="job_descp">
-												<h3><a href="note-detail.html" style="color: black">C语言学习心得</a></h3>
-												<p>c语言作为一种计算机的语言，我们学习它，有助于我们更好的了解计算机，与计算机进行交流，因此，c语言的学习对我们尤其重要... <a href="note-detail.html" title="">view more</a></p>
-												<ul class="skill-tags">
-													<li><a href="#" title="">HTML</a></li>
-													<li><a href="#" title="">PHP</a></li>
-													<li><a href="#" title="">CSS</a></li>
-													<li><a href="#" title="">Javascript</a></li>
-													<li><a href="#" title="">Wordpress</a></li> 	
-												</ul>
-											</div>
-											<div class="job-status-bar">
-												<ul class="like-com">
+														<span>{{site.collect}}</span>
+													</li>
 													<li>
-														<a href="#"><i class="la la-heart"></i> Like</a>
-														<img src="/static/images/liked-img.png" alt="">
-														<span>25</span>
-													</li> 
-													<li><a href="note-detail.html" title="" class="com"><img src="/static/images/com.png" alt=""> Comment 15</a></li>
+														<a v-if="site.liked" v-bind:href="loadNoteDetail(site.id)" title="" style="margin-top: 0px" class="active">
+															<i class="fa fa-thumbs-up" style="font-size:17px"></i>&nbsp&nbsp{{site.like}}
+														</a>
+														<a v-else v-bind:href="loadNoteDetail(site.id)" title="" style="margin-top: 0px">
+															<i class="fa fa-thumbs-up" style="font-size:17px"></i>&nbsp&nbsp{{site.like}}
+														</a>
+													</li>
+													<li style="margin-top: 10px">
+														<a v-bind:href="loadNoteDetail(site.id)" title="" class="com">
+															<img src="/static/images/com.png" alt=""> {{site.commentNum}}
+														</a>
+													</li>
 												</ul>
-												<a><i class="la la-eye"></i>Views 50</a>
-											</div>
-										</div><!--post-bar end-->
-										<div class="post-bar">
-											<div class="post_topbar">
-												<div class="usy-dt">
-													<a href="user-homepage.html"><img src="/static/images/resources/us-pic.png" alt=""></a>
-													<div class="usy-name"></a>
-														<h3><a href="user-homepage.html" style="color: black">张小明</h3></a>
-														<span><img src="/static/images/clock.png" alt="">3 min ago</span>
-													</div>
-												</div>
-											</div>
-											
-											<div class="job_descp">
-												<h3><a href="note-detail.html" style="color: black">C语言学习心得</a></h3>
-												<p>c语言作为一种计算机的语言，我们学习它，有助于我们更好的了解计算机，与计算机进行交流，因此，c语言的学习对我们尤其重要... <a href="note-detail.html" title="">view more</a></p>
-												<ul class="skill-tags">
-													<li><a href="#" title="">HTML</a></li>
-													<li><a href="#" title="">PHP</a></li>
-													<li><a href="#" title="">CSS</a></li>
-													<li><a href="#" title="">Javascript</a></li>
-													<li><a href="#" title="">Wordpress</a></li> 	
-												</ul>
-											</div>
-											<div class="job-status-bar">
-												<ul class="like-com">
-													<li>
-														<a href="#"><i class="la la-heart"></i> Like</a>
-														<img src="/static/images/liked-img.png" alt="">
-														<span>25</span>
-													</li> 
-													<li><a href="note-detail.html" title="" class="com"><img src="/static/images/com.png" alt=""> Comment 15</a></li>
-												</ul>
-												<a><i class="la la-eye"></i>Views 50</a>
+												<a><i class="la la-eye"></i> {{site.look}}</a>
 											</div>
 										</div><!--post-bar end-->
 										<div class="process-comm">
-											<a href="#" title=""><img src="/static/images/process-icon.png" alt=""></a>
+											<img id="loadMore" v-on:click="loadMore" src="/static/images/process-icon.png" alt="">
 										</div><!--process-comm end-->
 									</div><!--posts-section end-->
 								</div><!--main-ws-sec end-->
 							</div>
-							<div class="col-lg-4">
-								<div class="widget widget-jobs">
-									<div class="sd-title">
-										<h3>推荐阅读</h3>
-										<i id="custom-refresh" class="la la-refresh"></i>
-										<!-- <i class="la la-ellipsis-v"></i> -->
-									</div>
-									<div class="jobs-list" >
-										<div class="job-info">
-											<div class="hr-rate">
-												<span>1、</span>
-											</div>
-											<div class="job-details">
-												<h3><a href="note-detail.html">C语言学习心得</a></h3>
-												<p>c语言作为一种计算机的语言，我们学习它，有助于我们更好的...</p>
-											</div>
-										</div><!--job-info end-->
-										<div class="job-info">
-											<div class="hr-rate">
-												<span>2、</span>
-											</div>
-											<div class="job-details">
-												<h3><a href="note-detail.html">C语言学习心得</a></h3>
-												<p>c语言作为一种计算机的语言，我们学习它，有助于我们更好的...</p>
-											</div>
-										</div><!--job-info end-->
-										<div class="job-info">
-											<div class="hr-rate">
-												<span>3、</span>
-											</div>
-											<div class="job-details">
-												<h3><a href="note-detail.html">C语言学习心得</a></h3>
-												<p>c语言作为一种计算机的语言，我们学习它，有助于我们更好的...</p>
-											</div>
-										</div><!--job-info end-->
-										<div class="job-info">
-											<div class="hr-rate">
-												<span>4、</span>
-											</div>
-											<div class="job-details">
-												<h3><a href="note-detail.html">C语言学习心得</a></h3>
-												<p>c语言作为一种计算机的语言，我们学习它，有助于我们更好的...</p>
-											</div>
-										</div><!--job-info end-->
-										<div class="job-info">
-											<div class="hr-rate">
-												<span>5、</span>
-											</div>
-											<div class="job-details">
-												<h3><a href="note-detail.html">C语言学习心得</a></h3>
-												<p>c语言作为一种计算机的语言，我们学习它，有助于我们更好的...</p>
-											</div>
-										</div><!--job-info end-->
-									</div><!--jobs-list end-->
-								</div>
-								<div class="widget widget-adver">
-									<img src="http://via.placeholder.com/370x270" alt="">
-								</div><!--widget-adver end-->
-							</div><!--widget-jobs end-->
 						</div>
 					</div><!-- main-section-data end-->
 				</div> 
@@ -385,6 +369,12 @@
     function updateLocalToken(param){
         localStorage.setItem("Access-control-expose-headers", param.getResponseHeader("Access-control-expose-headers"));
         localStorage.setItem("Authorization", param.getResponseHeader("Authorization"));
+    }
+
+    //提取markdown文字
+    function GetMarkdownText(value){
+    	value = value.replace(/#*.*#/g, '').substring(0, 120);//.replace(/[\r\n]/g, " ") .replace(/[^a-z0-9\u4e00-\u9fa5]/, '') ..replace(/\s+/g, " ")
+    	return value;
     }
 </script>
 <script>

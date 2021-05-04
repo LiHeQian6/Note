@@ -73,10 +73,7 @@
             note = new Vue({
                 el: '#note',
                 data:{
-                    title:'',
-                    content:'',
-                    type:'',
-                    tags:[]
+                    noteInfo:'',
                 },
                 methods:{
                     noteSave: function(){
@@ -90,7 +87,7 @@
                                "Authorization": header2
                             },
                             contentType: "application/json;charset=UTF-8",
-                            data: JSON.stringify({id:noteId, title:that.title, content:$("#noteContent").val(), type:that.type, tags:that.tags}),
+                            data: JSON.stringify({id:noteId, title:that.noteInfo.title, content:$("#noteContent").val(), type:that.noteInfo.type, tags:that.noteInfo.tags}),
                             dataType: "json",
                             success: function(data){
                                 resultData = data.status;
@@ -122,11 +119,7 @@
                 dataType: "json",
                 success: function(data){
                     if(data.status == "SUCCESS"){
-                        var result = data.data;
-                        note.title = result.title;
-                        note.content = result.content;
-                        note.type = result.type;
-                        note.tags = result.tags;
+                        note.noteInfo = data.data;
 
                         testEditor = editormd("test-editormd", {
                             width   : "100%",
@@ -157,7 +150,7 @@
         <div class="cp-field" style="padding: 0px 40px">
             <h5>标题</h5>
             <div class="cpp-fiel">
-                <input type="text" name="title" v-model="title" class="form-control">
+                <input type="text" name="title" v-model="noteInfo.title" class="form-control">
             </div>
         </div>
         <div id="warningDiv" class="cp-field" style="padding: 0px 40px;display: none;margin-top: 0px">
@@ -169,7 +162,7 @@
         <div class="cp-field" style="padding: 0px 40px">
             <h5>正文</h5>
             <div id="test-editormd">
-                <textarea id="noteContent" style="display:none;">{{content}}</textarea>
+                <textarea id="noteContent" style="display:none;">{{noteInfo.content}}</textarea>
             </div>
         </div>
     </form>    

@@ -5715,6 +5715,19 @@ div .go-top div .arrow {
 	color: #FF6700;
 }
 
+.custom-follow-button {
+	background-color: #fff;
+	-webkit-border-radius: 30px;
+	-moz-border-radius: 30px;
+	-ms-border-radius: 30px;
+	-o-border-radius: 30px;
+	padding:3px 10px 3px 10px;
+	color:#FF6700;
+	font-size: 12px;
+	font-weight: bolder;
+	border: 1px solid #FF6700;
+}
+
 #loadMore {
 	cursor: pointer;
 }
