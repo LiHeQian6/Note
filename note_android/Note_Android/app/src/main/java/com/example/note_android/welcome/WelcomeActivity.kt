@@ -65,7 +65,7 @@ class WelcomeActivity : AppCompatActivity() {
         }
     }
 
-    private fun initView(){
+    private fun initView( ){
         //设置欢迎页动画
         val ani = AlphaAnimation(0.2f,1.0f)
         ani.duration = 1000
@@ -73,12 +73,16 @@ class WelcomeActivity : AppCompatActivity() {
     }
 
     private fun checkLogin() {
-        var shared = getSharedPreferences(resources.getString(R.string.Login_Type),Context.MODE_PRIVATE)
+        var shared = getSharedPreferences(resources.getString(R.string.LoginInfo),Context.MODE_PRIVATE)
         StateUtil.AUTHORIZATION = shared?.getString(resources.getString(R.string.Authorization),"").toString()
-        StateUtil.AUTHORIZATION = "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiI4NTk2ODQ1ODFAcXEuY29tIiwiY3JlYXRlZCI6MTYyMDA0Nzg2NzQ4NCwicm9sZXMiOiJST0xFX0FETUlOLFJPTEVfVVNFUiIsImV4cCI6MTYyMDY1MjY2N30.VtYbCWKJXGTJwa1qyVJ3NYkFHGyVlY7G861mRfBjNBfxxSE1GUF426WVr5eRveKXLI4UncpUvbzWBounGVFM5A"
         StateUtil.AUTHORIZATION_HEADERS = shared?.getString(resources.getString(R.string.Authorization_Header),"").toString()
         if (StateUtil.AUTHORIZATION == "") {
             StateUtil.IF_LOGIN = false
+            a.execute()
+            wel_close_button.setOnClickListener(View.OnClickListener {
+                ActivityUtil.get().goActivityKill(this@WelcomeActivity,MainActivity::class.java)
+                a.cancel(true)
+            })
         }else{
             StateUtil.IF_LOGIN = true
             getUserInfo()

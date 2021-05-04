@@ -7,9 +7,12 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.note_android.R
-import com.example.note_android.fragment.notice.Notice
+import com.example.note_android.bean.Notice
+import com.example.note_android.bean.NoticeInfo
 import com.example.note_android.listener.OnItemClickListener
+import com.google.gson.Gson
 import com.xuexiang.xui.widget.imageview.RadiusImageView
+import java.text.SimpleDateFormat
 
 
 class SystemNoticeAdapter(var list: List<Notice>,
@@ -18,6 +21,7 @@ class SystemNoticeAdapter(var list: List<Notice>,
     RecyclerView.Adapter<SystemNoticeAdapter.ViewHolder>(),View.OnClickListener {
 
     private var itemClickListener: OnItemClickListener? = null
+    private var gson:Gson = Gson()
 
     fun setOnItemClickListener(itemClickListener: OnItemClickListener?) {
         this.itemClickListener = itemClickListener
@@ -36,9 +40,11 @@ class SystemNoticeAdapter(var list: List<Notice>,
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.image.isCircle = true
-        holder.messageTitle.text = list[position].title
-        holder.messageCont.text = list[position].content
-        holder.messageTime.text = list[position].time
+        var noticeInfo = gson.fromJson(list[position].content,NoticeInfo::class.java)
+        holder.messageTitle.text = noticeInfo.userNickName
+        holder.messageCont.text = noticeInfo.entityInfo
+        var data = SimpleDateFormat("YYYY-MM-dd")
+        holder.messageTime.text = data.format(list[position].createTime)
     }
 
     override fun onClick(v: View?) {

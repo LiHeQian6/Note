@@ -51,6 +51,7 @@ class FollowFragment : Fragment() {
         followViewModel =
             ViewModelProvider(this).get(FollowViewModel::class.java)
         root = inflater.inflate(R.layout.fragment_follow, container, false)
+        initRefreshLayout()
         initRVAdapter()
         handler = object: Handler(){
             override fun handleMessage(msg: Message) {
@@ -91,7 +92,6 @@ class FollowFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        initRefreshLayout()
         StateBarUtils.setStatusBarLightMode(requireActivity())
     }
 
