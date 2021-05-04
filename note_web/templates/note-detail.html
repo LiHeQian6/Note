@@ -86,7 +86,7 @@
             data:{
                 noteInfo:'',
                 user:'',
-                isFollow:0
+                isFollow:0 //初值0代表未登录时显示“关注”
             },
             methods:{
             	//跳转到用户主页
@@ -115,6 +115,7 @@
 							if(resultData == "SUCCESS"){
 								alert("关注成功！");
 								that.isFollow = 1;
+								that.user.followee++;
 								return;
 			                }
 			                console.log(resultData);
@@ -146,6 +147,7 @@
 							if(resultData == "SUCCESS"){
 								alert("取消关注成功！");
 								that.isFollow = 0;
+								that.user.followee--;
 								return;
 			                }
 			                console.log(resultData);
@@ -301,7 +303,7 @@
 	                                    <h3 style="color: black;font-size: 22px">{{noteInfo.title}}</h3>
 	                                </div><!--usr_quest end-->
 	                                <div class="usr_img" style="width: auto">
-	                                    <a v-bind:href="loadUserHome(user.id)"><img style="width: 50px;height: 50px" src="http://via.placeholder.com/60x60" alt=""></a>
+	                                    <a v-bind:href="loadUserHome(user.id)"><img style="width: 60px;height: 60px" src="/static/images/resources/us-pic.png" alt=""></a>
 	                                </div>
 	                                <div class="usr_quest">
 	                                    <h3><a v-bind:href="loadUserHome(user.id)" style="color: #b2b2b2;font-size: 15px;font-weight: 600;">
@@ -309,14 +311,18 @@
 	                                    	</a>
 	                                    	<button v-if="isFollow == 0" v-on:click="followWriter" class="btn btn-danger custom-follow-button" style="margin-left: 10px"><i style="color:#FF6700;font-weight: bolder" class="la la-plus"></i>关注
 	                                    	</button>
-	                                    	<button v-else-if="isFollow == 1" v-on:click="closeFollowWriter" class="btn btn-danger custom-follow-button" style="margin-left: 10px"><i style="color:#FF6700;font-weight: bolder" class="fa fa-check"></i>取消关注
+	                                    	<button v-else-if="isFollow == 1" v-on:click="closeFollowWriter" class="btn btn-danger custom-follow-button" style="margin-left: 10px"><i style="color:#FF6700;font-weight: bolder;font-size: 12px" class="fa fa-check"></i>取消关注
 	                                    	</button>
+	                                    	<br>
+	                                    	<span style="font-size: 13px"><i class="fa fa-clock-o"></i>{{noteInfo.createTime}}&nbsp&nbsp&nbsp&nbsp</span>
+	                                    	<span style="font-size: 13px">{{user.like}}获赞</span>
+	                                    	<span style="font-size: 13px">{{user.followee}}粉丝</span>
 	                                    </h3>
-	                                    <span><i class="fa fa-clock-o"></i>{{noteInfo.createTime}}</span>
+	                                    <!-- <span><i class="fa fa-clock-o"></i>{{noteInfo.createTime}}</span> -->
 	                                </div><!--usr_quest end-->
 
 									<div class="usr_quest" style="width: 100%;padding-left: 0px">
-	                                    <ul class="quest-tags">
+	                                    <ul class="quest-tags" style="margin-top: 15px;margin-bottom: 20px">
 	                                        <li v-for="site in noteInfo.tags" >
 	                                        	<a href="#" title="">{{site.name}}</a>
 	                                        </li>

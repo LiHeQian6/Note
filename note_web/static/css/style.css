@@ -2690,6 +2690,10 @@ footer {
 .hre {
 	background-color: #51a5fb;
 }
+.hre:hover {
+	background-color: #51a5fb;
+	cursor: pointer;
+}
 
 
 /* =============== flw-status ============ */
@@ -3625,6 +3629,10 @@ a:hover {
 }
 .custome-close-follow {
 	background-color: #FF6700;
+}
+.custome-close-follow:hover {
+	background-color: #FF6700;
+	cursor: pointer;
 }
 .message-us {
 	background-color: #e44d3a;
