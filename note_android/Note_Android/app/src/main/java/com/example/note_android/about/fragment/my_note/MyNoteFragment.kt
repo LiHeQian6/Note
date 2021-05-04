@@ -217,6 +217,7 @@ class MyNoteFragment : Fragment() {
                         showBottomGrid()
                     }
                     2 -> {
+                        dialog.dismiss()
                         ActivityUtil.get().goActivityResult(requireActivity(), EditActivity::class.java, list[itemPosition],SystemCode.EDIT_NOTE)
                     }
                     3 -> {
