@@ -110,6 +110,33 @@
                 app:layout_constraintTop_toBottomOf="@+id/current_note_time" />
 
             <LinearLayout
+                android:id="@+id/current_tags"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/dp_50"
+                android:divider="@drawable/custom_divider"
+                android:dividerPadding="@dimen/dp_1"
+                android:showDividers="end"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/current_note_content">
+
+                <TextView
+                    android:id="@+id/tags"
+                    android:layout_width="wrap_content"
+                    android:layout_height="@dimen/dp_50"
+                    android:gravity="center_vertical"
+                    android:text="标签："
+                    android:textColor="@color/less_black"
+                    android:textSize="@dimen/sp_14"
+                    android:textStyle="bold" />
+
+                <com.xuexiang.xui.widget.flowlayout.FlowTagLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+            </LinearLayout>
+
+            <LinearLayout
                 android:id="@+id/comment"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/dp_30"
@@ -117,7 +144,7 @@
                 android:dividerPadding="@dimen/dp_1"
                 android:showDividers="end"
                 app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/current_note_content">
+                app:layout_constraintTop_toBottomOf="@id/current_tags">
 
                 <TextView
                     android:id="@+id/comment_num"

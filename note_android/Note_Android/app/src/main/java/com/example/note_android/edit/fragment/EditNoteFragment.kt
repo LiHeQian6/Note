@@ -272,6 +272,8 @@ class EditNoteFragment: Fragment(),View.OnClickListener {
                 )
             }
             R.id.select_note_type -> {
+                var manager =  requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                manager.hideSoftInputFromWindow(rootView.edit_markdown.windowToken,InputMethodManager.HIDE_NOT_ALWAYS)
                 requireActivity().supportFragmentManager
                         .beginTransaction()
                         .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
@@ -280,6 +282,8 @@ class EditNoteFragment: Fragment(),View.OnClickListener {
                         .commit()
             }
             R.id.select_note_tag -> {
+                var manager =  requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                manager.hideSoftInputFromWindow(rootView.edit_markdown.windowToken,InputMethodManager.HIDE_NOT_ALWAYS)
                 requireActivity().supportFragmentManager
                         .beginTransaction()
                         .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)

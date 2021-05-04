@@ -4,6 +4,8 @@ import android.os.*
 import androidx.appcompat.app.AppCompatActivity
 import android.view.View
 import android.widget.ExpandableListAdapter
+import android.widget.LinearLayout
+import android.widget.TextView
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.lifecycle.ViewModelProvider
@@ -11,19 +13,23 @@ import com.example.note_android.MainActivity
 import com.example.note_android.R
 import com.example.note_android.bean.Note
 import com.example.note_android.bean.NoteInfo
+import com.example.note_android.bean.Tag
 import com.example.note_android.bean.UserInfo
+import com.example.note_android.edit.fragment.FlowTagAdapter
 import com.example.note_android.util.ActivityUtil
 import com.example.note_android.util.HttpAddressUtil
 import com.example.note_android.util.StateUtil
 import com.google.gson.Gson
 import com.xuexiang.xui.utils.WidgetUtils
 import com.xuexiang.xui.widget.dialog.MiniLoadingDialog
+import com.xuexiang.xui.widget.flowlayout.FlowTagLayout
 import io.noties.markwon.AbstractMarkwonPlugin
 import io.noties.markwon.Markwon
 import io.noties.markwon.SoftBreakAddsNewLinePlugin
 import io.noties.markwon.core.MarkwonTheme
 import kotlinx.android.synthetic.main.activity_show.*
 import kotlinx.android.synthetic.main.activity_welcome.*
+import kotlinx.android.synthetic.main.fragment_select_type.*
 import kotlinx.android.synthetic.main.note_list_item.*
 import okhttp3.*
 import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
@@ -245,6 +251,15 @@ class ShowActivity : AppCompatActivity(),View.OnClickListener {
         })
     }
 
+    private fun initNoteTag(){
+        var floTagLayout = FlowTagLayout(this)
+        floTagLayout.adapter = ShowTagAdapter(this)
+        floTagLayout.setSingleCancelable(true)
+        floTagLayout.setTagCheckedMode(FlowTagLayout.FLOW_TAG_CHECKED_NONE)
+        floTagLayout.addTags(currentNote.tags)
+        current_tags.addView(floTagLayout)
+    }
+
     private fun initExListView() {
         adapter = CommentExAdapter(commonList,this)
         common_ex_list.setAdapter(adapter)
@@ -274,6 +289,7 @@ class ShowActivity : AppCompatActivity(),View.OnClickListener {
         IF_LIKE = currentNote.liked
         IF_COLLECT = currentNote.collected
         changeStatus()
+        initNoteTag()
         //初始化信息结束
     }
 
