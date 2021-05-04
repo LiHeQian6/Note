@@ -4,16 +4,19 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.note_android.R
+import com.example.note_android.bean.NoteInfo
 import com.example.note_android.listener.OnItemClickListener
 import com.example.note_android.listener.OnItemLongClickListener
 import com.example.note_android.listener.ViewListener
+import com.xuexiang.xui.widget.imageview.RadiusImageView
 import java.util.zip.Inflater
 
-class MyNoteRVAdapter(var list: MutableList<Int>, var recyclerView: RecyclerView) :
-    RecyclerView.Adapter<MyNoteRVAdapter.ViewHolder>(),
-    ViewListener {
+class MyNoteRVAdapter(var list: MutableList<NoteInfo>, var recyclerView: RecyclerView) :
+        RecyclerView.Adapter<MyNoteRVAdapter.ViewHolder>(),
+        ViewListener {
 
     private var setItemClickListener: OnItemClickListener? = null
     private var setLongClickListener: OnItemLongClickListener? = null
@@ -38,7 +41,13 @@ class MyNoteRVAdapter(var list: MutableList<Int>, var recyclerView: RecyclerView
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-
+        holder.noteTitle.text = list[position].title
+        var regex = Regex("[#->]")
+        var content = list[position].content.toString().replace(regex,"")
+        holder.noteLittleContent.text = content
+        holder.viewNum.text = list[position].look.toString()
+        holder.dianzanNum.text = list[position].like.toString()
+        holder.commonNum.text = "0"
     }
 
     override fun onLongClick(v: View?): Boolean {
@@ -63,6 +72,10 @@ class MyNoteRVAdapter(var list: MutableList<Int>, var recyclerView: RecyclerView
     }
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-
+        var noteTitle: TextView = itemView.findViewById(R.id.note_header)
+        var noteLittleContent: TextView = itemView.findViewById(R.id.note_little_content)
+        var viewNum: TextView = itemView.findViewById(R.id.view_num)
+        var dianzanNum: TextView = itemView.findViewById(R.id.dianzan_num)
+        var commonNum: TextView = itemView.findViewById(R.id.common_num)
     }
 }

@@ -13,6 +13,7 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.example.note_android.R
 import com.example.note_android.bean.NoteType
+import com.example.note_android.bean.Tag
 import com.example.note_android.util.StateUtil
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
@@ -28,9 +29,11 @@ class SelectTypeFragment() : Fragment(),View.OnClickListener{
 
     private lateinit var type: String
     private lateinit var url: String
-    private var tags: MutableList<NoteType> = ArrayList()
+    private var tags: MutableList<Tag> = ArrayList()
+    private lateinit var noteType: NoteType
     private lateinit var handler: Handler
     private var gson: Gson = Gson()
+    private var allTags: MutableList<Tag> = ArrayList()
     private lateinit var data:MutableList<NoteType>
     private var currentSelect = -1
 
@@ -46,11 +49,12 @@ class SelectTypeFragment() : Fragment(),View.OnClickListener{
                 super.handleMessage(msg)
                 var result = JSONObject(msg.obj.toString())
                 if(result != null && result.get("status") == "SUCCESS"){
-                    val typeToken = object : TypeToken<ArrayList<NoteType>?>() {}.type
                     if (type == "选择标签") {
-                        data = gson.fromJson(result.getJSONObject("data").get("content").toString(), typeToken)
+                        val typeToken = object : TypeToken<ArrayList<Tag>?>() {}.type
+                        allTags = gson.fromJson(result.getJSONObject("data").get("content").toString(), typeToken)
                         initNoteTag()
                     }else {
+                        val typeToken = object : TypeToken<ArrayList<NoteType>?>() {}.type
                         data = gson.fromJson(result.get("data").toString(), typeToken)
                         initNoteType()
                     }
@@ -82,7 +86,7 @@ class SelectTypeFragment() : Fragment(),View.OnClickListener{
             view.findViewById<TextView>(R.id.type_parent).text = data[item].name
             var floTagLayout = FlowTagLayout(requireContext())
             floTagLayout.id = item
-            floTagLayout.adapter = FlowTagAdapter(requireContext())
+            floTagLayout.adapter = FlowTypeAdapter(requireContext())
             floTagLayout.setSingleCancelable(true)
             floTagLayout.setTagCheckedMode(FlowTagLayout.FLOW_TAG_CHECKED_SINGLE)
             floTagLayout.addTags(data[item].child)
@@ -92,8 +96,7 @@ class SelectTypeFragment() : Fragment(),View.OnClickListener{
                 }
                 currentSelect = parent.id
                 var noteType:NoteType = parent.adapter.getItem(position) as NoteType
-                tags.add(0,noteType)
-//                Toast.makeText(requireContext(),getSelectedText(parent,selectedList),Toast.LENGTH_SHORT).show()
+                this.noteType = noteType
             }
             view.addView(floTagLayout)
             flow_tag_layout.addView(view)
@@ -107,10 +110,10 @@ class SelectTypeFragment() : Fragment(),View.OnClickListener{
         floTagLayout.adapter = FlowTagAdapter(requireContext())
         floTagLayout.setSingleCancelable(true)
         floTagLayout.setTagCheckedMode(FlowTagLayout.FLOW_TAG_CHECKED_MULTI)
-        floTagLayout.addTags(data)
+        floTagLayout.addTags(allTags)
         floTagLayout.setOnTagSelectListener { parent, position, selectedList ->
             currentSelect = parent.id
-            var noteType:NoteType = parent.adapter.getItem(position) as NoteType
+            var noteType:Tag = parent.adapter.getItem(position) as Tag
             if (tags.contains(noteType))
                 tags.remove(noteType)
             else {
@@ -167,7 +170,10 @@ class SelectTypeFragment() : Fragment(),View.OnClickListener{
                 var editNoteFragment: EditNoteFragment =
                         requireActivity().supportFragmentManager
                                 .findFragmentByTag("editNoteFragment") as EditNoteFragment
-                editNoteFragment.setData(type,tags)
+                if(type == "选择标签")
+                    editNoteFragment.setTags(tags)
+                else
+                    editNoteFragment.setNoteType(noteType)
                 requireActivity().supportFragmentManager.popBackStack()
             }
         }

@@ -4,6 +4,8 @@ import android.os.*
 import androidx.appcompat.app.AppCompatActivity
 import android.view.View
 import android.widget.ExpandableListAdapter
+import android.widget.LinearLayout
+import android.widget.TextView
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.lifecycle.ViewModelProvider
@@ -11,16 +13,23 @@ import com.example.note_android.MainActivity
 import com.example.note_android.R
 import com.example.note_android.bean.Note
 import com.example.note_android.bean.NoteInfo
+import com.example.note_android.bean.Tag
 import com.example.note_android.bean.UserInfo
+import com.example.note_android.edit.fragment.FlowTagAdapter
 import com.example.note_android.util.ActivityUtil
 import com.example.note_android.util.HttpAddressUtil
 import com.example.note_android.util.StateUtil
 import com.google.gson.Gson
 import com.xuexiang.xui.utils.WidgetUtils
 import com.xuexiang.xui.widget.dialog.MiniLoadingDialog
+import com.xuexiang.xui.widget.flowlayout.FlowTagLayout
+import io.noties.markwon.AbstractMarkwonPlugin
 import io.noties.markwon.Markwon
+import io.noties.markwon.SoftBreakAddsNewLinePlugin
+import io.noties.markwon.core.MarkwonTheme
 import kotlinx.android.synthetic.main.activity_show.*
 import kotlinx.android.synthetic.main.activity_welcome.*
+import kotlinx.android.synthetic.main.fragment_select_type.*
 import kotlinx.android.synthetic.main.note_list_item.*
 import okhttp3.*
 import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
@@ -242,6 +251,15 @@ class ShowActivity : AppCompatActivity(),View.OnClickListener {
         })
     }
 
+    private fun initNoteTag(){
+        var floTagLayout = FlowTagLayout(this)
+        floTagLayout.adapter = ShowTagAdapter(this)
+        floTagLayout.setSingleCancelable(true)
+        floTagLayout.setTagCheckedMode(FlowTagLayout.FLOW_TAG_CHECKED_NONE)
+        floTagLayout.addTags(currentNote.tags)
+        current_tags.addView(floTagLayout)
+    }
+
     private fun initExListView() {
         adapter = CommentExAdapter(commonList,this)
         common_ex_list.setAdapter(adapter)
@@ -250,12 +268,20 @@ class ShowActivity : AppCompatActivity(),View.OnClickListener {
     @RequiresApi(Build.VERSION_CODES.M)
     private fun initView() {
         //初始化信息开始
-        markwon = Markwon.create(this)
+        markwon = Markwon.builder(this)
+                .usePlugin(SoftBreakAddsNewLinePlugin())
+                .usePlugin(object : AbstractMarkwonPlugin() {
+                    override fun configureTheme(builder: MarkwonTheme.Builder) {
+                        builder.headingBreakHeight(1)
+                                .bulletWidth(resources.getDimension(R.dimen.dp_6).toInt())
+                    }
+                }).build()
+        current_writer.text = currentNote.user?.nickName
         current_writer_header.isCircle = true
         current_note_title.text = currentNote.title
         var data = SimpleDateFormat("YYYY-MM-dd")
         current_note_time.text = data.format(currentNote.createTime)
-        markwon.setMarkdown(current_note_content,currentNote.content.toString())
+        markwon.setMarkdown(current_note_content, currentNote.content.toString())
         comment_num.text = "评论 ${currentNote.commentNum}条"
         current_zan_num.text = currentNote.like.toString()
         current_save_num.text = currentNote.collect.toString()
@@ -263,6 +289,7 @@ class ShowActivity : AppCompatActivity(),View.OnClickListener {
         IF_LIKE = currentNote.liked
         IF_COLLECT = currentNote.collected
         changeStatus()
+        initNoteTag()
         //初始化信息结束
     }
 
@@ -276,6 +303,16 @@ class ShowActivity : AppCompatActivity(),View.OnClickListener {
             follow_this_writer.background = resources.getDrawable(R.drawable.radio_button_select,null)
             follow_this_writer.text = "关 注"
             follow_this_writer.setTextColor(resources.getColor(R.color.white,null))
+        }
+        if(IF_LIKE) {
+            ico_dianzan.setColorFilter(resources.getColor(R.color.orange, null))
+        }else {
+            ico_dianzan.setColorFilter(resources.getColor(R.color.little_gray, null))
+        }
+        if(IF_COLLECT) {
+            ico_save.setColorFilter(resources.getColor(R.color.orange, null))
+        }else{
+            ico_save.setColorFilter(resources.getColor(R.color.little_gray,null))
         }
     }
 

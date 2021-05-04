@@ -38,6 +38,7 @@
                     app:layout_constraintTop_toTopOf="parent" />
 
                 <TextView
+                    android:id="@+id/current_writer"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="@dimen/dp_5"
@@ -75,13 +76,13 @@
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:layout_marginBottom="@dimen/dp_50">
 
             <TextView
                 android:id="@+id/current_note_title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Android开发"
                 android:textColor="@color/less_black"
                 android:textSize="@dimen/sp_22"
                 android:textStyle="bold"
@@ -93,7 +94,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/dp_10"
-                android:text="发布于2021-13-14"
                 android:textColor="@color/little_gray"
                 android:textSize="@dimen/sp_13"
                 app:layout_constraintLeft_toLeftOf="parent"
@@ -104,11 +104,37 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/dp_10"
-                android:text="正文内容"
                 android:textColor="@color/less_black"
                 android:textSize="@dimen/sp_15"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/current_note_time" />
+
+            <LinearLayout
+                android:id="@+id/current_tags"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/dp_50"
+                android:divider="@drawable/custom_divider"
+                android:dividerPadding="@dimen/dp_1"
+                android:showDividers="end"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/current_note_content">
+
+                <TextView
+                    android:id="@+id/tags"
+                    android:layout_width="wrap_content"
+                    android:layout_height="@dimen/dp_50"
+                    android:gravity="center_vertical"
+                    android:text="标签："
+                    android:textColor="@color/less_black"
+                    android:textSize="@dimen/sp_14"
+                    android:textStyle="bold" />
+
+                <com.xuexiang.xui.widget.flowlayout.FlowTagLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+            </LinearLayout>
 
             <LinearLayout
                 android:id="@+id/comment"
@@ -118,7 +144,7 @@
                 android:dividerPadding="@dimen/dp_1"
                 android:showDividers="end"
                 app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/current_note_content">
+                app:layout_constraintTop_toBottomOf="@id/current_tags">
 
                 <TextView
                     android:id="@+id/comment_num"
@@ -160,7 +186,7 @@
                 android:layout_height="@dimen/dp_35"
                 android:background="@drawable/custom_editext"
                 android:gravity="center"
-                android:hint="评论"
+                android:hint="来说两句吧"
                 android:textSize="@dimen/sp_14" />
 
         </LinearLayout>
@@ -182,7 +208,6 @@
                 android:id="@+id/current_zan_num"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="123"
                 android:textColor="@color/little_gray"
                 android:textSize="@dimen/sp_9" />
         </LinearLayout>
@@ -204,7 +229,6 @@
                 android:id="@+id/current_save_num"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="123"
                 android:textColor="@color/little_gray"
                 android:textSize="@dimen/sp_9" />
         </LinearLayout>
