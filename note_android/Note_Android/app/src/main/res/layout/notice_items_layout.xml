@@ -46,14 +46,27 @@
             android:textSize="@dimen/sp_10" />
     </RelativeLayout>
 
+    <TextView
+        android:id="@+id/notice_content"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="写的真不戳！"
+        android:textSize="@dimen/sp_12"
+        android:textColor="@color/less_black"
+        android:layout_marginTop="@dimen/dp_10"
+        app:layout_constraintLeft_toLeftOf="@id/ll_notice_message"
+        app:layout_constraintTop_toBottomOf="@id/notice_option_head"
+        app:layout_constraintRight_toRightOf="parent"/>
+
     <LinearLayout
+        android:id="@+id/notice_note_title_ll"
         android:layout_width="@dimen/dp_0"
         android:layout_height="@dimen/dp_40"
         android:layout_marginTop="@dimen/dp_10"
         android:background="@drawable/register_editext"
         android:gravity="center_vertical"
         app:layout_constraintLeft_toLeftOf="@id/ll_notice_message"
-        app:layout_constraintTop_toBottomOf="@id/notice_option_head"
+        app:layout_constraintTop_toBottomOf="@id/notice_content"
         app:layout_constraintRight_toRightOf="parent">
 
         <TextView

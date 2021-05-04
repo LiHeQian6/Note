@@ -14,6 +14,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
+import android.widget.Scroller
 import android.widget.Toast
 import androidx.core.graphics.rotationMatrix
 import androidx.fragment.app.Fragment
@@ -230,7 +231,7 @@ class EditNoteFragment: Fragment(),View.OnClickListener {
     private fun initTool() {
         SoftKeyBoardListener.setListener(requireActivity(),object : SoftKeyBoardListener.OnSoftKeyBoardChangeListener{
             override fun keyBoardShow(height: Int) {
-                rootView.input_tool.animate().translationY((-height).toFloat()).setDuration(300).start()
+                rootView.input_tool.animate().translationYBy((-height).toFloat()).setDuration(300).start()
 //                Toast.makeText(this@EditActivity, "键盘显示 高度" + height, Toast.LENGTH_SHORT).show();
             }
             override fun keyBoardHide(height: Int) {
