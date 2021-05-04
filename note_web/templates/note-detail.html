@@ -16,17 +16,25 @@
 <link rel="stylesheet" type="text/css" href="/static/lib/slick/slick-theme.css">
 <link rel="stylesheet" type="text/css" href="/static/css/style.css">
 <link rel="stylesheet" type="text/css" href="/static/css/responsive.css">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tarekraafat-autocomplete.js/9.0.3/css/autoComplete.min.css">
+<link rel="stylesheet" type="text/css" href="/static/lib/editor/css/editormd.css">
 
 <script type="text/javascript">
     var localStorage;
     var header1;
     var header2;
+    var noteId
+    var note;
 
 	window.onload = function(){
 		localStorage = window.localStorage;
         header1 = localStorage.getItem("Access-control-expose-headers");
         header2 = localStorage.getItem("Authorization");
+        noteId = GetQueryString("noteId");
+            
+        if(noteId == null){
+            window.location.href = "index.html";
+            return;
+        }
 
 		//用户信息展示
         if(header1 != null && header2 != null){
@@ -43,6 +51,8 @@
                 success: function(data){
                     resultData = data.status;
                     if(resultData == "TOKEN_EXPIRED" || resultData == "USER_NOT_LOGIN"){
+                    	alert("请登录");
+                    	logout();
                         return;    
                     }else if(resultData == "SUCCESS"){
                         $("#navUserLogin").hide();
@@ -61,6 +71,38 @@
                 }
             });
         }
+
+        //笔记
+        note = new Vue({
+            el: '#note',
+            data:{
+                noteInfo:''
+            },
+        });
+
+        //加载笔记信息
+        var noteUrl = "/note/"+noteId;
+        $.ajax({
+            type: "GET",
+            url: noteUrl,
+            data: {},
+            dataType: "json",
+            success: function(data){
+                if(data.status == "SUCCESS"){
+                    note.noteInfo = data.data;
+					
+					$("#noteContent").val(note.noteInfo.content);
+                    editormd.markdownToHTML("noteContentDiv", {
+                        htmlDecode: "style,script,iframe", //可以过滤标签解码
+                        emoji: true,
+                        taskList:true,
+                        tex: true  // 默认不解析
+                    });
+                    return;
+                }
+                console.log(data.status);
+            }
+        });
 	}
 </script>
 </head>
@@ -142,16 +184,16 @@
 					</div>
 				</div><!--header-data end-->
 			</div>
-			<!-- <a href="note-post.html">
+			<a href="note-post.html">
 				<div class="note-post" style="position: absolute;top: 8px;right: 30px;">
 				发布笔记
 				</div>
-			</a> -->
-			<a href="note-post.html">
-				<button class="btn btn-success note-post" type="button" style="position: absolute;top: 8px;right: 30px;">
+			</a>
+			<!-- <a href="note-post.html">
+				<button class="btn btn-info note-post" type="button" style="position: absolute;top: 8px;right: 30px;">
 				发布笔记
 				</button>
-			</a>
+			</a> -->
 		</header>	<!--header end-->
 
 		<div class="search-sec">
@@ -171,34 +213,66 @@
 					<div class="row">
 						<div class="col-lg-8">
                         	<div class="forum-post-view">
-                            	<div class="usr-question">
+                            	<div id="note" class="usr-question" style="">
 	                                <div class="usr_img">
 	                                    <a href="user-homepage.html"><img src="http://via.placeholder.com/60x60" alt=""></a>
 	                                </div>
 	                                <div class="usr_quest">
-	                                    <h3><a href="user-homepage.html" style="color: black">C语言学习心得</a></h3>
-	                                    <span><i class="fa fa-clock-o"></i>3 min ago</span>
+	                                    <h3><a href="user-homepage.html" style="color: black">{{noteInfo.title}}</a></h3>
+	                                    <span><i class="fa fa-clock-o"></i>{{noteInfo.createTime}}</span>
+	                                </div><!--usr_quest end-->
+                            	</div><!--usr-question end-->
+
+                            	<div id="note1" class="usr-question">
+	                                <div class="usr_quest" style="width: 100%">
+	                                    <h3><a href="user-homepage.html" style="color: black">{{noteInfo.title}}</a></h3>
 	                                    <ul class="quest-tags">
-	                                        <li><a href="#" title="">Work</a></li>
-	                                        <li><a href="#" title="">Php</a></li>
-	                                        <li><a href="#" title="">Design</a></li>
+	                                        <li v-for="site in noteInfo.tags" >
+	                                        	<a href="#" title="">{{site.name}}</a>
+	                                        </li>
 	                                    </ul>
-	                                    <p>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp c语言作为一种计算机的语言，我们学习它，有助于我们更好的了解计算机，与计算机进行交流，因此，c语言的学习对我们尤其重要。</p>
-	                                    <p>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp 在这个星期里，我们专业的学生在专业老师的带领下进行了c语言程序实践学习。在这之前，我们已经对c语言这门课程学习了一个学期，对其有了一定的了解，但是也仅仅是停留在了解的范围，对里面的好多东西还是很陌生，的在运用起来的时候还是感到很棘手，毕竟，万事开头难嘛。</p>
-	                                    <p>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp 由于时间的关系，我们的这次实践课程老师并没有给我们详细的介绍，只是给我们简单的介绍了几个比较重要的实际操作。包括了程序模块处理。简单界面程序。高级界面程序。程序的添加修改。用程序做一元线性回归处理以及用c语言程序来画粒度分布图等这几样比较重要的时间操作。</p>
-	                                    <p>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp 上机实验是学习程序设计语言必不可少的实践环节，特别是c语言灵活、简洁，更需要通过编程的实践来真正掌握它。对于程序设计语言的学习目的，可以概括为学习语法规定、掌握程序设计方法、提高程序开发能力，这些都必须通过充分的实际上机操作才能完成。</p>
-	                                        <ul class="react-links" style="text-align: right;">
-	                                        <li><a href="#" title=""><i class="fa fa-heart"></i>点赞</a></li>
-	                                        <li><a href="#" title=""><i class="fa fa-eye"></i>收藏</a></li>
-	                                        <li><a href="#" title=""><i class="fa fa-share-alt"></i>分享</a></li>
+	                                    <div id="noteContentDiv" style="padding:0px">
+	                                    	<textarea id="noteContent" style="display: none">{{noteInfo.content}}</textarea>
+	                                    </div>
+                                        <ul class="react-links" style="text-align: right;">
+                                        	<li><a href="#" title=""><i class="fa fa-thumbs-up" style="font-size:17px"></i>{{noteInfo.like}}</a></li>
+	                                        <li><a href="#" title=""><i class="fa fa-heart"></i>{{noteInfo.collect}}</a></li>
+	                                        <li><a href="#" title=""><i class="fa fa-eye" style="font-size:17px"></i>{{noteInfo.look}}</a></li>
+	                                        <li><a href="#" title=""><i class="fa fa-share-alt" style="font-size:17px"></i>分享</a></li>
+	                                    </ul>	
+	                                </div><!--usr_quest end-->
+                            	</div><!--usr-question end-->
+                        	</div><!--forum-post-view end-->
+
+                        	<div class="forum-post-view">
+                            	<div id="note1" class="usr-question">
+	                                <div class="usr_img">
+	                                    <a href="user-homepage.html"><img src="http://via.placeholder.com/60x60" alt=""></a>
+	                                </div>
+	                                <div class="usr_quest">
+	                                    <h3><a href="user-homepage.html" style="color: black">{{noteInfo.title}}</a></h3>
+	                                    <span><i class="fa fa-clock-o"></i>{{noteInfo.createTime}}</span>
+	                                    <ul class="quest-tags">
+	                                        <li v-for="site in noteInfo.tags" >
+	                                        	<a href="#" title="">{{site.name}}</a>
+	                                        </li>
+	                                    </ul>
+	                                    <div id="noteContentDiv">
+	                                    	<textarea id="noteContent" style="display: none">{{noteInfo.content}}</textarea>
+	                                    </div>
+                                        <ul class="react-links" style="text-align: right;">
+                                        	<li><a href="#" title=""><i class="fa fa-thumbs-up" style="font-size:17px"></i>{{noteInfo.like}}</a></li>
+	                                        <li><a href="#" title=""><i class="fa fa-heart"></i>{{noteInfo.collect}}</a></li>
+	                                        <li><a href="#" title=""><i class="fa fa-eye" style="font-size:17px"></i>{{noteInfo.look}}</a></li>
+	                                        <li><a href="#" title=""><i class="fa fa-share-alt" style="font-size:17px"></i>分享</a></li>
 	                                    </ul>	
 	                                </div><!--usr_quest end-->
                             	</div><!--usr-question end-->
 	                            <div class="text-center"> 
 	                                <button id="reward" data-content="
 	                                    <div style='text-align:center'>
-	                                        <img style='float:none;width:100px;height:100px' src='/static/images/cmp-icon1.png'>
-	                                        <img style='float:none;width:100px;height:100px' src='/static/images/cmp-icon1.png'>
+	                                        <img style='float:none;width:100px;height:100px' src='/static/images/afford_zhifubao.png'>
+	                                        <img style='float:none;width:100px;height:100px' src='/static/images/afford_weixin.png'>
 	                                    </div>"
 	                                   title="<h2 class='text-center'>有所帮助？请作者喝杯咖啡吧！</h2>"
 	                                   data-toggle="popover"
@@ -265,26 +339,6 @@
 	                        </div><!--post-comment-box end-->
 	                    </div>
 						<div class="col-lg-4">
-                        	<div class="widget widget-feat">
-	                            <ul>
-	                                <li>
-	                                    <i class="fa fa-heart"></i>
-	                                    <span>1185</span>
-	                                </li>
-	                                <li>
-	                                    <i class="fa fa-comment"></i>
-	                                    <span>1165</span>
-	                                </li>
-	                                <li>
-	                                    <i class="fa fa-share-alt"></i>
-	                                    <span>1120</span>
-	                                </li>
-	                                <li>
-	                                    <i class="fa fa-eye"></i>
-	                                    <span>1009</span>
-	                                </li>
-	                            </ul>
-                        	</div><!--widget-feat end-->
                         	<div class="widget widget-jobs">
 								<div class="sd-title">
 									<h3>推荐阅读</h3>
@@ -348,6 +402,10 @@
 			</div>
 		</section><!--forum-page end-->
 
+		<div id="test-editormd" style="display: none;">
+            <textarea style="display:none;"></textarea>
+        </div>
+
 		<div class="chatbox-list" style="display: block;">
 	        <div class="chatbox">
 	            <div class="chat-mg" style="margin: 20px 10px">
@@ -375,11 +433,11 @@
 <script type="text/javascript" src="/static/js/jquery.mCustomScrollbar.js"></script>
 <script type="text/javascript" src="/static/lib/slick/slick.min.js"></script>
 <script type="text/javascript" src="/static/js/script.js"></script>
+<script type="text/javascript" src="/static/lib/editor/editormd.min.js"></script>
 
 <script src="https://cdn.staticfile.org/vue/2.4.2/vue.min.js"></script>
 <script src="https://cdn.staticfile.org/axios/0.18.0/axios.min.js"></script>
 <script src="https://cdn.staticfile.org/vue-resource/1.5.1/vue-resource.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/tarekraafat-autocomplete.js/9.0.3/js/autoComplete.min.js"></script>
 <script type="text/javascript">
 	//退出登录
     function logout(){
@@ -397,6 +455,36 @@
         localStorage.setItem("Access-control-expose-headers", param.getResponseHeader("Access-control-expose-headers"));
         localStorage.setItem("Authorization", param.getResponseHeader("Authorization"));
     }
+
+    //获取参数
+    function GetQueryString(name) { 
+        var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)","i"); 
+        var r = window.location.search.substr(1).match(reg); 
+        if (r!=null){
+            return (r[2]); 
+        }
+        return null; 
+    }
+
+    //markdown编辑
+    var testEditor;
+    $(function() {
+        testEditor = editormd("test-editormd", {
+            width   : "100%",
+            height  : 640,
+            syncScrolling : "single",
+            path    : "/static/lib/editor/lib/"
+        });
+        /*
+        // or
+        testEditor = editormd({
+            id      : "test-editormd",
+            width   : "90%",
+            height  : 640,
+            path    : "../lib/"
+        });
+        */
+    });
 </script>
 <script>
 	//打赏

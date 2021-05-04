@@ -539,23 +539,23 @@ nav > ul > li > a:hover {
 	-o-border-radius: 30px;
 }
 .note-post{
-	/*color: #FF6700;
+	color: #FF6700;
 	font-size: 16px;
 	font-weight: bold;
 	padding: 10px 20px;
 	background-color: #fff;
-	-webkit-border-radius: 5px;
-	-moz-border-radius: 5px;
-	-ms-border-radius: 5px;
-	-o-border-radius: 5px;*/
+	-webkit-border-radius: 10px;
+	-moz-border-radius: 10px;
+	-ms-border-radius: 10px;
+	-o-border-radius: 10px;
 
-	font-weight: bolder;
+	/*font-weight: bolder;
 	padding-right: 20px;
 	padding-left: 20px;
-	-webkit-border-radius: 30px;
-	-moz-border-radius: 30px;
-	-ms-border-radius: 30px;
-	-o-border-radius: 30px;
+	-webkit-border-radius: 10px;
+	-moz-border-radius: 10px;
+	-ms-border-radius: 10px;
+	-o-border-radius: 10px;*/
 }
 
 .user-account {
@@ -926,6 +926,10 @@ main {
 	width: 30px;
 	height: 30px;
 	border: 1px solid #e5e5e5;
+	-webkit-border-radius: 100px;
+	-moz-border-radius: 100px;
+	-ms-border-radius: 100px;
+	-o-border-radius: 100px;
 	text-align: center;	
 	line-height: 30px;
 	font-weight: 700;
@@ -5709,4 +5713,8 @@ div .go-top div .arrow {
 }
 .custom-cover-sec > a i {
 	color: #FF6700;
+}
+
+#loadMore {
+	cursor: pointer;
 }
