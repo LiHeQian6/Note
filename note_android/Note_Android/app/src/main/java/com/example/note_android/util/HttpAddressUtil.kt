@@ -45,6 +45,8 @@ class HttpAddressUtil {
         private const val USER_NOTE = "notes/user"
         //修改用户信息
         private const val CHANGE_USER_INFO = "changeInfo"
+        //评论
+        private const val COMMENT = "comment"
 
         fun getVerifyCodeIP(): String{
             return this.IP+this.GET_VERIFY_CODE
@@ -112,6 +114,10 @@ class HttpAddressUtil {
 
         fun getChangeInfo(): String{
             return this.IP+this.CHANGE_USER_INFO
+        }
+
+        fun toComment(): String{
+            return this.IP+this.COMMENT
         }
     }
 }

@@ -1,8 +1,10 @@
 package com.example.note_android.note
 
+import android.content.Context
 import android.os.*
 import androidx.appcompat.app.AppCompatActivity
 import android.view.View
+import android.view.inputmethod.InputMethodManager
 import android.widget.ExpandableListAdapter
 import android.widget.LinearLayout
 import android.widget.TextView
@@ -11,11 +13,10 @@ import androidx.annotation.RequiresApi
 import androidx.lifecycle.ViewModelProvider
 import com.example.note_android.MainActivity
 import com.example.note_android.R
-import com.example.note_android.bean.Note
-import com.example.note_android.bean.NoteInfo
-import com.example.note_android.bean.Tag
-import com.example.note_android.bean.UserInfo
+import com.example.note_android.bean.*
+import com.example.note_android.edit.fragment.EditNoteFragment
 import com.example.note_android.edit.fragment.FlowTagAdapter
+import com.example.note_android.edit.util.SoftKeyBoardListener
 import com.example.note_android.util.ActivityUtil
 import com.example.note_android.util.HttpAddressUtil
 import com.example.note_android.util.StateUtil
@@ -29,6 +30,7 @@ import io.noties.markwon.SoftBreakAddsNewLinePlugin
 import io.noties.markwon.core.MarkwonTheme
 import kotlinx.android.synthetic.main.activity_show.*
 import kotlinx.android.synthetic.main.activity_welcome.*
+import kotlinx.android.synthetic.main.fragment_edit_note.view.*
 import kotlinx.android.synthetic.main.fragment_select_type.*
 import kotlinx.android.synthetic.main.note_list_item.*
 import okhttp3.*
@@ -44,7 +46,9 @@ class ShowActivity : AppCompatActivity(),View.OnClickListener {
     private lateinit var showViewModel: ShowViewModel
     private lateinit var adapter: ExpandableListAdapter
     private lateinit var currentNote: NoteInfo
-    private var commonList:MutableList<Common> = ArrayList()
+    private lateinit var newNote: Common
+    private var list: MutableList<Comment> = ArrayList()
+    private lateinit var newComment:Comment
     private lateinit var markwon: Markwon
     private lateinit var handler: Handler
     private var gson: Gson = Gson()
@@ -104,6 +108,16 @@ class ShowActivity : AppCompatActivity(),View.OnClickListener {
                                 ico_save.setColorFilter(resources.getColor(R.color.little_gray,null))
                             }
                         }
+                        4 -> {
+                            newComment.user = StateUtil.SYSTEM_USER_INFO
+                            list.add(newComment)
+                            initExListView()
+                            var manager =  this@ShowActivity.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                            manager.hideSoftInputFromWindow(comment_content.windowToken, InputMethodManager.HIDE_NOT_ALWAYS)
+                            comment_content.setText("")
+                            comment_content.clearFocus()
+                            Toast.makeText(this@ShowActivity,"评论成功！", Toast.LENGTH_SHORT).show()
+                        }
                     }
                 }else{
                     Toast.makeText(this@ShowActivity,result.get("message").toString(), Toast.LENGTH_SHORT).show()
@@ -116,6 +130,7 @@ class ShowActivity : AppCompatActivity(),View.OnClickListener {
         follow_this_writer.setOnClickListener(this)
         ico_dianzan.setOnClickListener(this)
         ico_save.setOnClickListener(this)
+        publish_comment.setOnClickListener(this)
     }
 
     private fun initData() {
@@ -251,6 +266,60 @@ class ShowActivity : AppCompatActivity(),View.OnClickListener {
         })
     }
 
+    private fun comment(){
+        var httpClient = OkHttpClient()
+        val urlBuilder = HttpAddressUtil.toComment().toHttpUrlOrNull()!!.newBuilder()
+        var mediaType = "application/json".toMediaTypeOrNull()
+        var json = JSONObject()
+//        newNote = gson.fromJson(gson.toJson(currentNote),NoteInfo::class.java)
+        var data = "{\n" +
+                "    \"content\":\"${comment_content.text}\",\n" +
+                "    \"note\":{\n" +
+                "        \"id\": ${currentNote.id}\n" +
+                "    }\n" +
+                "}"
+        var requestBody = RequestBody.create(mediaType,data)
+        var request = Request.Builder()
+                .addHeader(resources.getString(R.string.Authorization),StateUtil.AUTHORIZATION)
+                .addHeader(resources.getString(R.string.Authorization_Header),StateUtil.AUTHORIZATION_HEADERS)
+                .url(urlBuilder.build())
+        request.post(requestBody)
+        httpClient.newCall(request.build()).enqueue(object : Callback {
+            override fun onFailure(call: Call, e: IOException) {
+                Looper.prepare()
+                Toast.makeText(this@ShowActivity,"服务器出了点问题", Toast.LENGTH_SHORT).show()
+                Looper.loop()
+            }
+
+            override fun onResponse(call: Call, response: Response) {
+                var result: String? = response.body?.string()
+                if(result == null || result == ""){
+                    Toast.makeText(this@ShowActivity,"网络出了点问题,请重试", Toast.LENGTH_SHORT).show()
+                    return
+                }
+                var mess = Message()
+                mess.obj = result
+                mess.what = 4
+                handler.sendMessage(mess)
+            }
+        })
+    }
+
+    private fun initTool() {
+        SoftKeyBoardListener.setListener(this,object : SoftKeyBoardListener.OnSoftKeyBoardChangeListener{
+            override fun keyBoardShow(height: Int) {
+                comment_option.visibility = View.GONE
+                publish_comment.visibility = View.VISIBLE
+//                Toast.makeText(this@EditActivity, "键盘显示 高度" + height, Toast.LENGTH_SHORT).show();
+            }
+            override fun keyBoardHide(height: Int) {
+                comment_option.visibility = View.VISIBLE
+                publish_comment.visibility = View.GONE
+//                Toast.makeText(this@EditActivity, "键盘隐藏 高度" + height, Toast.LENGTH_SHORT).show();
+            }
+        })
+    }
+
     private fun initNoteTag(){
         var floTagLayout = FlowTagLayout(this)
         floTagLayout.adapter = ShowTagAdapter(this)
@@ -261,8 +330,9 @@ class ShowActivity : AppCompatActivity(),View.OnClickListener {
     }
 
     private fun initExListView() {
-        adapter = CommentExAdapter(commonList,this)
+        adapter = CommentExAdapter(list,this)
         common_ex_list.setAdapter(adapter)
+        Utility.setListViewHeightBasedOnChildren(common_ex_list)
     }
 
     @RequiresApi(Build.VERSION_CODES.M)
@@ -288,8 +358,11 @@ class ShowActivity : AppCompatActivity(),View.OnClickListener {
         IF_FOLLOW = currentNote.user?.follow == true
         IF_LIKE = currentNote.liked
         IF_COLLECT = currentNote.collected
+        list = currentNote.comments!!
         changeStatus()
         initNoteTag()
+        initTool()
+        initExListView()
         //初始化信息结束
     }
 
@@ -334,6 +407,17 @@ class ShowActivity : AppCompatActivity(),View.OnClickListener {
                 if (StateUtil.checkLoginStatus())
                     collect()
                 else
+                    Toast.makeText(this@ShowActivity,"你还未登陆哦", Toast.LENGTH_SHORT).show()
+            }
+            R.id.publish_comment -> {
+                if (StateUtil.checkLoginStatus()) {
+                    newComment = Comment()
+                    newComment.likeNum = 0
+                    var child: MutableList<Comment> = ArrayList()
+                    newComment.child = child
+                    newComment.content = comment_content.text.toString()
+                    comment()
+                }else
                     Toast.makeText(this@ShowActivity,"你还未登陆哦", Toast.LENGTH_SHORT).show()
             }
         }

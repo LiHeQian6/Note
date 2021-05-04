@@ -7,10 +7,11 @@ import android.view.ViewGroup
 import android.widget.BaseExpandableListAdapter
 import android.widget.TextView
 import com.example.note_android.R
+import com.example.note_android.bean.Comment
 import com.xuexiang.xui.widget.imageview.RadiusImageView
 
 class CommentExAdapter(
-        private var commentList:MutableList<Common>,
+        private var commentList:MutableList<Comment>,
         private var context:Context) : BaseExpandableListAdapter() {
 
     override fun getGroupCount(): Int {
@@ -18,7 +19,7 @@ class CommentExAdapter(
     }
 
     override fun getChildrenCount(groupPosition: Int): Int {
-        return commentList[groupPosition].child.size
+        return commentList[groupPosition].child?.size!!
     }
 
     override fun getGroup(groupPosition: Int): Any {
@@ -26,7 +27,7 @@ class CommentExAdapter(
     }
 
     override fun getChild(groupPosition: Int, childPosition: Int): Any {
-        return commentList[groupPosition].child[childPosition]
+        return commentList[groupPosition].child?.get(childPosition)!!
     }
 
     override fun getGroupId(groupPosition: Int): Long {
@@ -51,14 +52,16 @@ class CommentExAdapter(
             commentVH.name = view.findViewById(R.id.commoner_name)
             commentVH.content = view.findViewById(R.id.commoner_content)
             commentVH.zan = view.findViewById(R.id.commoner_zan_num)
+            commentVH.commentNum = view.findViewById(R.id.common_num)
             view.tag = commentVH
         }else{
             commentVH = view?.tag as CommentViewHolder
         }
         commentVH.header.isCircle = true
-        commentVH.name.text = commentList[groupPosition].name
+        commentVH.name.text = commentList[groupPosition].user?.nickName
         commentVH.content.text = commentList[groupPosition].content
-        commentVH.zan.text = commentList[groupPosition].zan
+        commentVH.zan.text = commentList[groupPosition].likeNum.toString()
+        commentVH.commentNum.text = commentList[groupPosition].child?.size.toString()
         return view
     }
 
@@ -76,11 +79,11 @@ class CommentExAdapter(
         }else{
             replyVH = view?.tag as ReplyViewHolder
         }
-        var reply = commentList[groupPosition].child[childPosition]
+        var reply = commentList[groupPosition].child?.get(childPosition) as Comment
         replyVH.header.isCircle = true
-        replyVH.name.text = "${reply.fromName}"
-        replyVH.content.text = "@${reply.toName} "+reply.content
-        replyVH.zan.text = reply.zan
+        replyVH.name.text = "${reply.user?.nickName}"
+        replyVH.content.text = "@${reply.to?.nickName} "+reply.content
+        replyVH.zan.text = reply.likeNum.toString()
         return view
     }
 
@@ -93,6 +96,7 @@ class CommentExAdapter(
         lateinit var name:TextView
         lateinit var content:TextView
         lateinit var zan:TextView
+        lateinit var commentNum:TextView
     }
 
     private inner class ReplyViewHolder{
