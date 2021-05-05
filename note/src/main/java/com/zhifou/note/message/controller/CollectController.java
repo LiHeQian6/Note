@@ -42,11 +42,12 @@ public class CollectController implements Constant {
         User userInfo = jwtUtils.getUserInfo();
         collectService.collectNote(userInfo.getId(),id);
         MessageEvent collectEvent = new MessageEvent();
-        collectEvent.setUserId(userInfo.getId());
         collectEvent.setEntityType(ENTITY_TYPE_NOTE);
         collectEvent.setEntityId(id);
         User targetUser = noteService.getNote(id).getUser();
-        collectEvent.setEntityUserId(targetUser.getId());
+        collectEvent.setUserId(targetUser.getId());
+        collectEvent.setEntityUserId(userInfo.getId());
+        collectEvent.setExtra("entityUserNickname",userInfo.getNickName());
         collectEvent.setTopic(TOPIC_COLLECT);
         eventProducer.fireMessageEvent(collectEvent);
     }

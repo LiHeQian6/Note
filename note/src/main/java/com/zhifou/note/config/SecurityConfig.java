@@ -106,7 +106,7 @@ public class SecurityConfig {
                     .logoutSuccessHandler(noteLogoutSuccessHandler)
                     .and()
                     .authorizeRequests()//启用基于 HttpServletRequest 的访问限制，开始配置哪些URL需要被保护、哪些不需要被保护
-                    .antMatchers(HttpMethod.GET,"/note/**","/types","/tags/**","/notes/**","/users/popular").permitAll()
+                    .antMatchers(HttpMethod.GET,"/note/**","/types","/tags/**","/notes/**","/users/popular","/user/**","/search/**").permitAll()
                     .antMatchers("/getImageCode","/getMailCode/**","/forgotPassword/**",
                             "/register/**","/static/**","/webjars/**","/swagger-resources/**",
                             "/webjars/**", "/v2/**", "/swagger-ui.html/**",

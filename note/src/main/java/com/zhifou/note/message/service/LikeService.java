@@ -8,6 +8,9 @@ import com.zhifou.note.note.service.NoteService;
 import com.zhifou.note.util.RedisKeyUtil;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.dao.DataAccessException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.redis.core.RedisOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.SessionCallback;
@@ -15,7 +18,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
-import java.util.HashSet;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -123,9 +127,10 @@ public class LikeService implements Constant {
      * @author li
      * @Date 2021/5/2 11:42
      */
-    public Set<NoteVO> getUserLikedNotes(int userId, int page, int size) throws NoteException {
+    public Page<NoteVO> getUserLikedNotes(int userId, int page, int size) throws NoteException {
         int offset=page*size;
-        Set<NoteVO> noteVOs = new HashSet<>();
+        PageRequest pageRequest = PageRequest.of(page, size);
+        List<NoteVO> noteVOs = new ArrayList<>();
         String userLikedKey = RedisKeyUtil.getUserLikedKey(userId);
         Set<Integer> notes = (Set<Integer>) redisTemplate.opsForZSet().reverseRange(userLikedKey, offset, offset + size - 1);
         if (notes != null) {
@@ -135,7 +140,7 @@ public class LikeService implements Constant {
                 noteVOs.add(noteVO);
             }
         }
-        return noteVOs;
+        return new PageImpl<>(noteVOs,pageRequest,redisTemplate.opsForZSet().size(userLikedKey));
     }
 
 }

@@ -76,5 +76,15 @@ public interface Constant {
      */
     int DISABLE=1;
 
+    /**
+     * es索引名
+     */
+    String INDEX="zhifou";
+    /**
+     *
+     */
+    String HIGH_LIGHT_START_TAG="<em style='color:red'>";
+
+    String HIGH_LIGHT_END_TAG="</em>";
 
 }

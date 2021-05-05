@@ -8,6 +8,7 @@ import com.zhifou.note.bean.UserVO;
 import com.zhifou.note.exception.CertificationException;
 import com.zhifou.note.exception.UserException;
 import com.zhifou.note.exception.ValidateCodeException;
+import com.zhifou.note.message.service.FollowService;
 import com.zhifou.note.message.service.LikeService;
 import com.zhifou.note.user.entity.Certification;
 import com.zhifou.note.user.entity.User;
@@ -59,6 +60,8 @@ public class UserController {
     private CertificationService certificationService;
     @Resource
     private JwtUtils jwtUtils;
+    @Resource
+    private FollowService followerService;
 
 
     @ApiOperation("用户注册")
@@ -122,6 +125,23 @@ public class UserController {
         User userInfo = jwtUtils.getUserInfo();
         UserVO userVO = new UserVO(userInfo);
         userVO.setLike(likeService.findUserLikeCount(userInfo.getId()));
+        userVO.setFollower(followerService.getFollowerCount(userInfo.getId()));
+        userVO.setFollowee(followerService.getFolloweeCount(userInfo.getId()));
+        return userVO;
+    }
+
+    @ApiOperation("获取其他用户信息")
+    @GetMapping("/user/{id}")
+    public UserVO getUserInfo(@PathVariable int id) throws UserException {
+        User info = jwtUtils.getUserInfo();
+        User userInfo = userService.findUserById(id);
+        UserVO userVO = new UserVO(userInfo);
+        userVO.setLike(likeService.findUserLikeCount(userInfo.getId()));
+        userVO.setFollower(followerService.getFollowerCount(userInfo.getId()));
+        userVO.setFollowee(followerService.getFolloweeCount(userInfo.getId()));
+        if (info!=null){
+            userVO.setFollow(followerService.hasFollowed(info.getId(),id));
+        }
         return userVO;
     }
 

@@ -43,7 +43,7 @@ public class MessageController {
 
     @ApiOperation("按类型获取消息")
     @GetMapping("/message/{type}")
-    public Page<MessageVO> getMessage(@PathVariable String type,
+    public Page<MessageVO> getMessage(@PathVariable @ApiParam("like/system/collect/follow/comment") String type,
                                       @RequestParam @ApiParam("第几页") @Min(value = 0, message = "页数最小为0") int page,
                                       @RequestParam @ApiParam("页大小") @Min(value = 1, message = "页尺寸最小为1") int size){
         User userInfo = jwtUtils.getUserInfo();

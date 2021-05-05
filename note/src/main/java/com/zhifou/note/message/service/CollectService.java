@@ -106,7 +106,7 @@ public class CollectService implements Constant {
      * @Date 2021/3/3 20:05
      */
     public List<Map<String, Object>> getCollects(int userId, int page, int size) throws NoteException {
-        int offset=(page-1)*size;
+        int offset=page*size;
         String userCollectKey = RedisKeyUtil.getUserCollectKey(userId);
         Set<Integer> targetIds = redisTemplate.opsForZSet().reverseRange(userCollectKey, offset, offset + size - 1);
 

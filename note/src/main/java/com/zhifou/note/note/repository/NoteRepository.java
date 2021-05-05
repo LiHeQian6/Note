@@ -9,6 +9,8 @@ import org.springframework.data.jpa.datatables.repository.DataTablesRepository;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.Set;
+
 /**
  * @author : li
  * @Date: 2021-02-08 17:24
@@ -24,4 +26,6 @@ public interface NoteRepository extends DataTablesRepository<Note,Integer>, JpaR
     Page<Note> findAllByUser(User user, Pageable pageable);
 
     Page<Note> findAllByUserOrderByCreateTimeDesc(User user,Pageable pageable);
+
+    Page<Note> findNotesByUser_IdIsInOrderByCreateTimeDesc(Set<Integer> userIds, Pageable pageable);
 }

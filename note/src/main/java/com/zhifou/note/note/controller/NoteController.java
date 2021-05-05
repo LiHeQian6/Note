@@ -27,6 +27,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
+import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -64,8 +65,10 @@ public class NoteController implements Constant {
         NoteVO noteVO = noteService.getNoteData(note);
         if (userInfo !=null) {
             dataService.recordDAU(userInfo.getId());
-            boolean followed = followService.hasFollowed(userInfo.getId(), note.getUser().getId());
-            noteVO.getUser().setFollow(followed);
+            noteVO.getUser().setFollow(followService.hasFollowed(userInfo.getId(), note.getUser().getId()));
+            noteVO.getUser().setFollower(followService.getFollowerCount(noteVO.getUser().getId()));
+            noteVO.getUser().setFollowee(followService.getFolloweeCount(noteVO.getUser().getId()));
+            noteVO.getUser().setLike(likeService.findUserLikeCount(noteVO.getUser().getId()));
             noteVO.setLiked(likeService.findEntityLikeStatus(userInfo.getId(),ENTITY_TYPE_NOTE, id));
             noteVO.setCollected(collectService.hasCollected(userInfo.getId(),id));
         }
@@ -84,7 +87,7 @@ public class NoteController implements Constant {
     @WordFilter(description = "note")
     @ApiOperation("修改笔记")
     @PutMapping("/note")
-    public void editNote(@ApiParam("只需要传title,content,type.id,tags=[tag.id]") @Valid @RequestBody Note newNote) throws NoteException {
+    public void editNote(@ApiParam("只需要传id,title,content,type.id,tags=[tag.id]") @Valid @RequestBody Note newNote) throws NoteException, IOException {
         User userInfo = jwtUtils.getUserInfo();
         Note note = noteService.getNote(newNote.getId(),userInfo.getUsername());
         if (note.update(newNote)) {
@@ -94,7 +97,7 @@ public class NoteController implements Constant {
 
     @ApiOperation("删除笔记")
     @DeleteMapping("/note/{id}")
-    public void deleteNote(@PathVariable int id) throws NoteException {
+    public void deleteNote(@PathVariable int id) throws NoteException, IOException {
         User userInfo = jwtUtils.getUserInfo();
         noteService.deleteNote(id,userInfo.getUsername());
     }
@@ -141,7 +144,7 @@ public class NoteController implements Constant {
             }
         });
 
-        return new PageImpl<>(noteVOList, pageRequest, noteVOList.size());
+        return new PageImpl<>(noteVOList, pageRequest, notes.getTotalElements());
     }
 
     @ApiOperation("获取用户笔记列表")
@@ -166,7 +169,6 @@ public class NoteController implements Constant {
     @GetMapping("/notes/followers")
     public Page<NoteVO> getUserFollowersNotes(@ApiParam("第几页") @Min(value = 0, message = "页数最小为0") int page,
                                               @ApiParam("页大小") @Min(value = 1, message = "页尺寸最小为1") int size){
-        //todo 待测试
         User userInfo = jwtUtils.getUserInfo();
         return noteService.getUserFollowersNotes(userInfo.getId(),page,size);
     }

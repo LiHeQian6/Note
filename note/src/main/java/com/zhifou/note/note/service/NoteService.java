@@ -1,5 +1,6 @@
 package com.zhifou.note.note.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.zhifou.note.bean.CommentVO;
 import com.zhifou.note.bean.Constant;
 import com.zhifou.note.bean.NoteVO;
@@ -15,13 +16,23 @@ import com.zhifou.note.note.entity.Tag;
 import com.zhifou.note.note.repository.NoteRepository;
 import com.zhifou.note.note.repository.TagRepository;
 import com.zhifou.note.user.entity.User;
+import com.zhifou.note.user.service.DataService;
 import com.zhifou.note.user.service.UserDetailsServiceImp;
+import com.zhifou.note.util.JwtUtils;
+import com.zhifou.note.util.RedisKeyUtil;
+import org.elasticsearch.action.delete.DeleteRequest;
+import org.elasticsearch.action.index.IndexRequest;
+import org.elasticsearch.action.update.UpdateRequest;
+import org.elasticsearch.client.RequestOptions;
+import org.elasticsearch.client.RestHighLevelClient;
+import org.elasticsearch.common.xcontent.XContentType;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.datatables.mapping.DataTablesInput;
 import org.springframework.data.jpa.datatables.mapping.DataTablesOutput;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,6 +40,7 @@ import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import java.io.IOException;
 import java.math.BigInteger;
 import java.util.*;
 
@@ -59,6 +71,16 @@ public class NoteService implements Constant {
     private CommentService commentService;
     @Resource
     private FollowService followService;
+    @Resource
+    @Lazy
+    private RedisTemplate redisTemplate;
+    @Resource
+    @Lazy
+    private DataService dataService;
+    @Resource
+    private JwtUtils jwtUtils;
+    @Resource
+    private RestHighLevelClient restHighLevelClient;
 
     /**
      * @param: id
@@ -82,9 +104,14 @@ public class NoteService implements Constant {
      * @author li
      * @Date 2021/3/24 22:22
      */
-    public void addNote(Note note) {
-        Note save = noteRepository.save(note);
-        followService.publishNoteToFollowee(note.getUser().getId(),save.getId());
+    public void addNote(Note note) throws IOException {
+        Note n = noteRepository.save(note);
+        ObjectMapper mapper = new ObjectMapper();
+        IndexRequest request = new IndexRequest(INDEX);
+        request.id(String.valueOf(n.getId()));
+        request.timeout("1s");
+        request.source(mapper.writeValueAsString(new NoteVO(n)), XContentType.JSON);
+        restHighLevelClient.index(request, RequestOptions.DEFAULT);
     }
 
     /**
@@ -110,8 +137,14 @@ public class NoteService implements Constant {
      * @author li
      * @Date 2021/3/24 22:21
      */
-    public void updateNote(Note note) {
+    public void updateNote(Note note) throws IOException {
         noteRepository.save(note);
+        ObjectMapper mapper = new ObjectMapper();
+        UpdateRequest request = new UpdateRequest(INDEX, String.valueOf(note.getId()));
+        request.id(String.valueOf(note.getId()));
+        request.timeout("1s");
+        request.doc(mapper.writeValueAsString(new NoteVO(note)), XContentType.JSON);
+        restHighLevelClient.update(request, RequestOptions.DEFAULT);
     }
 
     /**
@@ -122,8 +155,11 @@ public class NoteService implements Constant {
      * @author li
      * @Date 2021/3/24 22:19
      */
-    public void deleteNote(int id, String username) throws NoteException {
+    public void deleteNote(int id, String username) throws NoteException, IOException {
         Note note = getNote(id, username);
+        DeleteRequest request = new DeleteRequest(INDEX, String.valueOf(note.getId()));
+        request.timeout("1s");
+        restHighLevelClient.delete(request, RequestOptions.DEFAULT);
         noteRepository.delete(note);
     }
     /**
@@ -306,14 +342,13 @@ public class NoteService implements Constant {
         ArrayList<NoteVO> noteVOList = new ArrayList<>();
         for (Note note : notes) {
             NoteVO noteVO = getNoteData(note);
-            noteVO.setLike(likeService.findEntityLikeCount(Constant.ENTITY_TYPE_NOTE,note.getId()));
             noteVOList.add(noteVO);
         }
         if (type==1){
             noteVOList.sort(new Comparator<NoteVO>() {
                 @Override
                 public int compare(NoteVO o1, NoteVO o2) {
-                    return (int) (o1.getLike()-o2.getLike());
+                    return (int) (o2.getLike()-o1.getLike());
                 }
             });
         }
@@ -328,12 +363,20 @@ public class NoteService implements Constant {
      * @Date 2021/5/2 11:38
      */
     public NoteVO getNoteData(Note note) {
+        User userInfo = jwtUtils.getUserInfo();
         int id = note.getId();
         long look = lookService.lookNum(id);
         long like = likeService.findEntityLikeCount(ENTITY_TYPE_NOTE, id);
         long collect = collectService.getNoteCollectCount(id);
         Set<CommentVO> comments = commentService.getNoteComments(id);
-        return new NoteVO(note, like, look, collect, comments);
+        NoteVO noteVO = new NoteVO(note, like, look, collect, comments);
+        if (userInfo !=null) {
+            dataService.recordDAU(userInfo.getId());
+            noteVO.getUser().setFollow(followService.hasFollowed(userInfo.getId(), note.getUser().getId()));
+            noteVO.setLiked(likeService.findEntityLikeStatus(userInfo.getId(),ENTITY_TYPE_NOTE, id));
+            noteVO.setCollected(collectService.hasCollected(userInfo.getId(),id));
+        }
+        return noteVO;
     }
 
     /**
@@ -345,15 +388,25 @@ public class NoteService implements Constant {
      * @Date 2021/5/2 18:35
      */
     public Page<NoteVO> getUserFollowersNotes(int userId,int page, int size) {
-        int offset=page*size;
-        Set<Integer> notesId = followService.getUserFollowersNotes(userId,offset, size);
-        List<Note> notes = noteRepository.findAllById(notesId);
+        PageRequest of = PageRequest.of(page, size);
+        String followerKey = RedisKeyUtil.getFollowerKey(userId);
+        Set<Integer> targetIds = redisTemplate.opsForZSet().reverseRange(followerKey, 0, followService.getFollowerCount(userId));
+        Page<Note> notes = noteRepository.findNotesByUser_IdIsInOrderByCreateTimeDesc(targetIds,of);
         ArrayList<NoteVO> noteVOList = new ArrayList<>();
         for (Note note : notes) {
             NoteVO noteVO = getNoteData(note);
             noteVOList.add(noteVO);
         }
-        PageRequest pageRequest = PageRequest.of(page, size);
-        return new PageImpl<>(noteVOList, pageRequest, followService.getUserFollowersNotesTotal(userId));
+        return new PageImpl<>(noteVOList, of, notes.getTotalElements());
+    }
+
+    public List<NoteVO> getAllNotes() {
+        List<Note> notes = noteRepository.findAll();
+        ArrayList<NoteVO> noteVOList = new ArrayList<>();
+        for (Note note : notes) {
+            NoteVO noteVO = new NoteVO(note);
+            noteVOList.add(noteVO);
+        }
+        return noteVOList;
     }
 }

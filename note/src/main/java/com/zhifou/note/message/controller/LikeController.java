@@ -11,6 +11,7 @@ import com.zhifou.note.user.entity.User;
 import com.zhifou.note.util.JwtUtils;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import org.springframework.data.domain.Page;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -18,7 +19,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
 import javax.validation.constraints.Min;
-import java.util.Set;
 
 /**
  * @author : li
@@ -44,10 +44,11 @@ public class LikeController implements Constant {
         boolean likeStatus = likeService.findEntityLikeStatus(id, entityType, entityId);
         if (likeStatus) {
             MessageEvent likeEvent = new MessageEvent();
-            likeEvent.setUserId(id);
+            likeEvent.setUserId(entityUserId);
             likeEvent.setEntityType(entityType);
             likeEvent.setEntityId(entityId);
-            likeEvent.setEntityUserId(entityUserId);
+            likeEvent.setEntityUserId(id);
+            likeEvent.setExtra("entityUserNickname",jwtUtils.getUserInfo().getNickName());
             likeEvent.setTopic(TOPIC_LIKE);
             eventProducer.fireMessageEvent(likeEvent);
         }
@@ -55,8 +56,8 @@ public class LikeController implements Constant {
 
     @ApiOperation("获取用户点赞记录")
     @GetMapping("/like")
-    public Set<NoteVO> getLiked(@ApiParam("第几页") @Min(value = 0,message = "页数最小为0") int page,
-                                @ApiParam("页大小")@Min(value = 1,message = "页尺寸最小为1") int size) throws NoteException {
+    public Page<NoteVO> getLiked(@ApiParam("第几页") @Min(value = 0,message = "页数最小为0") int page,
+                                 @ApiParam("页大小")@Min(value = 1,message = "页尺寸最小为1") int size) throws NoteException {
         User userInfo = jwtUtils.getUserInfo();
         return likeService.getUserLikedNotes(userInfo.getId(),page,size);
     }

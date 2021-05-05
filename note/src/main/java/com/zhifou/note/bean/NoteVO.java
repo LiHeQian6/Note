@@ -6,6 +6,8 @@ import com.zhifou.note.note.entity.Tag;
 import com.zhifou.note.note.entity.Type;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.data.elasticsearch.annotations.Field;
+import org.springframework.data.elasticsearch.annotations.FieldType;
 
 import java.text.SimpleDateFormat;
 import java.util.Set;
@@ -18,7 +20,9 @@ import java.util.Set;
 @Setter
 public class NoteVO {
     private int id;
+    @Field(type = FieldType.Text, analyzer = "ik_max_word")
     private String title;
+    @Field(type = FieldType.Text, analyzer = "ik_smart")
     private String content;
     private long like;
     private long look;
@@ -27,23 +31,30 @@ public class NoteVO {
     private long popularity;
     private boolean isLiked;
     private boolean isCollected;
+    @Field(type = FieldType.Text, analyzer = "ik_smart")
     private Set<CommentVO> comments;
     private String createTime;
     private UserVO user;
+    @Field(type = FieldType.Text, analyzer = "ik_smart")
     private Type type;
     @JsonIgnoreProperties({"hibernateLazyInitializer","handler"})
+    @Field(type = FieldType.Text, analyzer = "ik_smart")
     private Set<Tag> tags;
 
 
     //统计笔记评论数
     private long countComments() {
-        long num=comments.size();
-        for (CommentVO comment : comments) {
-            Set<CommentVO> child = comment.getChild();
-            if (child!=null) {
-                num+= child.size();
+        long num=0;
+        if (comments!=null) {
+            num =comments.size();
+            for (CommentVO comment : comments) {
+                Set<CommentVO> child = comment.getChild();
+                if (child!=null) {
+                    num+= child.size();
+                }
             }
         }
+
         return num;
     }
 

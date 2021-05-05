@@ -10,7 +10,7 @@ public class RedisKeyUtil {
     private static final String PREFIX_FOLLOWER = "follower";
     private static final String PREFIX_VERIFY_CODE = "verifyCode";
     private static final String PREFIX_TOKEN = "token";
-    private static final String PREFIX_FOLLOWERS_NOTES = "follower:note";//用户关注者发布的笔记
+//    private static final String PREFIX_FOLLOWERS_NOTES = "follower:note";//用户关注者发布的笔记
     private static final String PREFIX_UV = "uv";
     private static final String PREFIX_DAU = "dau";
     private static final String PREFIX_LOOK = "look";//笔记浏览
@@ -97,8 +97,8 @@ public class RedisKeyUtil {
     }
 
     //用户关注的人发布的笔记
-    public static String getUserFollowersNotesKey(int userId){
-        return PREFIX_FOLLOWERS_NOTES+SPLIT+userId;
-    }
+//    public static String getUserFollowersNotesKey(int userId){
+//        return PREFIX_FOLLOWERS_NOTES+SPLIT+userId;
+//    }
 
 }
