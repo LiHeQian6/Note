@@ -10,7 +10,7 @@
         android:id="@+id/type_parent"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="理科"
+        android:text=""
         android:textColor="@color/less_black"
         android:textSize="@dimen/sp_20"
         android:textStyle="bold"/>

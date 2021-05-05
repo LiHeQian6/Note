@@ -16,13 +16,16 @@ import com.bumptech.glide.signature.ObjectKey
 import com.example.note_android.MainActivity
 import com.example.note_android.R
 import com.example.note_android.annotation.Page
+import com.example.note_android.bean.UserInfo
 import com.example.note_android.login.QQLogin.MyIUiListener
 import com.example.note_android.util.*
+import com.google.gson.Gson
 import com.tencent.tauth.Tencent
 import kotlinx.android.synthetic.main.activity_login.*
 import kotlinx.android.synthetic.main.activity_register.*
 import kotlinx.android.synthetic.main.fragment_person.view.*
 import okhttp3.*
+import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
@@ -36,6 +39,7 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
     private lateinit var mTencent: Tencent
     private lateinit var handler: Handler
     private lateinit var share: SharedPreferences.Editor
+    private var gson:Gson = Gson()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -51,11 +55,50 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
                 super.handleMessage(msg)
                 var result = JSONObject(msg.obj.toString())
                 if(result.get("status") == "SUCCESS")
-                    ActivityUtil.get().goActivityKill(this@LoginActivity, MainActivity::class.java)
+                    when(msg.what) {
+                        0 -> {
+                            getUserInfo()
+                        }
+                        1 -> {
+                            var userInfo: UserInfo = gson.fromJson(result.get("data").toString(), UserInfo::class.java)
+                            StateUtil.SYSTEM_USER_INFO = userInfo
+                            StateUtil.IF_LOGIN = true
+                            ActivityUtil.get().goActivityKill(this@LoginActivity, MainActivity::class.java)
+                        }
+                    }
                 else
                     Toast.makeText(this@LoginActivity,result.get("message").toString(), Toast.LENGTH_SHORT).show()
             }
         }
+    }
+
+    private fun getUserInfo(){
+        var httpClient = OkHttpClient()
+        val urlBuilder = HttpAddressUtil.getUserInfo().toHttpUrlOrNull()!!.newBuilder()
+        var request = Request.Builder()
+                .addHeader(resources.getString(R.string.Authorization),StateUtil.AUTHORIZATION)
+                .addHeader(resources.getString(R.string.Authorization_Header),StateUtil.AUTHORIZATION_HEADERS)
+                .get()
+                .url(urlBuilder.build()).build()
+        httpClient.newCall(request).enqueue(object : Callback {
+            override fun onFailure(call: Call, e: IOException) {
+                Looper.prepare()
+                Toast.makeText(this@LoginActivity,"网络出了点问题", Toast.LENGTH_SHORT).show()
+                Looper.loop()
+            }
+
+            override fun onResponse(call: Call, response: Response) {
+                var result: String? = response.body?.string()
+                if(result == null || result == ""){
+                    Toast.makeText(this@LoginActivity,"网络出了点问题,请重试", Toast.LENGTH_SHORT).show()
+                    return
+                }
+                var mess = Message()
+                mess.obj = result
+                mess.what = 1
+                handler.sendMessage(mess)
+            }
+        })
     }
 
     private fun getImageCode(random:String) {

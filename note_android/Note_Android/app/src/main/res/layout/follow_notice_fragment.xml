@@ -6,6 +6,7 @@
     tools:context=".fragment.notice.type.FollowNoticeFragment">
 
     <com.scwang.smart.refresh.layout.SmartRefreshLayout
+        android:id="@+id/follow_notice_refresh"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
@@ -18,5 +19,9 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:overScrollMode="never" />
+
+        <com.scwang.smart.refresh.footer.BallPulseFooter
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/dp_30" />
     </com.scwang.smart.refresh.layout.SmartRefreshLayout>
 </FrameLayout>

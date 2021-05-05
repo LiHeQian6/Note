@@ -6,10 +6,11 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.note_android.R
+import com.example.note_android.bean.NoteInfo
 import com.example.note_android.holder.NoteViewHolder
 import com.example.note_android.listener.OnItemClickListener
 
-class FollowRVAdapter(var list: MutableList<Any>,
+class FollowRVAdapter(var list: MutableList<NoteInfo>,
                       var context: Context,
                       var recyclerView: RecyclerView):
     RecyclerView.Adapter<NoteViewHolder>(),View.OnClickListener {
@@ -32,11 +33,14 @@ class FollowRVAdapter(var list: MutableList<Any>,
 
     override fun onBindViewHolder(holder: NoteViewHolder, position: Int) {
         holder.writerHeader.isCircle = true
-        holder.noteTitle.text = "Android开发"
-        holder.noteLittleContent.text = "浅谈Android开发"
-        holder.viewNum.text = "1"
-        holder.dianzanNum.text = "2"
-        holder.commonNum.text = "3"
+        holder.writeName.text = list[position].user?.nickName
+        holder.noteTitle.text = list[position].title
+        var regex = Regex("[#->]")
+        var content = list[position].content.toString().replace(regex,"")
+        holder.noteLittleContent.text = content
+        holder.viewNum.text = list[position].look.toString()
+        holder.dianzanNum.text = list[position].like.toString()
+        holder.commonNum.text = list[position].commentNum.toString()
     }
 
     override fun onClick(v: View?) {

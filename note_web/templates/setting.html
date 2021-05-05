@@ -22,6 +22,7 @@
     var localStorage;
     var header1;
     var header2;
+    var userInfo;
 
 	window.onload = function(){
 		localStorage = window.localStorage;
@@ -49,6 +50,8 @@
                         $("#navUserLogin").hide();
                         $("#navUserInfo").show();
                         $("#nickName").text(data.data.nickName);
+
+                        userInfo.userInfo = data.data;
                         return;
                     }
                     console.log(resultData);
@@ -64,6 +67,85 @@
         }else{
             window.location.href = "sign-in.html";
         }
+
+        userInfo = new Vue({
+			el: '#userInfo',
+			data:{
+				userInfo:''
+			},
+			methods:{
+				reset: function(){
+					$("#password").val("");
+					$("#repeat-password").val("");
+				},
+				updateUserInfo: function(){
+					var resultData;
+					var that = this;
+		            $.ajax({
+		                type: "POST",
+		                url: "/changeInfo",
+		                headers: {
+		                   "Access-control-expose-headers": header1,
+		                   "Authorization": header2
+		                },
+		                contentType: "application/json;charset=UTF-8",
+			            dataType: "json",
+			            data: JSON.stringify({nickName:that.userInfo.nickName, introduction:that.userInfo.introduction}),
+		                success: function(data){
+		                    resultData = data.status;
+		                    if(resultData == "SUCCESS"){
+		                        alert("修改信息成功！");
+		                        $("#nickName").text(that.userInfo.nickName);
+		                        return;
+		                    }
+		                    console.log(resultData);
+		                },
+		                complete: function(xhr,data){
+		                    if(resultData == "SUCCESS" && data == "success"){
+		                        updateLocalToken(xhr);
+		                        return;
+		                    } 
+		                    console.log(data);
+		                }
+		            });
+				},
+				updatePassword: function(){
+					if($("#password").val() != $("#repeat-password").val()){
+						alert("两次输入密码不一致！");
+						return;
+					}
+					var resultData;
+					var that = this;
+		            $.ajax({
+		                type: "POST",
+		                url: "/changeInfo",
+		                headers: {
+		                   "Access-control-expose-headers": header1,
+		                   "Authorization": header2
+		                },
+		                contentType: "application/json;charset=UTF-8",
+			            dataType: "json",
+			            data: JSON.stringify({password:$("#password").val()}),
+		                success: function(data){
+		                    resultData = data.status;
+		                    if(resultData == "SUCCESS"){
+		                        alert("修改信息成功！请重新登录！");
+		                        logout();
+		                        return;
+		                    }
+		                    console.log(resultData);
+		                },
+		                complete: function(xhr,data){
+		                    if(resultData == "SUCCESS" && data == "success"){
+		                        updateLocalToken(xhr);
+		                        return;
+		                    } 
+		                    console.log(data);
+		                }
+		            });
+				}
+			}
+		});
 	}
 </script>
 </head>
@@ -85,7 +167,7 @@
 					<nav style="">
 						<ul>
 							<li>
-								<a href="index.html" title="" class="nav-actived">
+								<a href="index.html" title="">
 									<!-- <span><img src="/static/images/icon1.png" alt=""></span> -->
 									首页
 								</a>
@@ -139,7 +221,7 @@
 						<div class="user-account-settingss">
 							<a href="person-homepage.html" title=""><div class="custom-user-account-dropdown">个人主页</div></a>
 							<a href="collect.html" title=""><div class="custom-user-account-dropdown">收藏笔记</div></a>
-							<a href="like.html" title=""><div class="custom-user-account-dropdown">喜欢笔记</div></a>
+							<a href="like.html" title=""><div class="custom-user-account-dropdown">点赞笔记</div></a>
 							<a href="management.html" title=""><div class="custom-user-account-dropdown">管理笔记</div></a>
 							<a href="setting.html" title=""><div class="custom-user-account-dropdown">设置</div></a>
 							<a href="javascript:logout()" title=""><div class="custom-user-account-logout">退出登陆</div></a>
@@ -147,16 +229,16 @@
 					</div>
 				</div><!--header-data end-->
 			</div>
-			<!-- <a href="note-post.html">
+			<a href="note-post.html">
 				<div class="note-post" style="position: absolute;top: 8px;right: 30px;">
 				发布笔记
 				</div>
-			</a> -->
-			<a href="note-post.html">
-				<button class="btn btn-success note-post" type="button" style="position: absolute;top: 8px;right: 30px;">
+			</a>
+			<!-- <a href="note-post.html">
+				<button class="btn btn-info note-post" type="button" style="position: absolute;top: 8px;right: 30px;">
 				发布笔记
 				</button>
-			</a>
+			</a> -->
 		</header>	<!--header end-->
 
 
@@ -172,7 +254,7 @@
 								  </div>
 							</div><!--acc-leftbar end-->
 						</div>
-						<div class="col-lg-9">
+						<div id="userInfo" class="col-lg-9">
 							<div class="tab-content" id="nav-tabContent">
 								<div class="tab-pane fade show active" id="nav-acc" role="tabpanel" aria-labelledby="nav-acc-tab">
 									<div class="acc-setting">
@@ -193,7 +275,7 @@
                                             <div class="cp-field">
                                                 <h5>昵称</h5>
                                                 <div class="cpp-fiels">
-                                                    <input type="text" class="form-control" name="old-password" value="孤独的小浣熊">
+                                                    <input type="text" class="form-control" v-model="userInfo.nickName">
                                                     <i class="fa fa-male"></i>
                                                 </div>
                                                 <p style="color: #A9A9A9;font-size: 13px;padding-left: 14px">其他人可通过该昵称找到你</p>
@@ -201,22 +283,22 @@
                                             <div class="cp-field">
                                                 <h5>个人简介</h5>
                                                 <div class="cpp-fiels">
-                                                    <input type="text" class="form-control" name="repeat-password" value=" 我是MC水观音，发出性感的声音">
+                                                    <input type="text" class="form-control" v-model="userInfo.introduction">
                                                     <i class="fa fa-pencil-square-o"></i>
                                                 </div>
                                             </div>
                                             <div class="cp-field">
                                                 <h5>邮箱</h5>
                                                 <div class="cpp-fiels">
-                                                    <input type="email" class="form-control" name="new-password" value=" 1764056039@qq.com">
+                                                    <input type="email" class="form-control" name="new-password" v-bind:value="userInfo.username" disabled>
                                                     <i class="fa fa-envelope-square"></i>
-                                                   	<p style="color: #A9A9A9;font-size: 13px;padding-left: 14px">邮箱地址是您用来登录账户的凭证，并帮助您在忘记密码的情况下进行密码重置。为确保您的邮箱地址正确有效，每次更换邮箱之后，请根据操作提示来完成邮箱验证</p>
+                                                   	<p style="color: #A9A9A9;font-size: 13px;padding-left: 14px">邮箱地址是您用来登录账户的凭证，并帮助您在忘记密码的情况下进行密码重置。</p>
                                                 </div>
                                             </div>
                                             <div class="save-stngs pd2">
                                                 <ul style="text-align: center;">
                                                     <li>
-                                                        <button type="submit">保存</button>
+                                                        <button v-on:click="updateUserInfo" type="button">保存</button>
                                                     </li>
                                                 </ul>
                                             </div><!--save-stngs end-->
@@ -227,35 +309,35 @@
 	                                <div class="acc-setting">
 	                                    <h3>修改密码</h3>
 	                                    <form>
-	                                        <div class="cp-field">
+	                                        <!-- <div class="cp-field">
 	                                            <h5>旧密码</h5>
 	                                            <div class="cpp-fiels">
 	                                                <input type="password" class="form-control" name="old-password" placeholder="请输入旧密码">
 	                                                <i class="fa fa-lock"></i>
 	                                            </div>
-	                                        </div>
+	                                        </div> -->
 	                                        <div class="cp-field">
 	                                            <h5>新密码</h5>
 	                                            <div class="cpp-fiels">
-	                                                <input type="password" class="form-control" name="new-password" placeholder="请输入新密码">
+	                                                <input id="password" type="password" class="form-control" name="new-password" placeholder="请输入新密码">
 	                                                <i class="fa fa-lock"></i>
-	                                                <p style="color: #A9A9A9;font-size: 13px;padding-left: 14px">密码长度在6-20位之间，且密码必须包含数字、字母</p>
+	                                                <p style="color: #A9A9A9;font-size: 13px;padding-left: 14px">密码长度在8-20位之间，且密码必须包含数字、字母</p>
 	                                            </div>
 	                                        </div>
 	                                        <div class="cp-field">
 	                                            <h5>确认密码</h5>
 	                                            <div class="cpp-fiels">
-	                                                <input type="password" class="form-control" name="repeat-password" placeholder="请再次输入新密码">
+	                                                <input id="repeat-password" type="password" class="form-control" name="repeat-password" placeholder="请再次输入新密码">
 	                                                <i class="fa fa-lock"></i>
 	                                            </div>
 	                                        </div>
 	                                        <div class="save-stngs pd2">
 	                                            <ul>
 	                                                <li>
-	                                                    <button type="submit">保存</button>
+	                                                    <button v-on:click="updatePassword" type="button">保存</button>
 	                                                </li>
 	                                                <li>
-	                                                    <button type="reset">重置</button>
+	                                                    <button v-on:click="reset" type="button">重置</button>
 	                                                </li>
 	                                            </ul>
 	                                        </div><!--save-stngs end-->

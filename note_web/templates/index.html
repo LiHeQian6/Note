@@ -28,7 +28,8 @@
     var user_recommend;
     var user_recommendSize = 5;
     var currentUserPage = 0;
-    var notePageSize = 2;
+    var lastUserPage;
+    var notePageSize = 3;
     var currentNotePage = 0;
     var currentNoteSubject = -1;
     var currentNoteTag = 0;
@@ -54,12 +55,16 @@
 				success: function(data){
                     resultData = data.status;
                     if(resultData == "TOKEN_EXPIRED" || resultData == "USER_NOT_LOGIN"){
+                    	alert("请登录");
+                    	logout();
                         return;    
                     }else if(resultData == "SUCCESS"){
                     	localStorage.setItem("UserId", data.data.id);
                         $("#navUserLogin").hide();
                         $("#navUserInfo").show();
                         $("#nickName").text(data.data.nickName);
+
+                        request_writer_login();
                         return;
                     }
                     console.log(resultData);
@@ -72,9 +77,9 @@
                     console.log(data);
                 }
             });
-
-            //知否笔记logo隐藏
-            $("#logoZhifou").hide();
+        }else{
+        	$("#logoZhifou").show();
+        	request_writer_unLogin();
         }
 		//学科
 		subject = new Vue({
@@ -85,7 +90,41 @@
 			      subject1:-1, //一级学科选中
 			      subject2:-1, //二级学科选中
 			  },
-			  watch:{ //监听学科
+			  methods:{
+			  	  //根据学科查询笔记
+			  	  selectNoteBySubject: function(){
+			  	  	if(this.subject2 == -1){
+						alert("请选择学科！");
+						return;
+					}
+
+					flag = 1;
+					currentNoteSubject = this.subject2;
+					currentNotePage = 0;
+					
+					var subjectUrl = "/notes/type/"+currentNoteSubject;
+					$.ajax({
+			            type: "GET",
+			            url: subjectUrl,
+			            data: {page:currentNotePage, size:notePageSize},
+			            dataType: "json",
+			            success: function(data){
+				            if(data.status == "SUCCESS"){
+								noteList.notes = data.data.content;
+
+								for (var i = noteList.notes.length - 1; i >= 0; i--) {
+									noteList.notes[i].content = GetMarkdownText(noteList.notes[i].content);
+								}
+								
+			                    return;
+				            }
+							console.log(data.status);
+				        }
+				    });
+			  	  }
+			  },
+			  watch:{ 
+			    //监听学科
 		        subject1:function(val) {
 		        	if(val == -1){
 						this.subject2 = -1;
@@ -108,6 +147,7 @@
 				noteTags:[]
 			},
 			methods:{
+				//根据标签查询笔记
 				selectByTag: function(tagId){
 					flag = 2;
 					currentNoteTag = tagId;
@@ -140,6 +180,35 @@
 			el: '#noteList',
 			data:{
 				notes:[]
+			},
+			methods:{
+				//跳转到详情页
+				loadNoteDetail: function(noteId){
+					return "note-detail.html?noteId="+noteId;
+				},
+				//跳转到用户主页
+				loadUserHome: function(writerId){
+					return "user-homepage.html?writerId="+writerId;
+				},
+				//加载更多
+				loadMore: function(){
+					currentNotePage++;
+					var requestUrl;
+					switch (flag) {
+						case 0:
+							requestUrl = "/notes/popularity"; 
+							requestLoadMore(requestUrl);
+							break;
+						case 1:
+							requestUrl = "/notes/type/"+currentNoteSubject;; 
+							requestLoadMore(requestUrl);
+							break;
+						case 2:
+							requestUrl = "/notes/tag/"+currentNoteTag;
+							requestLoadMore(requestUrl);
+							break;
+					}
+				}
 			}
 		});
 		//作者
@@ -147,6 +216,109 @@
 			el: '#user_recommend',
 			data:{
 				users:[]
+			},
+			methods:{
+				//刷新推荐作者
+				loadMoreUser: function(){
+					currentUserPage++;
+					if(currentUserPage+1 > lastUserPage){
+						currentUserPage = lastUserPage-1;
+						// currentUserPage = Math.floor(Math.random()*lastUserPage+1)-1;
+					}
+
+					if(header1 == null || header2 == null){
+						request_writer_unLogin();
+					}else{
+						request_writer_login();
+					}
+				},
+				//关注作者
+				followWriter: function(writerId,index){
+					if(header1 == null || header2 == null){
+						alert("请登录！");
+						return;
+					}
+					if(this.users[index].follow == true){
+						alert("您已关注该作者！");
+
+						var iconId1 = "#icon_follow"+index;
+						var iconId2 = "#icon_close_follow"+index;
+						$(iconId1).hide();
+						$(iconId2).show();
+						return;
+					}
+					var resultData;
+					var that = this;
+					$.ajax({
+			            type: "POST",
+			            url: "/follow",
+			            headers: {
+			               "Access-control-expose-headers": header1,
+			               "Authorization": header2
+			            },
+			            data: {targetId:writerId},
+			            dataType: "json",
+			            success: function(data){
+			            	resultData = data.status;
+							if(resultData == "SUCCESS"){
+								alert("关注成功！");
+
+								var iconId1 = "#icon_follow"+index;
+								var iconId2 = "#icon_close_follow"+index;
+								$(iconId1).hide();
+								$(iconId2).show();
+
+								that.users[index].followee++;
+								return;
+			                }
+			                console.log(resultData);
+				        },
+				        complete: function(xhr,data){
+			                if(resultData == "SUCCESS" && data == "success"){
+			                    updateLocalToken(xhr);
+			                    return;
+			                } 
+			                console.log(data);
+			            }
+				    });
+				},
+				//取消关注
+				closeFollowWriter: function(writerId,index){
+					var that = this;
+					var resultData;
+					$.ajax({
+			            type: "DELETE",
+			            url: "/follow",
+			            headers: {
+			               "Access-control-expose-headers": header1,
+			               "Authorization": header2
+			            },
+			            data: {targetId:writerId},
+			            dataType: "json",
+			            success: function(data){
+			            	resultData = data.status;
+							if(resultData == "SUCCESS"){
+								alert("取消关注成功！");
+
+								var iconId1 = "#icon_follow"+index;
+								var iconId2 = "#icon_close_follow"+index;
+								$(iconId1).show();
+								$(iconId2).hide();
+
+								that.users[index].followee--;
+								return;
+			                }
+			                console.log(resultData);
+				        },
+				        complete: function(xhr,data){
+			                if(resultData == "SUCCESS" && data == "success"){
+			                    updateLocalToken(xhr);
+			                    return;
+			                } 
+			                console.log(data);
+			            }
+				    });
+				}
 			}
 		});
 
@@ -190,6 +362,7 @@
 
 					for (var i = noteList.notes.length - 1; i >= 0; i--) {
 						noteList.notes[i].content = GetMarkdownText(noteList.notes[i].content);
+						// console.log(noteList.notes[i].)
 					}
 					
                     return;
@@ -197,21 +370,8 @@
                 console.log(data.status);
 	        }
 	    });
-	    //推荐作者加载
-		$.ajax({
-            type: "GET",
-            url: "/users/popular",
-            data: {page:currentUserPage, size:user_recommendSize},
-            dataType: "json",
-            success: function(data){
-				if(data.status == "SUCCESS"){
-					user_recommend.users = data.data.content;
-                    return;
-                }
-                console.log(data.status);
-	        }
-	    });
 	}
+
 </script>
 </head> 
 
@@ -282,7 +442,7 @@
 						<div id="navUserInfoDropdown" class="user-account-settingss">
 							<a href="person-homepage.html" title=""><div class="custom-user-account-dropdown">个人主页</div></a>
 							<a href="collect.html" title=""><div class="custom-user-account-dropdown">收藏笔记</div></a>
-							<a href="like.html" title=""><div class="custom-user-account-dropdown">喜欢笔记</div></a>
+							<a href="like.html" title=""><div class="custom-user-account-dropdown">点赞笔记</div></a>
 							<a href="management.html" title=""><div class="custom-user-account-dropdown">管理笔记</div></a>
 							<a href="setting.html" title=""><div class="custom-user-account-dropdown">设置</div></a>
 							<a href="javascript:logout1()" title=""><div class="custom-user-account-logout">退出登陆</div></a>
@@ -290,16 +450,16 @@
 					</div>
 				</div><!--header-data end-->
 			</div>
-			<!-- <a href="note-post.html">
+			<a href="note-post.html">
 				<div class="note-post" style="position: absolute;top: 8px;right: 30px;">
 				发布笔记
 				</div>
-			</a> -->
-			<a href="note-post.html">
-				<button class="btn btn-success note-post" type="button" style="position: absolute;top: 8px;right: 30px;">
+			</a>
+			<!-- <a href="note-post.html">
+				<button class="btn btn-info note-post" type="button" style="position: absolute;top: 8px;right: 30px;">
 				发布笔记
 				</button>
-			</a>
+			</a> -->
 		</header>	<!--header end-->
 		
 		<div class="search-sec">
@@ -319,7 +479,7 @@
 					<div class="main-section-data">
 						<div class="row">
 							<div class="col-lg-3">
-								<div id="logoZhifou" class="widget widget-about">
+								<div id="logoZhifou" class="widget widget-about" style="display: none">
 									<!-- <img src="../static/images/wd-logo.png" alt=""> -->
 									<img src="/static/images/logo_zhifou.png" alt="">
 									<!-- <h3>笔记在线分享平台</h3> -->
@@ -332,7 +492,7 @@
 								<div id="subject" class="filter-secs" style="margin-bottom: 20px">
 									<div class="filter-heading" style="padding: 20px 20px">
 										<h3>学科</h3>
-										<button id="selectByType" type="button" class="btn btn-default pull-right" style="margin-top: -5px;padding: 2px 0px 0px 0px;width: 30px;height: 30px;"><i class="la la-search" style="color: #FF6700;font-size: 23px;font-weight: bolder"></i></button>
+										<button v-on:click="selectNoteBySubject" type="button" class="btn btn-default pull-right" style="margin-top: -5px;padding: 2px 0px 0px 0px;width: 30px;height: 30px;"><i class="la la-search" style="color: #FF6700;font-size: 23px;font-weight: bolder"></i></button>
 									</div><!--filter-heading end-->
 									<div class="paddy">
 										<div class="filter-dd">
@@ -379,17 +539,18 @@
 		                        <div id="user_recommend" class="suggestions full-width">
 									<div class="sd-title">
 										<h3>推荐作者</h3>
-										<i id="custom-refresh" class="la la-refresh"></i>
+										<i id="custom-refresh" v-on:click="loadMoreUser" class="la la-refresh"></i>
 										<!-- <i class="la la-ellipsis-v"></i> -->
 									</div><!--sd-title end-->
 									<div class="suggestions-list">
-										<div v-for="site in users" class="suggestion-usd">
-											<img src="/static/images/resources/s3.png" alt="">
+										<div v-for="site,index in users" class="suggestion-usd">
+											<img style="width: 35px;height: 35px" src="/static/images/resources/us-pic.png" alt="">
 											<div class="sgt-text">
 												<h4><a href="user-homepage.html" style="color: black;">{{site.nickName}}</a></h4>
 												<span>{{site.like}}获赞 &nbsp {{site.followee}}粉丝</span>
 											</div>
-											<span><i class="la la-plus"></i></span>
+											<span v-bind:id="'icon_follow'+index" v-on:click="followWriter(site.id,index)"><i class="la la-plus"></i></span>
+											<span v-bind:id="'icon_close_follow'+index" v-on:click="closeFollowWriter(site.id,index)" style="display: none"><i class="fa fa-check"></i></span>
 										</div>
 										<div class="view-more">
 											<a href="writer.html" title="">View More</a>
@@ -406,34 +567,36 @@
 										<div v-for="site in notes" class="post-bar">
 											<div class="post_topbar">
 												<div class="usy-dt">
-													<a href="user-homepage.html"><img src="/static/images/resources/us-pic.png" alt=""></a>
+													<a v-bind:href="loadUserHome(site.user.id)"><img src="/static/images/resources/us-pic.png" alt=""></a>
 													<div class="usy-name"></a>
-														<h3><a href="user-homepage.html" style="color: black">{{site.user.nickName}}</h3></a>
+														<h3><a v-bind:href="loadUserHome(site.user.id)" style="color: black">{{site.user.nickName}}</h3></a>
 														<span><img src="/static/images/clock.png" alt="">{{site.createTime}}</span>
 													</div>
 												</div>
 											</div>
 											
 											<div class="job_descp">
-												<h3><a href="note-detail.html" style="color: black">{{site.title}}</a></h3>
-												<p>{{site.content}}<a href="note-detail.html" title=""> &nbspview more</a></p>
+												<h3><a v-bind:href="loadNoteDetail(site.id)" style="color: black">{{site.title}}</a></h3>
+												<p>{{site.content}}<a v-bind:href="loadNoteDetail(site.id)" title=""> &nbspview more</a></p>
 												<ul class="skill-tags">
 													<li v-for="tag in site.tags"><a href="#" title="">{{tag.name}}</a></li> 	
 												</ul>
 											</div>
 											<div class="job-status-bar">
-												<ul class="like-com">
+												<ul class="like-com" style="display: flex;align-items: center">
 													<li>
-														<a href="#"><i class="la la-heart"></i> </a>
+														<a v-bind:href="loadNoteDetail(site.id)"><i class="la la-heart"></i> </a>
 														<img src="/static/images/liked-img.png" alt="">
-														<span>{{site.like}}</span>
-													</li> 
-													<li v-if="site.comments">
-														<a href="note-detail.html" title="" class="com"><img src="/static/images/com.png" alt=""> {{site.comments.length}}
+														<span>{{site.collect}}</span>
+													</li>
+													<li>
+														<a v-bind:href="loadNoteDetail(site.id)" title="" style="margin-top: 0px">
+															<i class="fa fa-thumbs-up" style="font-size:17px"></i>&nbsp&nbsp{{site.like}}
 														</a>
 													</li>
-													<li v-else>
-														<a href="note-detail.html" title="" class="com"><img src="/static/images/com.png" alt=""> 0
+													<li style="margin-top: 10px">
+														<a v-bind:href="loadNoteDetail(site.id)" title="" class="com">
+															<img src="/static/images/com.png" alt=""> {{site.commentNum}}
 														</a>
 													</li>
 												</ul>
@@ -441,7 +604,7 @@
 											</div>
 										</div><!--post-bar end-->
 										<div class="process-comm">
-											<a href="javascript:loadMore()"><img id="loadMore" src="/static/images/process-icon.png" alt=""></a>
+											<img id="loadMore" v-on:click="loadMore" src="/static/images/process-icon.png" alt="">
 										</div><!--process-comm end-->
 									</div><!--posts-section end-->
 								</div><!--main-ws-sec end-->
@@ -488,57 +651,6 @@
 <script src="https://cdn.staticfile.org/axios/0.18.0/axios.min.js"></script>
 <script src="https://cdn.staticfile.org/vue-resource/1.5.1/vue-resource.min.js"></script>
 <script>
-	//根据学科查询笔记
-	$(document).on('click','#selectByType',function(){
-		if(currentNoteSubject == -1){
-			alert("请选择学科！");
-			return;
-		}
-
-		flag = 1;
-		currentNoteSubject = subject.subject2;
-		currentNotePage = 0;
-		
-		var subjectUrl = "/notes/type/"+currentNoteSubject;
-		$.ajax({
-            type: "GET",
-            url: subjectUrl,
-            data: {page:currentNotePage, size:notePageSize},
-            dataType: "json",
-            success: function(data){
-	            if(data.status == "SUCCESS"){
-					noteList.notes = data.data.content;
-
-					for (var i = noteList.notes.length - 1; i >= 0; i--) {
-						noteList.notes[i].content = GetMarkdownText(noteList.notes[i].content);
-					}
-					
-                    return;
-	            }
-				console.log(data.status);
-	        }
-	    });
-	});
-
-	//查看更多笔记
-	function loadMore(){
-		currentNotePage++;
-		var requestUrl;
-		switch (flag) {
-			case 0:
-				requestUrl = "/notes/popularity"; 
-				requestLoadMore(requestUrl);
-				break;
-			case 1:
-				requestUrl = "/notes/type/"+currentNoteSubject;; 
-				requestLoadMore(requestUrl);
-				break;
-			case 2:
-				requestUrl = "/notes/tag/"+currentNoteTag;
-				requestLoadMore(requestUrl);
-				break;
-		}
-	}
 	//请求-加载更多
 	function requestLoadMore(requestUrl){
 		$.ajax({
@@ -553,8 +665,8 @@
 						alert("已经到底了！");
 						return;
 					}
-					var length = noteList.notes.length;
 
+					var length = noteList.notes.length;
 					for (var i = result.length - 1; i >= 0; i--) {
 						noteList.notes.push(result[i]);
 						noteList.notes[length].content = GetMarkdownText(noteList.notes[length].content);
@@ -568,23 +680,55 @@
 	    });
 	}
 
-	//推荐作者刷新
-	$(document).on('click','#custom-refresh',function(){
-		currentUserPage++;
+	//加载推荐作者（未登录）
+	function request_writer_unLogin(){
+	    //推荐作者加载
+		$.ajax({
+	        type: "GET",
+	        url: "/users/popular",
+	        data: {page:currentUserPage, size:user_recommendSize},
+	        dataType: "json",
+	        success: function(data){
+				if(data.status == "SUCCESS"){
+					user_recommend.users = data.data.content;
+					lastUserPage = data.data.totalPages;
+	                return;
+	            }
+	            console.log(data.status);
+	        }
+	    });
+	}
+	//加载推荐作者（已登录）
+	function request_writer_login(){
+		var resultData;
+	    //推荐作者加载
 		$.ajax({
             type: "GET",
             url: "/users/popular",
+            headers: {
+               "Access-control-expose-headers": header1,
+               "Authorization": header2
+            },
             data: {page:currentUserPage, size:user_recommendSize},
             dataType: "json",
             success: function(data){
-				if(data.status == "SUCCESS"){
+            	resultData = data.status;
+				if(resultData == "SUCCESS"){
 					user_recommend.users = data.data.content;
+					lastUserPage = data.data.totalPages;
                     return;
                 }
-                console.log(data.status);
-	        }
+                console.log(resultData);
+	        },
+	        complete: function(xhr,data){
+                if(resultData == "SUCCESS" && data == "success"){
+                    updateLocalToken(xhr);
+                    return;
+                } 
+                console.log(data);
+            }
 	    });
-	});
+	}
 
 	//退出登录
     function logout(){
@@ -596,7 +740,6 @@
         $("#navUserInfo").hide();
         $("#navUserInfoDropdown").hide();
         $("#navUserLogin").show();
-        //知否笔记logo隐藏
         $("#logoZhifou").show();
     }
 	//更新本地token

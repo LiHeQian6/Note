@@ -16,17 +16,29 @@
 <link rel="stylesheet" type="text/css" href="/static/lib/slick/slick-theme.css">
 <link rel="stylesheet" type="text/css" href="/static/css/style.css">
 <link rel="stylesheet" type="text/css" href="/static/css/responsive.css">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tarekraafat-autocomplete.js/9.0.3/css/autoComplete.min.css">
+<link rel="stylesheet" type="text/css" href="/static/lib/editor/css/editormd.css">
 
 <script type="text/javascript">
     var localStorage;
     var header1;
     var header2;
+    var noteId
+    var note;
+    var noteList;
+    var currentNotePage = 0;
+    var lastNotePage;
+    var notePageSize = 5;
 
 	window.onload = function(){
 		localStorage = window.localStorage;
         header1 = localStorage.getItem("Access-control-expose-headers");
         header2 = localStorage.getItem("Authorization");
+        noteId = GetQueryString("noteId");
+            
+        if(noteId == null){
+            window.location.href = "index.html";
+            return;
+        }
 
 		//用户信息展示
         if(header1 != null && header2 != null){
@@ -43,11 +55,15 @@
                 success: function(data){
                     resultData = data.status;
                     if(resultData == "TOKEN_EXPIRED" || resultData == "USER_NOT_LOGIN"){
+                    	alert("请登录");
+                    	logout();
                         return;    
                     }else if(resultData == "SUCCESS"){
                         $("#navUserLogin").hide();
                         $("#navUserInfo").show();
                         $("#nickName").text(data.data.nickName);
+
+                        loadNoteInfo_login();
                         return;
                     }
                     console.log(resultData);
@@ -60,7 +76,118 @@
                     console.log(data);
                 }
             });
+        }else{
+        	loadNoteInfo_unLogin();
         }
+
+        //笔记
+        note = new Vue({
+            el: '#note',
+            data:{
+                noteInfo:'',
+                user:'',
+                isFollow:0 //初值0代表未登录时显示“关注”
+            },
+            methods:{
+            	//跳转到用户主页
+            	loadUserHome: function(writerId){
+            		return "user-homepage.html?writerId="+writerId;
+            	},
+            	//关注作者
+            	followWriter: function(){
+					if(header1 == null || header2 == null){
+						alert("请登录！");
+						return;
+					}
+					var resultData;
+					var that = this;
+					$.ajax({
+			            type: "POST",
+			            url: "/follow",
+			            headers: {
+			               "Access-control-expose-headers": header1,
+			               "Authorization": header2
+			            },
+			            data: {targetId:that.noteInfo.user.id},
+			            dataType: "json",
+			            success: function(data){
+			            	resultData = data.status;
+							if(resultData == "SUCCESS"){
+								alert("关注成功！");
+								that.isFollow = 1;
+								that.user.followee++;
+								return;
+			                }
+			                console.log(resultData);
+				        },
+				        complete: function(xhr,data){
+			                if(resultData == "SUCCESS" && data == "success"){
+			                    updateLocalToken(xhr);
+			                    return;
+			                } 
+			                console.log(data);
+			            }
+				    });					
+            	},
+            	//取关作者
+            	closeFollowWriter: function(){
+					var resultData;
+					var that = this;
+					$.ajax({
+			            type: "DELETE",
+			            url: "/follow",
+			            headers: {
+			               "Access-control-expose-headers": header1,
+			               "Authorization": header2
+			            },
+			            data: {targetId:that.noteInfo.user.id},
+			            dataType: "json",
+			            success: function(data){
+			            	resultData = data.status;
+							if(resultData == "SUCCESS"){
+								alert("取消关注成功！");
+								that.isFollow = 0;
+								that.user.followee--;
+								return;
+			                }
+			                console.log(resultData);
+				        },
+				        complete: function(xhr,data){
+			                if(resultData == "SUCCESS" && data == "success"){
+			                    updateLocalToken(xhr);
+			                    return;
+			                } 
+			                console.log(data);
+			            }
+				    });					
+            	}
+            }
+        });
+
+        //推荐阅读
+        noteList = new Vue({
+            el: '#noteList',
+            data:{
+                notes:''
+            },
+            methods:{
+            	loadMoreNote: function(){
+            		currentNotePage++;
+					if(currentNotePage+1 > lastNotePage){
+						currentNotePage = lastNotePage-1;
+						// currentUserPage = Math.floor(Math.random()*lastUserPage+1)-1;
+					}
+
+            		request_loadMoreNote();
+            	},
+            	turnNoteDetail: function(noteId){
+					return "note-detail.html?noteId="+noteId;
+            	}
+            }
+        });
+
+        //加载推荐阅读
+        request_loadMoreNote();
 	}
 </script>
 </head>
@@ -80,7 +207,7 @@
 					<nav style="">
 						<ul>
 							<li>
-								<a href="index.html" title="" class="nav-actived">
+								<a href="index.html" title="">
 									<!-- <span><img src="/static/images/icon1.png" alt=""></span> -->
 									首页
 								</a>
@@ -134,7 +261,7 @@
 						<div id="navUserInfoDropdown" class="user-account-settingss">
 							<a href="person-homepage.html" title=""><div class="custom-user-account-dropdown">个人主页</div></a>
 							<a href="collect.html" title=""><div class="custom-user-account-dropdown">收藏笔记</div></a>
-							<a href="like.html" title=""><div class="custom-user-account-dropdown">喜欢笔记</div></a>
+							<a href="like.html" title=""><div class="custom-user-account-dropdown">点赞笔记</div></a>
 							<a href="management.html" title=""><div class="custom-user-account-dropdown">管理笔记</div></a>
 							<a href="setting.html" title=""><div class="custom-user-account-dropdown">设置</div></a>
 							<a href="javascript:logout1()" title=""><div class="custom-user-account-logout">退出登陆</div></a>
@@ -142,16 +269,16 @@
 					</div>
 				</div><!--header-data end-->
 			</div>
-			<!-- <a href="note-post.html">
+			<a href="note-post.html">
 				<div class="note-post" style="position: absolute;top: 8px;right: 30px;">
 				发布笔记
 				</div>
-			</a> -->
-			<a href="note-post.html">
-				<button class="btn btn-success note-post" type="button" style="position: absolute;top: 8px;right: 30px;">
+			</a>
+			<!-- <a href="note-post.html">
+				<button class="btn btn-info note-post" type="button" style="position: absolute;top: 8px;right: 30px;">
 				发布笔记
 				</button>
-			</a>
+			</a> -->
 		</header>	<!--header end-->
 
 		<div class="search-sec">
@@ -170,35 +297,79 @@
 				<div class="forum-questions-sec">
 					<div class="row">
 						<div class="col-lg-8">
-                        	<div class="forum-post-view">
+                        	<div id="note" class="forum-post-view">
                             	<div class="usr-question">
-	                                <div class="usr_img">
-	                                    <a href="user-homepage.html"><img src="http://via.placeholder.com/60x60" alt=""></a>
+                            		<div class="usr_quest" style="width: 100%;padding-left: 0px;margin-bottom: 20px">
+	                                    <h3 style="color: black;font-size: 22px">{{noteInfo.title}}</h3>
+	                                </div><!--usr_quest end-->
+	                                <div class="usr_img" style="width: auto">
+	                                    <a v-bind:href="loadUserHome(user.id)"><img style="width: 60px;height: 60px" src="/static/images/resources/us-pic.png" alt=""></a>
 	                                </div>
 	                                <div class="usr_quest">
-	                                    <h3><a href="user-homepage.html" style="color: black">C语言学习心得</a></h3>
-	                                    <span><i class="fa fa-clock-o"></i>3 min ago</span>
-	                                    <ul class="quest-tags">
-	                                        <li><a href="#" title="">Work</a></li>
-	                                        <li><a href="#" title="">Php</a></li>
-	                                        <li><a href="#" title="">Design</a></li>
+	                                    <h3><a v-bind:href="loadUserHome(user.id)" style="color: #b2b2b2;font-size: 15px;font-weight: 600;">
+	                                    		{{user.nickName}}
+	                                    	</a>
+	                                    	<button v-if="isFollow == 0" v-on:click="followWriter" class="btn btn-danger custom-follow-button" style="margin-left: 10px"><i style="color:#FF6700;font-weight: bolder" class="la la-plus"></i>关注
+	                                    	</button>
+	                                    	<button v-else-if="isFollow == 1" v-on:click="closeFollowWriter" class="btn btn-danger custom-follow-button" style="margin-left: 10px"><i style="color:#FF6700;font-weight: bolder;font-size: 12px" class="fa fa-check"></i>取消关注
+	                                    	</button>
+	                                    	<br>
+	                                    	<span style="font-size: 13px"><i class="fa fa-clock-o"></i>{{noteInfo.createTime}}&nbsp&nbsp&nbsp&nbsp</span>
+	                                    	<span style="font-size: 13px">{{user.like}}获赞</span>
+	                                    	<span style="font-size: 13px">{{user.followee}}粉丝</span>
+	                                    </h3>
+	                                    <!-- <span><i class="fa fa-clock-o"></i>{{noteInfo.createTime}}</span> -->
+	                                </div><!--usr_quest end-->
+
+									<div class="usr_quest" style="width: 100%;padding-left: 0px">
+	                                    <ul class="quest-tags" style="margin-top: 15px;margin-bottom: 20px">
+	                                        <li v-for="site in noteInfo.tags" >
+	                                        	<a href="#" title="">{{site.name}}</a>
+	                                        </li>
 	                                    </ul>
-	                                    <p>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp c语言作为一种计算机的语言，我们学习它，有助于我们更好的了解计算机，与计算机进行交流，因此，c语言的学习对我们尤其重要。</p>
-	                                    <p>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp 在这个星期里，我们专业的学生在专业老师的带领下进行了c语言程序实践学习。在这之前，我们已经对c语言这门课程学习了一个学期，对其有了一定的了解，但是也仅仅是停留在了解的范围，对里面的好多东西还是很陌生，的在运用起来的时候还是感到很棘手，毕竟，万事开头难嘛。</p>
-	                                    <p>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp 由于时间的关系，我们的这次实践课程老师并没有给我们详细的介绍，只是给我们简单的介绍了几个比较重要的实际操作。包括了程序模块处理。简单界面程序。高级界面程序。程序的添加修改。用程序做一元线性回归处理以及用c语言程序来画粒度分布图等这几样比较重要的时间操作。</p>
-	                                    <p>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp 上机实验是学习程序设计语言必不可少的实践环节，特别是c语言灵活、简洁，更需要通过编程的实践来真正掌握它。对于程序设计语言的学习目的，可以概括为学习语法规定、掌握程序设计方法、提高程序开发能力，这些都必须通过充分的实际上机操作才能完成。</p>
-	                                        <ul class="react-links" style="text-align: right;">
-	                                        <li><a href="#" title=""><i class="fa fa-heart"></i>点赞</a></li>
-	                                        <li><a href="#" title=""><i class="fa fa-eye"></i>收藏</a></li>
-	                                        <li><a href="#" title=""><i class="fa fa-share-alt"></i>分享</a></li>
+	                                </div><!--usr_quest end-->
+
+	                                <div class="usr_quest" style="width: 100%;padding-left: 0px">
+	                                    <div id="noteContentDiv" style="padding:0px">
+	                                    	<textarea id="noteContent" style="display: none"></textarea>
+	                                    </div>	
+	                                </div><!--usr_quest end-->
+
+	                                <div class="usr_quest" style="width: 100%;padding-left: 0px;margin-top: 30px">
+                                        <ul class="react-links" style="text-align: right;">
+                                        	<li>
+                                        		<a v-if="noteInfo.liked" href="javascript:thumbsUp(2)" title="" style="color: #e44d3a">
+                                        			<i class="fa fa-thumbs-up" style="font-size:17px"></i>{{noteInfo.like}}
+                                        		</a>
+                                        		<a v-else href="javascript:thumbsUp(1)" title="">
+                                        			<i class="fa fa-thumbs-up" style="font-size:17px"></i>{{noteInfo.like}}
+                                        		</a>
+                                        	</li>
+	                                        <li>
+	                                        	<a v-if="noteInfo.collected" href="javascript:like(2)" title="" style="color: #e44d3a">
+	                                        		<i class="fa fa-heart"></i>{{noteInfo.collect}}
+	                                        	</a>
+	                                        	<a v-else href="javascript:like(1)" title="">
+	                                        		<i class="fa fa-heart"></i>{{noteInfo.collect}}
+	                                        	</a>
+	                                        </li>
+	                                        <li>
+	                                        	<a href="#" title=""><i class="fa fa-eye" style="font-size:17px"></i>{{noteInfo.look}}
+	                                        	</a>
+	                                        </li>
+	                                        <li>
+	                                        	<a href="#" title="">
+	                                        		<i class="fa fa-share-alt" style="font-size:17px"></i>分享
+	                                        	</a>
+	                                        </li>
 	                                    </ul>	
 	                                </div><!--usr_quest end-->
                             	</div><!--usr-question end-->
-	                            <div class="text-center"> 
+                            	<div class="text-center"> 
 	                                <button id="reward" data-content="
 	                                    <div style='text-align:center'>
-	                                        <img style='float:none;width:100px;height:100px' src='/static/images/cmp-icon1.png'>
-	                                        <img style='float:none;width:100px;height:100px' src='/static/images/cmp-icon1.png'>
+	                                        <img style='float:none;width:100px;height:100px' src='/static/images/afford_zhifubao.png'>
+	                                        <img style='float:none;width:100px;height:100px' src='/static/images/afford_weixin.png'>
 	                                    </div>"
 	                                   title="<h2 class='text-center'>有所帮助？请作者喝杯咖啡吧！</h2>"
 	                                   data-toggle="popover"
@@ -206,7 +377,6 @@
 	                                   data-html="true" data-placement="top">打赏</button>
 	                            </div>
                         	</div><!--forum-post-view end-->
-
 	                        <div class="post-comment-box">
 	                            <div class="comment-section">
 	                                <h3>评论</h3>
@@ -265,76 +435,20 @@
 	                        </div><!--post-comment-box end-->
 	                    </div>
 						<div class="col-lg-4">
-                        	<div class="widget widget-feat">
-	                            <ul>
-	                                <li>
-	                                    <i class="fa fa-heart"></i>
-	                                    <span>1185</span>
-	                                </li>
-	                                <li>
-	                                    <i class="fa fa-comment"></i>
-	                                    <span>1165</span>
-	                                </li>
-	                                <li>
-	                                    <i class="fa fa-share-alt"></i>
-	                                    <span>1120</span>
-	                                </li>
-	                                <li>
-	                                    <i class="fa fa-eye"></i>
-	                                    <span>1009</span>
-	                                </li>
-	                            </ul>
-                        	</div><!--widget-feat end-->
-                        	<div class="widget widget-jobs">
+                        	<div id="noteList" class="widget widget-jobs">
 								<div class="sd-title">
 									<h3>推荐阅读</h3>
-									<i id="custom-refresh" class="la la-refresh"></i>
+									<i id="custom-refresh" v-on:click="loadMoreNote" class="la la-refresh"></i>
 									<!-- <i class="la la-ellipsis-v"></i> -->
 								</div>
-								<div class="jobs-list" >
-									<div class="job-info">
+								<div class="jobs-list">
+									<div v-for="site,index in notes" class="job-info">
 										<div class="hr-rate">
-											<span>1、</span>
+											<span>{{index+1}}、</span>
 										</div>
 										<div class="job-details">
-											<h3><a href="note-detail.html">C语言学习心得</a></h3>
-											<p>c语言作为一种计算机的语言，我们学习它，有助于我们更好的...</p>
-										</div>
-									</div><!--job-info end-->
-									<div class="job-info">
-										<div class="hr-rate">
-											<span>2、</span>
-										</div>
-										<div class="job-details">
-											<h3><a href="note-detail.html">C语言学习心得</a></h3>
-											<p>c语言作为一种计算机的语言，我们学习它，有助于我们更好的...</p>
-										</div>
-									</div><!--job-info end-->
-									<div class="job-info">
-										<div class="hr-rate">
-											<span>3、</span>
-										</div>
-										<div class="job-details">
-											<h3><a href="note-detail.html">C语言学习心得</a></h3>
-											<p>c语言作为一种计算机的语言，我们学习它，有助于我们更好的...</p>
-										</div>
-									</div><!--job-info end-->
-									<div class="job-info">
-										<div class="hr-rate">
-											<span>4、</span>
-										</div>
-										<div class="job-details">
-											<h3><a href="note-detail.html">C语言学习心得</a></h3>
-											<p>c语言作为一种计算机的语言，我们学习它，有助于我们更好的...</p>
-										</div>
-									</div><!--job-info end-->
-									<div class="job-info">
-										<div class="hr-rate">
-											<span>5、</span>
-										</div>
-										<div class="job-details">
-											<h3><a href="note-detail.html">C语言学习心得</a></h3>
-											<p>c语言作为一种计算机的语言，我们学习它，有助于我们更好的...</p>
+											<h3><a v-bind:href="turnNoteDetail(site.id)">{{site.title}}</a></h3>
+											<p>{{site.content}}</p>
 										</div>
 									</div><!--job-info end-->
 								</div><!--jobs-list end-->
@@ -347,6 +461,10 @@
 				</div><!--forum-questions-sec end-->
 			</div>
 		</section><!--forum-page end-->
+
+		<div id="test-editormd" style="display: none;">
+            <textarea style="display:none;"></textarea>
+        </div>
 
 		<div class="chatbox-list" style="display: block;">
 	        <div class="chatbox">
@@ -375,12 +493,185 @@
 <script type="text/javascript" src="/static/js/jquery.mCustomScrollbar.js"></script>
 <script type="text/javascript" src="/static/lib/slick/slick.min.js"></script>
 <script type="text/javascript" src="/static/js/script.js"></script>
+<script type="text/javascript" src="/static/lib/editor/editormd.min.js"></script>
 
 <script src="https://cdn.staticfile.org/vue/2.4.2/vue.min.js"></script>
 <script src="https://cdn.staticfile.org/axios/0.18.0/axios.min.js"></script>
 <script src="https://cdn.staticfile.org/vue-resource/1.5.1/vue-resource.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/tarekraafat-autocomplete.js/9.0.3/js/autoComplete.min.js"></script>
 <script type="text/javascript">
+	//加载笔记信息（未登录）
+	function loadNoteInfo_unLogin(){
+        var noteUrl = "/note/"+noteId;
+        $.ajax({
+            type: "GET",
+            url: noteUrl,
+            data: {},
+            dataType: "json",
+            success: function(data){
+                if(data.status == "SUCCESS"){
+                    note.noteInfo = data.data;
+                    note.user = data.data.user;
+					
+					$("#noteContent").val(note.noteInfo.content);
+                    editormd.markdownToHTML("noteContentDiv", {
+                        htmlDecode: "style,script,iframe", //可以过滤标签解码
+                        emoji: true,
+                        taskList:true,
+                        tex: true  // 默认不解析
+                    });
+                    return;
+                }
+            }
+        });
+	}
+	//加载笔记信息（已登录）
+	function loadNoteInfo_login(){
+        var resultData;
+        var noteUrl = "/note/"+noteId;
+        $.ajax({
+            type: "GET",
+            url: noteUrl,
+            headers: {
+               "Access-control-expose-headers": header1,
+               "Authorization": header2
+            },
+            data: {},
+            dataType: "json",
+            success: function(data){
+            	resultData = data.status;
+                if(resultData == "SUCCESS"){
+                    note.noteInfo = data.data;
+                    note.user = data.data.user;
+
+                    if(data.data.user.follow == true){
+                    	note.isFollow = 1;
+                    }
+					
+					$("#noteContent").val(note.noteInfo.content);
+                    editormd.markdownToHTML("noteContentDiv", {
+                        htmlDecode: "style,script,iframe", //可以过滤标签解码
+                        emoji: true,
+                        taskList:true,
+                        tex: true  // 默认不解析
+                    });
+                    return;
+                }
+                console.log(resultData);
+            },
+	        complete: function(xhr,data){
+                if(resultData == "SUCCESS" && data == "success"){
+                    updateLocalToken(xhr);
+                    return;
+                } 
+                console.log(data);
+            }
+        });
+	}
+
+	//刷新推荐阅读
+	function request_loadMoreNote(){
+		$.ajax({
+            type: "GET",
+            url: "/notes/popularity",
+            data: {page:currentNotePage, size:notePageSize},
+            dataType: "json",
+            success: function(data){
+				if(data.status == "SUCCESS"){
+					noteList.notes = data.data.content;
+					lastNotePage = data.data.totalPages;
+
+					for (var i = noteList.notes.length - 1; i >= 0; i--) {
+						noteList.notes[i].content = GetMarkdownText(noteList.notes[i].content);
+					}
+					
+                    return;
+                }
+                console.log(data.status);
+	        }
+	    });
+	}
+
+	//点赞
+	function thumbsUp(flag){
+		if(header1 == null || header2 == null){
+			alert("请登录！");
+			return;
+		}
+		var resultData;
+		$.ajax({
+            type: "POST",
+            url: "/like",
+            headers: {
+               "Access-control-expose-headers": header1,
+               "Authorization": header2
+            },
+            data: {entityId:noteId, entityType:1, entityUserId:note.noteInfo.user.id},
+            dataType: "json",
+            success: function(data){
+            	resultData = data.status;
+				if(resultData == "SUCCESS"){
+					if(flag == 1){
+						note.noteInfo.liked = true;
+						note.noteInfo.like++;
+					}else{
+						note.noteInfo.liked = false;
+						note.noteInfo.like--;
+					}
+					return;
+                }
+                console.log(resultData);
+	        },
+	        complete: function(xhr,data){
+                if(resultData == "SUCCESS" && data == "success"){
+                    updateLocalToken(xhr);
+                    return;
+                } 
+                console.log(data);
+            }
+	    });
+	}
+	//收藏
+	function like(flag){
+		if(header1 == null || header2 == null){
+			alert("请登录！");
+			return;
+		}
+		var resultData;
+		$.ajax({
+            type: "POST",
+            url: "/collect",
+            headers: {
+               "Access-control-expose-headers": header1,
+               "Authorization": header2
+            },
+            data: {id:noteId},
+            dataType: "json",
+            success: function(data){
+            	resultData = data.status;
+				if(resultData == "SUCCESS"){
+					if(flag == 1){
+						alert("收藏成功");
+						note.noteInfo.collected = true;
+						note.noteInfo.collect++;
+					}else{
+						alert("取消收藏成功");
+						note.noteInfo.collected = false;
+						note.noteInfo.collect--;
+					}
+					return;
+                }
+                console.log(resultData);
+	        },
+	        complete: function(xhr,data){
+                if(resultData == "SUCCESS" && data == "success"){
+                    updateLocalToken(xhr);
+                    return;
+                } 
+                console.log(data);
+            }
+	    });
+	}
+
 	//退出登录
     function logout(){
         localStorage.clear();
@@ -391,12 +682,49 @@
         $("#navUserInfo").hide();
         $("#navUserInfoDropdown").hide();
         $("#navUserLogin").show();
+        note.isFollow = 0;
     }
 	//更新本地token
     function updateLocalToken(param){
         localStorage.setItem("Access-control-expose-headers", param.getResponseHeader("Access-control-expose-headers"));
         localStorage.setItem("Authorization", param.getResponseHeader("Authorization"));
     }
+
+	//提取markdown文字
+    function GetMarkdownText(value){
+    	value = value.replace(/#*.*#/g, '').substring(0, 120);//.replace(/[\r\n]/g, " ") .replace(/[^a-z0-9\u4e00-\u9fa5]/, '') ..replace(/\s+/g, " ")
+    	return value;
+    }
+
+    //获取参数
+    function GetQueryString(name) { 
+        var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)","i"); 
+        var r = window.location.search.substr(1).match(reg); 
+        if (r!=null){
+            return (r[2]); 
+        }
+        return null; 
+    }
+
+    //markdown编辑
+    var testEditor;
+    $(function() {
+        testEditor = editormd("test-editormd", {
+            width   : "100%",
+            height  : 640,
+            syncScrolling : "single",
+            path    : "/static/lib/editor/lib/"
+        });
+        /*
+        // or
+        testEditor = editormd({
+            id      : "test-editormd",
+            width   : "90%",
+            height  : 640,
+            path    : "../lib/"
+        });
+        */
+    });
 </script>
 <script>
 	//打赏

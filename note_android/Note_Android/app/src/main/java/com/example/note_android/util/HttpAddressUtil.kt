@@ -10,7 +10,7 @@ import okhttp3.OkHttpClient
 class HttpAddressUtil {
     companion object{
         //服务器IP
-        private const val IP = "http://192.168.137.1:8080/"
+        private const val IP = "http://192.168.2.160:8080/"
         //获取邮件验证码
         private const val GET_VERIFY_CODE = "getMailCode"
         //注册
@@ -23,7 +23,7 @@ class HttpAddressUtil {
         private const val LOGOUT = "logout"
         //忘记密码
         private const val FORGET_PASSWORD = "forgotPassword"
-        //发布笔记、阅读笔记
+        //笔记相关
         private const val PUBLISH_NOTE = "note"
         //获取笔记类别
         private const val TYPES = "types"
@@ -39,6 +39,16 @@ class HttpAddressUtil {
         private const val LIKE = "like"
         //收藏
         private const val COLLECT = "collect"
+        //获取用户关注作者笔记
+        private const val FOLLOWER_NOTE = "notes/followers"
+        //获取用户笔记
+        private const val USER_NOTE = "notes/user"
+        //修改用户信息
+        private const val CHANGE_USER_INFO = "changeInfo"
+        //评论
+        private const val COMMENT = "comment"
+        //消息
+        private const val MESSAGE = "message"
 
         fun getVerifyCodeIP(): String{
             return this.IP+this.GET_VERIFY_CODE
@@ -94,6 +104,26 @@ class HttpAddressUtil {
 
         fun toCollect(): String{
             return this.IP+this.COLLECT
+        }
+
+        fun getFollowerNote(): String{
+            return this.IP+this.FOLLOWER_NOTE
+        }
+
+        fun getUserNote(): String{
+            return this.IP+this.USER_NOTE
+        }
+
+        fun getChangeInfo(): String{
+            return this.IP+this.CHANGE_USER_INFO
+        }
+
+        fun toComment(): String{
+            return this.IP+this.COMMENT
+        }
+
+        fun getMessage(): String{
+            return this.IP+this.MESSAGE
         }
     }
 }

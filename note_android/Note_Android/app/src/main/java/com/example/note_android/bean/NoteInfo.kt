@@ -20,4 +20,14 @@ data class NoteInfo (
     var tags: MutableList<Tag>? = null,
     var liked: Boolean = false,
     var collected: Boolean = false
-): Serializable
+): Serializable {
+
+    constructor(id: Int,comments: MutableList<Comment>? = null) : this(id, null, null, 0, 0, 0, 0, 0) {
+        this.comments = comments
+        this.id = id
+    }
+
+    constructor(id: Int) : this(id, null, null, 0, 0, 0, 0, 0) {
+        this.id = id
+    }
+}

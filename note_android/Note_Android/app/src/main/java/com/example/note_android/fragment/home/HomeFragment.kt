@@ -42,7 +42,6 @@ class HomeFragment : Fragment(),View.OnClickListener {
     private val NOTE_SIZE = 10
     private var currentPage = 0
     private val gson:Gson = Gson()
-    private lateinit var loadingDialog:MiniLoadingDialog
 
     override fun onCreateView(
             inflater: LayoutInflater,
@@ -52,6 +51,7 @@ class HomeFragment : Fragment(),View.OnClickListener {
         homeViewModel =
             ViewModelProvider(this).get(NoticeViewModel::class.java)
         root = inflater.inflate(R.layout.fragment_home, container, false)
+        initRVAdapter()
         initListener()
         initRefreshLayout()
         handler = object : Handler(){
@@ -72,7 +72,7 @@ class HomeFragment : Fragment(),View.OnClickListener {
                     }
                     list.addAll(newList)
                     root.home_refresh.finishLoadMore()
-                    initRVAdapter()
+                    adapter.notifyDataSetChanged()
                 }
             }
         }
@@ -155,7 +155,7 @@ class HomeFragment : Fragment(),View.OnClickListener {
     override fun onClick(v: View?) {
         when(v?.id){
             R.id.add_button -> {
-                ActivityUtil.get().activity(requireContext(), EditActivity::class.java)
+                ActivityUtil.get().goActivityResult(requireActivity(), EditActivity::class.java, null,SystemCode.PUBLIC_NOTE)
             }
             R.id.saoma -> {
                 ScanActivity.start(requireActivity(), 1, R.style.XQRCodeTheme_Custom)

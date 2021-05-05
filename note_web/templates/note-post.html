@@ -205,12 +205,6 @@
 <script src="https://cdn.staticfile.org/vue-resource/1.5.1/vue-resource.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/tarekraafat-autocomplete.js/9.0.3/js/autoComplete.min.js"></script>
 <script type="text/javascript">
-    $("#btnChange").click(function(){
-        var data = $("#noteContent").val();
-        data = data.replace(/#*.*#/g, '').replace(/[^a-z0-9\u4e00-\u9fa5]/, '').replace(/[\r\n]/g, " ").replace(/\s+/g, " "); // .substring(0, 200)
-        console.log(data);
-    });
-
     var tagArray = [];
 
     //标签输入框提示

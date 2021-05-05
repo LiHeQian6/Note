@@ -73,10 +73,40 @@
             note = new Vue({
                 el: '#note',
                 data:{
-                    title:'',
-                    content:'',
-                    type:'',
-                    tags:[]
+                    noteInfo:'',
+                },
+                methods:{
+                    noteSave: function(){
+                        var resultData;
+                        var that = this;
+                        $.ajax({
+                            type: "PUT",
+                            url: "/note",
+                            headers: {
+                               "Access-control-expose-headers": header1,
+                               "Authorization": header2
+                            },
+                            contentType: "application/json;charset=UTF-8",
+                            data: JSON.stringify({id:noteId, title:that.noteInfo.title, content:$("#noteContent").val(), type:that.noteInfo.type, tags:that.noteInfo.tags}),
+                            dataType: "json",
+                            success: function(data){
+                                resultData = data.status;
+                                if(resultData == "SUCCESS"){
+                                    alert("编辑成功");
+                                    window.location.href = "management.html";
+                                    return;
+                                }
+                                console.log(resultData);
+                            },
+                            complete: function(xhr,data){
+                                if(resultData == "SUCCESS" && data == "success"){
+                                    updateLocalToken(xhr);
+                                    return;
+                                } 
+                                console.log(data);
+                            }
+                        });
+                    }
                 }
             });
 
@@ -89,11 +119,7 @@
                 dataType: "json",
                 success: function(data){
                     if(data.status == "SUCCESS"){
-                        var result = data.data;
-                        note.title = result.title;
-                        note.content = result.content;
-                        note.type = result.type;
-                        note.tags = result.tags;
+                        note.noteInfo = data.data;
 
                         testEditor = editormd("test-editormd", {
                             width   : "100%",
@@ -118,13 +144,13 @@
                 <a href="management.html" style="display: flex;align-items: center;color: #686868;font-size: 24px;font-weight: 600;"><img src="/static/images/note_edit_return.png" style="width: 20px;height: 20px">&nbsp笔记管理
                 </a>
             </div>
-            <button id="noteSave" type="button" class="btn btn-danger pull-right" style="position: absolute;top: 0px;right:20px;color: #ffffff;font-size: 16px;font-weight: 600;">保存
+            <button v-on:click="noteSave" type="button" class="btn btn-danger pull-right" style="position: absolute;top: 0px;right:20px;color: #ffffff;font-size: 16px;font-weight: 600;">保存
             </button>
         </div>
         <div class="cp-field" style="padding: 0px 40px">
             <h5>标题</h5>
             <div class="cpp-fiel">
-                <input id="noteTitle" type="text" name="title" v-model="title" class="form-control">
+                <input type="text" name="title" v-model="noteInfo.title" class="form-control">
             </div>
         </div>
         <div id="warningDiv" class="cp-field" style="padding: 0px 40px;display: none;margin-top: 0px">
@@ -136,7 +162,7 @@
         <div class="cp-field" style="padding: 0px 40px">
             <h5>正文</h5>
             <div id="test-editormd">
-                <textarea id="noteContent" style="display:none;">{{content}}</textarea>
+                <textarea id="noteContent" style="display:none;">{{noteInfo.content}}</textarea>
             </div>
         </div>
     </form>    
@@ -176,38 +202,6 @@
     function hideWarning() {
         $("#warningDiv").hide();
     }
-
-    //保存笔记
-    $(document).on('click','#noteSave',function(){
-        var resultData;
-        $.ajax({
-            type: "PUT",
-            url: "/note",
-            headers: {
-               "Access-control-expose-headers": header1,
-               "Authorization": header2
-            },
-            contentType: "application/json;charset=UTF-8",
-            data: JSON.stringify({id:noteId, title:note.title, content:note.content, type:note.type, tags:note.tags}),
-            dataType: "json",
-            success: function(data){
-                resultData = data.status;
-                if(resultData == "SUCCESS"){
-                    alert("编辑成功");
-                    window.location.href = "management.html";
-                    return;
-                }
-                console.log(resultData);
-            },
-            complete: function(xhr,data){
-                if(resultData == "SUCCESS" && data == "success"){
-                    updateLocalToken(xhr);
-                    return;
-                } 
-                console.log(data);
-            }
-        });
-    });
     
     //退出登录
     function logout(){

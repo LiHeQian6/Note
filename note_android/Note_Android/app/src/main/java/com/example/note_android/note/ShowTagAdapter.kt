@@ -1,4 +1,4 @@
-package com.example.note_android.edit.fragment
+package com.example.note_android.note
 
 import android.content.Context
 import android.view.View
@@ -8,14 +8,14 @@ import com.example.note_android.bean.NoteType
 import com.example.note_android.bean.Tag
 import com.xuexiang.xui.widget.flowlayout.BaseTagAdapter
 
-class FlowTagAdapter(context: Context) : BaseTagAdapter<Tag, TextView>(context) {
+class ShowTagAdapter(context: Context) : BaseTagAdapter<Tag, TextView>(context) {
 
     override fun newViewHolder(convertView: View?): TextView {
         return (convertView!!.findViewById<View>(R.id.tv_tag) as TextView)
     }
 
     override fun getLayoutId(): Int {
-        return R.layout.adapter_item_tag
+        return R.layout.show_item_tag
     }
 
     override fun convert(holder: TextView?, item: Tag?, position: Int) {
