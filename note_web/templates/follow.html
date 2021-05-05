@@ -403,7 +403,7 @@
 											<div class="job-status-bar">
 												<ul class="like-com" style="display: flex;align-items: center">
 													<li>
-														<a v-if="site.collected" v-bind:href="loadNoteDetail(site.id)" class="active"><i class="la la-heart"></i> 
+														<a v-if="site.collected" v-bind:href="loadNoteDetail(site.id)" style="color: #e44d3a"><i class="la la-heart"></i> 
 														</a>
 														<a v-else v-bind:href="loadNoteDetail(site.id)"><i class="la la-heart"></i> 
 														</a>
@@ -411,7 +411,7 @@
 														<span>{{site.collect}}</span>
 													</li>
 													<li>
-														<a v-if="site.liked" v-bind:href="loadNoteDetail(site.id)" title="" style="margin-top: 0px" class="active">
+														<a v-if="site.liked" v-bind:href="loadNoteDetail(site.id)" title="" style="margin-top: 0px;color: #e44d3a">
 															<i class="fa fa-thumbs-up" style="font-size:17px"></i>&nbsp&nbsp{{site.like}}
 														</a>
 														<a v-else v-bind:href="loadNoteDetail(site.id)" title="" style="margin-top: 0px">
