@@ -105,6 +105,7 @@
 				},
 				//加载更多最新笔记
 				loadMoreNew: function(){
+					currentNotePageNew++;
 					if(header1 == null || header2 == null){
 						loadMoreNewUnLogin();
 					}else{
@@ -113,6 +114,7 @@
 				},
 				//加载更多最热笔记
 				loadMoreHot: function(){
+					currentNotePageHot++;
 					if(header1 == null || header2 == null){
 						loadMoreHotUnLogin();
 					}else{
