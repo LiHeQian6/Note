@@ -44,7 +44,6 @@ public class CommentController implements Constant {
         Note note = comment.getNote();
         commentService.addComment(comment);
         MessageEvent commentEvent = new MessageEvent();
-        commentEvent.setUserId(userInfo.getId());
         int targetId;
         if (comment.getParent()==null) {
             commentEvent.setEntityType(ENTITY_TYPE_NOTE);
@@ -54,9 +53,12 @@ public class CommentController implements Constant {
             commentEvent.setEntityType(ENTITY_TYPE_COMMENT);
             commentEvent.setEntityId(comment.getParent().getId());
             targetId=commentService.getComment(comment.getParent().getId()).getUser().getId();
-            commentEvent.setExtra("noteId",comment.getNote().getId());
         }
-        commentEvent.setEntityUserId(targetId);
+        commentEvent.setUserId(targetId);
+        commentEvent.setExtra("noteId",comment.getNote().getId());
+        commentEvent.setExtra("commentContent",comment.getContent());
+        commentEvent.setExtra("entityUserNickname",noteService.getNote(comment.getNote().getId()).getUser().getNickName());
+        commentEvent.setEntityUserId(userInfo.getId());
         commentEvent.setTopic(TOPIC_COMMENT);
         eventProducer.fireMessageEvent(commentEvent);
     }

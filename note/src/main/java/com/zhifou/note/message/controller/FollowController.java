@@ -39,10 +39,11 @@ public class FollowController implements Constant {
         if (!followService.hasFollowed(userInfo.getId(),targetId)) {
             followService.follow(userInfo.getId(),targetId);
             MessageEvent followEvent = new MessageEvent();
-            followEvent.setUserId(userInfo.getId());
             followEvent.setEntityType(ENTITY_TYPE_USER);
             followEvent.setEntityId(targetId);
-            followEvent.setEntityUserId(targetId);
+            followEvent.setUserId(targetId);
+            followEvent.setEntityUserId(userInfo.getId());
+            followEvent.setExtra("entityUserNickname",userInfo.getNickName());
             followEvent.setTopic(TOPIC_FOLLOW);
             eventProducer.fireMessageEvent(followEvent);
         }
@@ -56,19 +57,19 @@ public class FollowController implements Constant {
         followService.unfollow(userInfo.getId(),targetId);
     }
 
-    @ApiOperation("获取自己的关注列表")
+    @ApiOperation("获取自己的粉丝列表")
     @GetMapping("/followee")
     public List<Map<String, Object>> getFollowee(@ApiParam("第几页") @Min(value = 0,message = "页数最小为0") int page,
                                                  @ApiParam("页大小")@Min(value = 1,message = "页尺寸最小为1") int size) throws UserException {
-        int offset=(page-1)*size;
+        int offset=page*size;
         User userInfo = jwtUtils.getUserInfo();
-        return followService.getFollowee(userInfo.getId(),offset,size);
+        return followService.getFollowees(userInfo.getId(),offset,size);
     }
-    @ApiOperation("获取自己的粉丝列表")
+    @ApiOperation("获取自己的关注列表")
     @GetMapping("/follower")
     public List<Map<String, Object>> getFollowers(@ApiParam("第几页") @Min(value = 0,message = "页数最小为0") int page,
                                                   @ApiParam("页大小")@Min(value = 1,message = "页尺寸最小为1") int size) throws UserException {
-        int offset=(page-1)*size;
+        int offset=page*size;
         User userInfo = jwtUtils.getUserInfo();
         return followService.getFollowers(userInfo.getId(),offset,size);
     }

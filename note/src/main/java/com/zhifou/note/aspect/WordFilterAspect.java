@@ -14,7 +14,6 @@ import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
-import java.text.ParseException;
 
 /**
  * User: li
@@ -40,7 +39,7 @@ public class WordFilterAspect {
      * @Date 11:58 2020/4/17
      **/
     @Around("filterAspect()")
-    public Object filter(ProceedingJoinPoint joinPoint) throws ParseException {
+    public Object filter(ProceedingJoinPoint joinPoint) throws Throwable {
         boolean escapeHtml = ((MethodSignature) joinPoint.getSignature()).getMethod().getAnnotation(WordFilter.class).escapeHtml();
         String description = ((MethodSignature) joinPoint.getSignature()).getMethod().getAnnotation(WordFilter.class).description();
         System.out.println("*****Filter Start*****");
@@ -59,11 +58,8 @@ public class WordFilterAspect {
             tag.setName(wordFilterUtil.filter(tag.getName()));
             args[0] = tag;
         }
-        try {
-            result = joinPoint.proceed(args);
-        } catch (Throwable throwable) {
-            throwable.printStackTrace();
-        }
+        result = joinPoint.proceed(args);
+
         System.out.println("*****Filter End*****");
         return result;
     }

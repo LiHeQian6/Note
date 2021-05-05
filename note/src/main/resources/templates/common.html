@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh-cn" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+<html lang="zh-cn" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
@@ -43,7 +43,7 @@
                         <div class="dropdown-content-body">
                             <ul>
 <!--                                <li><a href=""><i class="mdi mdi-account"></i> <span>username</span></a> </li>-->
-                                <li><a href="/logout"><i class="icon-power"></i> <span>Logout</span></a> </li>
+                                <li><a href="/admin/logout"><i class="icon-power"></i> <span>Logout</span></a> </li>
                             </ul>
                         </div>
                     </div> </li>
@@ -78,7 +78,7 @@
                     <li><a th:href="@{/admin/user-identity-management}">用户认证</a> </li>
 <!--                    <li><a th:href="@{/admin/admin-identity-management}">管理员认证</a> </li>-->
                 </ul> </li>
-            <li><a class="has-arrow" aria-expanded="false"><i class="mdi mdi-desktop-mac"></i> <span class="nav-text">系统监控</span></a>
+            <li sec:authorize="hasRole('ROLE_SUPERADMIN')"><a class="has-arrow" aria-expanded="false"><i class="mdi mdi-desktop-mac"></i> <span class="nav-text">系统监控</span></a>
                 <ul aria-expanded="false">
                     <li><a th:href="@{/admin/system-log/today/1}">系统日志</a> </li>
                     <li><a th:href="@{/admin/sql-management}">sql监控</a> </li>

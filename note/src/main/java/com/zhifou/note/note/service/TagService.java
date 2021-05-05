@@ -24,6 +24,8 @@ import java.util.List;
 public class TagService implements Constant {
     @Resource
     private TagRepository tagRepository;
+    @Resource
+    private NoteService noteService;
 
     public Page<Tag> getAllTags(int page, int size){
         PageRequest pageRequest = PageRequest.of(page, size);
@@ -76,5 +78,10 @@ public class TagService implements Constant {
 
     public List<Tag> getTagsByKeyWord(String keyWord) {
         return tagRepository.findAllByNameIgnoreCaseIsContaining(keyWord);
+    }
+
+    public List<Tag> getTagsByNoteCount() {
+        //todo 返回热门标签
+        return noteService.getTagsWithNoteCount();
     }
 }

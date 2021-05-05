@@ -8,6 +8,8 @@ import com.zhifou.note.bean.UserVO;
 import com.zhifou.note.exception.CertificationException;
 import com.zhifou.note.exception.UserException;
 import com.zhifou.note.exception.ValidateCodeException;
+import com.zhifou.note.message.service.FollowService;
+import com.zhifou.note.message.service.LikeService;
 import com.zhifou.note.user.entity.Certification;
 import com.zhifou.note.user.entity.User;
 import com.zhifou.note.user.service.CertificationService;
@@ -48,15 +50,18 @@ public class UserController {
 
     @Resource
     private RedisTemplate<String,Object> redisTemplate;
-
     @Resource
     private MailUtil mailUtil;
     @Resource
     private UserDetailsServiceImp userService;
     @Resource
+    private LikeService likeService;
+    @Resource
     private CertificationService certificationService;
     @Resource
     private JwtUtils jwtUtils;
+    @Resource
+    private FollowService followerService;
 
 
     @ApiOperation("用户注册")
@@ -114,6 +119,32 @@ public class UserController {
         }
     }
 
+    @ApiOperation("获取用户信息")
+    @GetMapping("/getInfo")
+    public UserVO getUserInfo() throws UserException {
+        User userInfo = jwtUtils.getUserInfo();
+        UserVO userVO = new UserVO(userInfo);
+        userVO.setLike(likeService.findUserLikeCount(userInfo.getId()));
+        userVO.setFollower(followerService.getFollowerCount(userInfo.getId()));
+        userVO.setFollowee(followerService.getFolloweeCount(userInfo.getId()));
+        return userVO;
+    }
+
+    @ApiOperation("获取其他用户信息")
+    @GetMapping("/user/{id}")
+    public UserVO getUserInfo(@PathVariable int id) throws UserException {
+        User info = jwtUtils.getUserInfo();
+        User userInfo = userService.findUserById(id);
+        UserVO userVO = new UserVO(userInfo);
+        userVO.setLike(likeService.findUserLikeCount(userInfo.getId()));
+        userVO.setFollower(followerService.getFollowerCount(userInfo.getId()));
+        userVO.setFollowee(followerService.getFolloweeCount(userInfo.getId()));
+        if (info!=null){
+            userVO.setFollow(followerService.hasFollowed(info.getId(),id));
+        }
+        return userVO;
+    }
+
     @ApiOperation("修改用户信息")
     @PostMapping("/changeInfo")
     public void changeInfo(@RequestBody @Valid @ApiParam("只能修改密码、昵称、简介") User user) throws UserException {
@@ -134,7 +165,12 @@ public class UserController {
     @GetMapping("/users/popular")
     public Page<UserVO> getPopularUsers(@ApiParam("第几页") @Min(value = 0, message = "页数最小为0") int page,
                                         @ApiParam("页大小") @Min(value = 1, message = "页尺寸最小为1") int size){
-        return userService.getUsersByPopular(page,size);
+        int id=0;
+        User userInfo = jwtUtils.getUserInfo();
+        if (userInfo !=null) {
+            id=userInfo.getId();
+        }
+        return userService.getUsersByPopular(id,page,size);
     }
 
 

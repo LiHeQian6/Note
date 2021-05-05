@@ -110,7 +110,7 @@ public class DataService {
 
     //得到笔记数量前5的标签及笔记数量
     public HashMap<String, BigInteger> getTagNoteCount() {
-        return noteService.getTagNoteCount();
+        return noteService.getTagsByNoteCount();
     }
 
 

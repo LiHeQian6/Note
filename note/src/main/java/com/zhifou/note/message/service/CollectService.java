@@ -1,10 +1,12 @@
 package com.zhifou.note.message.service;
 
+import com.zhifou.note.bean.Constant;
 import com.zhifou.note.bean.NoteVO;
 import com.zhifou.note.bean.UserVO;
 import com.zhifou.note.exception.NoteException;
 import com.zhifou.note.exception.UserException;
 import com.zhifou.note.note.entity.Note;
+import com.zhifou.note.note.service.CommentService;
 import com.zhifou.note.note.service.NoteService;
 import com.zhifou.note.user.entity.User;
 import com.zhifou.note.user.service.UserDetailsServiceImp;
@@ -25,7 +27,7 @@ import java.util.*;
  */
 @Service
 @Transactional
-public class CollectService {
+public class CollectService implements Constant {
     @Resource
     private RedisTemplate redisTemplate;
     @Resource
@@ -34,6 +36,12 @@ public class CollectService {
     private UserDetailsServiceImp userService;
     @Resource
     private FollowService followService;
+    @Resource
+    private LookService lookService;
+    @Resource
+    private LikeService likeService;
+    @Resource
+    private CommentService commentService;
 
 
     /**
@@ -98,7 +106,7 @@ public class CollectService {
      * @Date 2021/3/3 20:05
      */
     public List<Map<String, Object>> getCollects(int userId, int page, int size) throws NoteException {
-        int offset=(page-1)*size;
+        int offset=page*size;
         String userCollectKey = RedisKeyUtil.getUserCollectKey(userId);
         Set<Integer> targetIds = redisTemplate.opsForZSet().reverseRange(userCollectKey, offset, offset + size - 1);
 
@@ -110,7 +118,7 @@ public class CollectService {
         for (Integer targetId : targetIds) {
             Map<String, Object> map = new HashMap<>();
             Note note = noteService.getNote(targetId);
-            NoteVO noteVO = new NoteVO(note);
+            NoteVO noteVO = noteService.getNoteData(note);
             map.put("note", noteVO);
             Double score = redisTemplate.opsForZSet().score(userCollectKey, targetId);
             map.put("collectTime", new Date(score.longValue()));

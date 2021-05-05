@@ -5,10 +5,7 @@ import com.zhifou.note.bean.ResponseBean;
 import com.zhifou.note.bean.Status;
 import com.zhifou.note.user.filter.TokenFilter;
 import com.zhifou.note.user.filter.ValidateCodeFilter;
-import com.zhifou.note.user.handle.AdminAuthenticationFailureHandle;
-import com.zhifou.note.user.handle.AdminAuthenticationSuccessHandle;
-import com.zhifou.note.user.handle.NoteAuthenticationFailureHandle;
-import com.zhifou.note.user.handle.NoteAuthenticationSuccessHandle;
+import com.zhifou.note.user.handle.*;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
@@ -54,7 +51,8 @@ public class SecurityConfig {
                     .permitAll()//表单登录，permitAll()表示这个不需要验证
                     .and()//Return the SecurityBuilder
                     .logout()
-                    .logoutUrl("/logout")//登出请求地址
+                    .logoutUrl("/admin/logout")//登出请求地址
+                    .logoutSuccessUrl("/admin/")
                     .and()
                     .authorizeRequests()//启用基于 HttpServletRequest 的访问限制，开始配置哪些URL需要被保护、哪些不需要被保护
                     .antMatchers("/static/**","/logout").permitAll()//未登陆用户允许的请求
@@ -75,6 +73,8 @@ public class SecurityConfig {
         private NoteAuthenticationFailureHandle noteAuthenticationFailureHandle;
         @Resource
         private NoteAuthenticationSuccessHandle noteAuthenticationSuccessHandle;
+        @Resource
+        private NoteLogoutSuccessHandler noteLogoutSuccessHandler;
         @Resource
         private TokenFilter tokenFilter;
 
@@ -103,9 +103,10 @@ public class SecurityConfig {
                     .and()//Return the SecurityBuilder
                     .logout()
                     .logoutUrl("/logout")//登出请求地址
+                    .logoutSuccessHandler(noteLogoutSuccessHandler)
                     .and()
                     .authorizeRequests()//启用基于 HttpServletRequest 的访问限制，开始配置哪些URL需要被保护、哪些不需要被保护
-                    .antMatchers(HttpMethod.GET,"/note/**","/types","/tags/**","/notes/**","/users/popular").permitAll()
+                    .antMatchers(HttpMethod.GET,"/note/**","/types","/tags/**","/notes/**","/users/popular","/user/**","/search/**").permitAll()
                     .antMatchers("/getImageCode","/getMailCode/**","/forgotPassword/**",
                             "/register/**","/static/**","/webjars/**","/swagger-resources/**",
                             "/webjars/**", "/v2/**", "/swagger-ui.html/**",
