@@ -31,6 +31,8 @@ public class FollowService implements Constant {
 
     @Resource
     private UserDetailsServiceImp userService;
+    @Resource
+    private LikeService likeService;
 
     /**
      * @param: userId
@@ -44,13 +46,13 @@ public class FollowService implements Constant {
         redisTemplate.execute(new SessionCallback<Object>() {
             @Override
             public Object execute(RedisOperations operations) throws DataAccessException {
-                String followeeKey = RedisKeyUtil.getFolloweeKey(userId);
-                String followerKey = RedisKeyUtil.getFollowerKey(entityId);
+                String followeeKey = RedisKeyUtil.getFolloweeKey(entityId);
+                String followerKey = RedisKeyUtil.getFollowerKey(userId);
 
                 operations.multi();
 
-                operations.opsForZSet().add(followeeKey, entityId, System.currentTimeMillis());
-                operations.opsForZSet().add(followerKey, userId, System.currentTimeMillis());
+                operations.opsForZSet().add(followeeKey,userId, System.currentTimeMillis());
+                operations.opsForZSet().add(followerKey,entityId, System.currentTimeMillis());
 
                 return operations.exec();
             }
@@ -69,13 +71,13 @@ public class FollowService implements Constant {
         redisTemplate.execute(new SessionCallback<Object>() {
             @Override
             public Object execute(RedisOperations operations) throws DataAccessException {
-                String followeeKey = RedisKeyUtil.getFolloweeKey(userId);
-                String followerKey = RedisKeyUtil.getFollowerKey(entityId);
+                String followeeKey = RedisKeyUtil.getFolloweeKey(entityId);
+                String followerKey = RedisKeyUtil.getFollowerKey(userId);
 
                 operations.multi();
 
-                operations.opsForZSet().remove(followeeKey, entityId);
-                operations.opsForZSet().remove(followerKey, userId);
+                operations.opsForZSet().remove(followeeKey, userId);
+                operations.opsForZSet().remove(followerKey, entityId);
 
                 return operations.exec();
             }
@@ -117,8 +119,8 @@ public class FollowService implements Constant {
      * @Date 2021/3/3 16:56
      */
     public boolean hasFollowed(int userId, int targetId) {
-        String followeeKey = RedisKeyUtil.getFolloweeKey(userId);
-        return redisTemplate.opsForZSet().score(followeeKey, targetId) != null;
+        String followeeKey = RedisKeyUtil.getFolloweeKey(targetId);
+        return redisTemplate.opsForZSet().score(followeeKey, userId) != null;
     }
 
     /**
@@ -126,23 +128,25 @@ public class FollowService implements Constant {
      * @param: offset 开始的位置从0开始
      * @param: limit  查询总数
      * @return java.util.List<java.util.Map<java.lang.String,java.lang.Object>>
-     * @description 查询用户关注的人
+     * @description 查询用户关注的人    误 //这里弄反了ee和er
      * @author li
      * @Date 2021/3/3 17:03
      */
-    public List<Map<String, Object>> getFollowee(int userId, int offset, int limit) throws UserException {
+    public List<Map<String, Object>> getFollowees(int userId, int offset, int limit) throws UserException {
         String followeeKey = RedisKeyUtil.getFolloweeKey(userId);
         Set<Integer> targetIds = redisTemplate.opsForZSet().reverseRange(followeeKey, offset, offset + limit - 1);
 
         if (targetIds == null) {
             return null;
         }
-
         List<Map<String, Object>> list = new ArrayList<>();
         for (Integer targetId : targetIds) {
             Map<String, Object> map = new HashMap<>();
             User user = userService.findUserById(targetId);
-            UserVO userVO = new UserVO(user,true);
+            UserVO userVO = new UserVO(user,hasFollowed(userId,targetId));
+            userVO.setFollower(getFollowerCount(user.getId()));
+            userVO.setFollowee(getFolloweeCount(user.getId()));
+            userVO.setLike(likeService.findUserLikeCount(user.getId()));
             map.put("user", userVO);
             Double score = redisTemplate.opsForZSet().score(followeeKey, targetId);
             map.put("followTime", new Date(score.longValue()));
@@ -173,7 +177,10 @@ public class FollowService implements Constant {
         for (Integer targetId : targetIds) {
             Map<String, Object> map = new HashMap<>();
             User user = userService.findUserById(targetId);
-            UserVO userVO = new UserVO(user,hasFollowed(userId,targetId));
+            UserVO userVO = new UserVO(user,true);
+            userVO.setFollower(getFollowerCount(user.getId()));
+            userVO.setFollowee(getFolloweeCount(user.getId()));
+            userVO.setLike(likeService.findUserLikeCount(user.getId()));
             map.put("user", userVO);
             Double score = redisTemplate.opsForZSet().score(followerKey, targetId);
             map.put("followTime", new Date(score.longValue()));

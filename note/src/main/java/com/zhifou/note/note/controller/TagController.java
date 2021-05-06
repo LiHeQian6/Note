@@ -3,6 +3,7 @@ package com.zhifou.note.note.controller;
 import com.zhifou.note.annotation.WordFilter;
 import com.zhifou.note.exception.TagException;
 import com.zhifou.note.note.entity.Tag;
+import com.zhifou.note.note.service.NoteService;
 import com.zhifou.note.note.service.TagService;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -24,6 +25,8 @@ import java.util.List;
 public class TagController {//todo 添加（友链表）,笔记价值评估和排行 ，标签模糊搜索
     @Resource
     private TagService tagService;
+    @Resource
+    private NoteService noteService;
 
 
     @ApiOperation("获取所有笔记标签")
@@ -33,8 +36,8 @@ public class TagController {//todo 添加（友链表）,笔记价值评估和�
         return tagService.getAllTags(page,size);
     }
 
-    @WordFilter(description = "tag")
     @ApiOperation("创建一个标签")
+    @WordFilter(description = "tag")
     @PostMapping("/tag")
     public void createTag(@Valid @RequestBody Tag tag) throws TagException {
         tagService.createTag(tag);
@@ -45,6 +48,12 @@ public class TagController {//todo 添加（友链表）,笔记价值评估和�
     @GetMapping("/tags/{keyWord}")
     public List<Tag> getTags(@PathVariable String keyWord){
         return tagService.getTagsByKeyWord(keyWord);
+    }
+
+    @ApiOperation("获取热门标签")
+    @GetMapping("/tags/popularity")
+    public List<Tag> getPopularityTags(){
+        return tagService.getTagsByNoteCount();
     }
 
 }

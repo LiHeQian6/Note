@@ -36,14 +36,58 @@ public class CommentService implements Constant {
 
     public Set<CommentVO> getNoteComments(int noteId,int userId){
         Set<CommentVO> commentVOs=new HashSet<>();
-        Set<Comment> comments = commentRepository.findCommentsByNote_Id(noteId);
+        Set<Comment> comments = commentRepository.findCommentsByNote_IdAndParentIsNull(noteId);
         for (Comment comment : comments) {
             CommentVO commentVO = new CommentVO(comment,
                     likeService.findEntityLikeCount(ENTITY_TYPE_COMMENT,comment.getId()),
                     likeService.findEntityLikeStatus(userId,ENTITY_TYPE_COMMENT,comment.getId()), likeService);
             commentVOs.add(commentVO);
         }
+        for (CommentVO vo : commentVOs) {
+            for (CommentVO commentVO : vo.getChild()) {
+                packageComment(commentVO);
+            }
+        }
         return commentVOs;
+    }
+    public Set<CommentVO> getNoteComments(int noteId){
+        Set<CommentVO> commentVOs=new HashSet<>();
+        Set<Comment> comments = commentRepository.findCommentsByNote_IdAndParentIsNull(noteId);
+        for (Comment comment : comments) {
+            CommentVO commentVO = new CommentVO(comment,
+                    likeService.findEntityLikeCount(ENTITY_TYPE_COMMENT,comment.getId()),
+                    false, likeService);
+            commentVOs.add(commentVO);
+        }
+        for (CommentVO vo : commentVOs) {
+            for (CommentVO commentVO : vo.getChild()) {
+                packageComment(commentVO);
+            }
+        }
+        return commentVOs;
+    }
+
+    /**
+     * @param: comment
+     * @return void
+     * @description 把评论的子评论放到一级中
+     * @author li
+     * @Date 2021/4/22 17:00
+     */
+    public void packageComment(CommentVO comment){
+        Set<CommentVO> child = comment.getChild();
+        Set<CommentVO> comments = new HashSet<>();
+        if (child !=null){
+            for (CommentVO vo : child) {
+                packageComment(vo);
+                if (vo.getChild() != null) {
+                    comments.addAll(vo.getChild());
+                }
+                vo.setChild(null);
+                comments.add(vo);
+            }
+            comment.setChild(comments);
+        }
     }
 
     public Comment getComment(int id) throws CommentException {

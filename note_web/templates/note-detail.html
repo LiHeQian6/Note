@@ -22,6 +22,7 @@
     var localStorage;
     var header1;
     var header2;
+    var userId;
     var noteId
     var note;
     var noteList;
@@ -33,6 +34,7 @@
 		localStorage = window.localStorage;
         header1 = localStorage.getItem("Access-control-expose-headers");
         header2 = localStorage.getItem("Authorization");
+        userId = localStorage.getItem("UserId");
         noteId = GetQueryString("noteId");
             
         if(noteId == null){
@@ -86,7 +88,8 @@
             data:{
                 noteInfo:'',
                 user:'',
-                isFollow:0
+                comment:'',
+                isFollow:0 //初值0代表未登录时显示“关注”
             },
             methods:{
             	//跳转到用户主页
@@ -115,6 +118,7 @@
 							if(resultData == "SUCCESS"){
 								alert("关注成功！");
 								that.isFollow = 1;
+								that.user.followee++;
 								return;
 			                }
 			                console.log(resultData);
@@ -146,6 +150,7 @@
 							if(resultData == "SUCCESS"){
 								alert("取消关注成功！");
 								that.isFollow = 0;
+								that.user.followee--;
 								return;
 			                }
 			                console.log(resultData);
@@ -158,6 +163,44 @@
 			                console.log(data);
 			            }
 				    });					
+            	},
+            	//发表评论
+            	postComment: function(){
+            		if(header1 == null || header2 == null){
+						alert("请登录！");
+						return;
+					}
+            		var resultData;
+					var that = this;
+					$.ajax({
+			            type: "POST",
+			            url: "/comment",
+			            headers: {
+			               "Access-control-expose-headers": header1,
+			               "Authorization": header2
+			            },
+			            contentType: "application/json;charset=UTF-8",
+            			dataType: "json",
+			            data: JSON.stringify({content:that.comment, note:{id:noteId}}),
+			            success: function(data){
+			            	resultData = data.status;
+							if(resultData == "SUCCESS"){
+								alert("评论成功！");
+
+								var customComment = {user:{id:userId,nickName:document.getElementById("nickName").innerHTML},content:that.comment,createTime:"刚刚"};
+								that.noteInfo.comments.push(customComment);
+								return;
+			                }
+			                console.log(resultData);
+				        },
+				        complete: function(xhr,data){
+			                if(resultData == "SUCCESS" && data == "success"){
+			                    updateLocalToken(xhr);
+			                    return;
+			                } 
+			                console.log(data);
+			            }
+				    });
             	}
             }
         });
@@ -294,14 +337,14 @@
 			<div class="container">
 				<div class="forum-questions-sec">
 					<div class="row">
-						<div class="col-lg-8">
-                        	<div id="note" class="forum-post-view">
+						<div id="note" class="col-lg-8">
+                        	<div class="forum-post-view">
                             	<div class="usr-question">
                             		<div class="usr_quest" style="width: 100%;padding-left: 0px;margin-bottom: 20px">
 	                                    <h3 style="color: black;font-size: 22px">{{noteInfo.title}}</h3>
 	                                </div><!--usr_quest end-->
 	                                <div class="usr_img" style="width: auto">
-	                                    <a v-bind:href="loadUserHome(user.id)"><img style="width: 50px;height: 50px" src="http://via.placeholder.com/60x60" alt=""></a>
+	                                    <a v-bind:href="loadUserHome(user.id)"><img style="width: 60px;height: 60px" src="/static/images/resources/us-pic.png" alt=""></a>
 	                                </div>
 	                                <div class="usr_quest">
 	                                    <h3><a v-bind:href="loadUserHome(user.id)" style="color: #b2b2b2;font-size: 15px;font-weight: 600;">
@@ -309,14 +352,18 @@
 	                                    	</a>
 	                                    	<button v-if="isFollow == 0" v-on:click="followWriter" class="btn btn-danger custom-follow-button" style="margin-left: 10px"><i style="color:#FF6700;font-weight: bolder" class="la la-plus"></i>关注
 	                                    	</button>
-	                                    	<button v-else-if="isFollow == 1" v-on:click="closeFollowWriter" class="btn btn-danger custom-follow-button" style="margin-left: 10px"><i style="color:#FF6700;font-weight: bolder" class="fa fa-check"></i>取消关注
+	                                    	<button v-else-if="isFollow == 1" v-on:click="closeFollowWriter" class="btn btn-danger custom-follow-button" style="margin-left: 10px"><i style="color:#FF6700;font-weight: bolder;font-size: 12px" class="fa fa-check"></i>取消关注
 	                                    	</button>
+	                                    	<br>
+	                                    	<span style="font-size: 13px"><i class="fa fa-clock-o"></i>{{noteInfo.createTime}}&nbsp&nbsp&nbsp&nbsp</span>
+	                                    	<span style="font-size: 13px">{{user.like}}获赞</span>
+	                                    	<span style="font-size: 13px">{{user.followee}}粉丝</span>
 	                                    </h3>
-	                                    <span><i class="fa fa-clock-o"></i>{{noteInfo.createTime}}</span>
+	                                    <!-- <span><i class="fa fa-clock-o"></i>{{noteInfo.createTime}}</span> -->
 	                                </div><!--usr_quest end-->
 
 									<div class="usr_quest" style="width: 100%;padding-left: 0px">
-	                                    <ul class="quest-tags">
+	                                    <ul class="quest-tags" style="margin-top: 15px;margin-bottom: 20px">
 	                                        <li v-for="site in noteInfo.tags" >
 	                                        	<a href="#" title="">{{site.name}}</a>
 	                                        </li>
@@ -373,56 +420,32 @@
                         	</div><!--forum-post-view end-->
 	                        <div class="post-comment-box">
 	                            <div class="comment-section">
-	                                <h3>评论</h3>
+	                                <h3 style="font-size: 22px">评论</h3>
 	                                <div class="comment-sec">
 	                                    <ul>
 	                                        <li>
-	                                            <div class="comment-list">
+	                                            <div v-for="site in noteInfo.comments" class="comment-list">
 	                                                <div class="bg-img">
-	                                                    <a href="user-homepage.html"><a href="user-homepage.html"><img src="http://via.placeholder.com/40x40" alt=""></a></a>
+	                                                    <a v:bind:href="loadUserHome(site.user.id)"><img src="/static/images/resources/user-pro-img.png" style="width: 40px;height: 40px" alt=""></a>
 	                                                </div>
 	                                                <div class="comment">
-	                                                    <h3><a href="user-homepage.html" style="color: black">张小明</a></h3>
-	                                                    <span><img src="/static/images/clock.png" alt=""> 3 min ago</span>
-	                                                    <p>学习C语言就是要这样，才能前后融会贯通，积累所应该掌握的知识</p>
-	                                                </div>
-	                                            </div><!--comment-list end-->
-	                                        </li>
-	                                        <li>
-	                                            <div class="comment-list">
-	                                                <div class="bg-img">
-	                                                    <a href="user-homepage.html"><a href="user-homepage.html"><img src="http://via.placeholder.com/40x40" alt=""></a></a>
-	                                                </div>
-	                                                <div class="comment">
-	                                                    <h3><a href="user-homepage.html" style="color: black">张小明</a></h3>
-	                                                    <span><img src="/static/images/clock.png" alt=""> 3 min ago</span>
-	                                                    <p>学习C语言就是要这样，才能前后融会贯通，积累所应该掌握的知识</p>
-	                                                </div>
-	                                            </div><!--comment-list end-->
-	                                        </li>
-	                                        <li>
-	                                            <div class="comment-list">
-	                                                <div class="bg-img">
-	                                                    <a href="user-homepage.html"><a href="user-homepage.html"><img src="http://via.placeholder.com/40x40" alt=""></a></a>
-	                                                </div>
-	                                                <div class="comment">
-	                                                    <h3><a href="user-homepage.html" style="color: black">张小明</a></h3>
-	                                                    <span><img src="/static/images/clock.png" alt=""> 3 min ago</span>
-	                                                    <p>学习C语言就是要这样，才能前后融会贯通，积累所应该掌握的知识</p>
+	                                                    <h3 style="padding-top: 3px;margin-bottom: 8px;font-size: 15px">{{site.user.nickName}}</h3>
+	                                                    <span><img src="/static/images/clock.png" alt=""> {{site.createTime}}</span>
+	                                                    <p>{{site.content}}</p>
 	                                                </div>
 	                                            </div><!--comment-list end-->
 	                                        </li>
 	                                    </ul>
 	                                </div><!--comment-sec end-->
 	                            </div>
-	                            <div class="user-poster">
+	                            <div class="user-poster" style="padding-left: 20px;padding-right: 20px">
 	                                <div class="usr-post-img">
-	                                    <a href="person-homepage.html"><img src="http://via.placeholder.com/40x40" alt=""></a>
+	                                    <img src="/static/images/resources/user-pro-img.png" style="width: 40px;height: 40px" alt="">
 	                                </div>
 	                                <div class="post_comment_sec">
 	                                    <form>
-	                                        <textarea class="form-control" placeholder="请发表你的评论"></textarea>
-	                                        <button type="submit" style="background-color: #FF6700">发表</button>
+	                                        <textarea class="form-control" placeholder="请发表你的评论" v-model="comment"></textarea>
+	                                        <button v-on:click="postComment" type="button" style="background-color: #FF6700">发表</button>
 	                                    </form>
 	                                </div><!--post_comment_sec end-->
 	                            </div><!--user-poster end-->

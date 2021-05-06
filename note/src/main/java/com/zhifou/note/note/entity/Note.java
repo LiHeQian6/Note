@@ -25,6 +25,7 @@ public class Note {
     @NotBlank(message = "标题不能为空")
     private String title;
     @NotBlank(message = "内容不能为空")
+    @Column(columnDefinition = "text")
     private String content;
 /*    private int likeNum; //交由redis存储
     private int lookNum;*/

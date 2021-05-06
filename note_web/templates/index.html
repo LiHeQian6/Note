@@ -248,6 +248,7 @@
 						return;
 					}
 					var resultData;
+					var that = this;
 					$.ajax({
 			            type: "POST",
 			            url: "/follow",
@@ -266,6 +267,8 @@
 								var iconId2 = "#icon_close_follow"+index;
 								$(iconId1).hide();
 								$(iconId2).show();
+
+								that.users[index].followee++;
 								return;
 			                }
 			                console.log(resultData);
@@ -281,6 +284,7 @@
 				},
 				//取消关注
 				closeFollowWriter: function(writerId,index){
+					var that = this;
 					var resultData;
 					$.ajax({
 			            type: "DELETE",
@@ -300,6 +304,8 @@
 								var iconId2 = "#icon_close_follow"+index;
 								$(iconId1).show();
 								$(iconId2).hide();
+
+								that.users[index].followee--;
 								return;
 			                }
 			                console.log(resultData);
@@ -538,7 +544,7 @@
 									</div><!--sd-title end-->
 									<div class="suggestions-list">
 										<div v-for="site,index in users" class="suggestion-usd">
-											<img src="/static/images/resources/s3.png" alt="">
+											<img style="width: 35px;height: 35px" src="/static/images/resources/us-pic.png" alt="">
 											<div class="sgt-text">
 												<h4><a href="user-homepage.html" style="color: black;">{{site.nickName}}</a></h4>
 												<span>{{site.like}}获赞 &nbsp {{site.followee}}粉丝</span>

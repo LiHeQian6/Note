@@ -66,7 +66,7 @@ public class EventConsumer implements Constant {
         }
         Message message = new Message();
         message.setFrom(userDetailsServiceImp.findUserById(SYSTEM_USER_ID));
-        message.setTo(userDetailsServiceImp.findUserById(event.getEntityUserId()));
+        message.setTo(userDetailsServiceImp.findUserById(event.getUserId()));
         message.setCreateTime(new Date());
         message.setMsType(event.getTopic());
         HashMap<String, Object> content = new HashMap<>();
@@ -74,6 +74,7 @@ public class EventConsumer implements Constant {
         content.put("userNickName",userDetailsServiceImp.findUserById(event.getUserId()).getNickName());
         content.put("entityId",event.getEntityId());
         content.put("entityType",event.getEntityType());
+        content.put("entityUserId",event.getEntityUserId());
         if (event.getEntityType()==ENTITY_TYPE_NOTE){
             content.put("entityInfo",noteService.getNote(event.getEntityId()).getTitle());
         }else if (event.getEntityType()==ENTITY_TYPE_COMMENT){

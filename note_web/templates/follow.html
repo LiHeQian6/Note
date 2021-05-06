@@ -71,6 +71,7 @@
         }else{
             window.location.href = "sign-in.html";
         }
+        
 		//笔记
 		noteList = new Vue({
 			el: '#noteList',
@@ -161,6 +162,7 @@
 						return;
 					}
 					var resultData;
+					var that = this;
 					$.ajax({
 			            type: "POST",
 			            url: "/follow",
@@ -179,6 +181,8 @@
 								var iconId2 = "#icon_close_follow"+index;
 								$(iconId1).hide();
 								$(iconId2).show();
+
+								that.users[index].followee++;
 								return;
 			                }
 			                console.log(resultData);
@@ -195,6 +199,7 @@
 				//取消关注
 				closeFollowWriter: function(writerId,index){
 					var resultData;
+					var that = this;
 					$.ajax({
 			            type: "DELETE",
 			            url: "/follow",
@@ -213,6 +218,8 @@
 								var iconId2 = "#icon_close_follow"+index;
 								$(iconId1).show();
 								$(iconId2).hide();
+
+								that.users[index].followee--;
 								return;
 			                }
 			                console.log(resultData);
@@ -396,7 +403,7 @@
 											<div class="job-status-bar">
 												<ul class="like-com" style="display: flex;align-items: center">
 													<li>
-														<a v-if="site.collected" v-bind:href="loadNoteDetail(site.id)" class="active"><i class="la la-heart"></i> 
+														<a v-if="site.collected" v-bind:href="loadNoteDetail(site.id)" style="color: #e44d3a"><i class="la la-heart"></i> 
 														</a>
 														<a v-else v-bind:href="loadNoteDetail(site.id)"><i class="la la-heart"></i> 
 														</a>
@@ -404,7 +411,7 @@
 														<span>{{site.collect}}</span>
 													</li>
 													<li>
-														<a v-if="site.liked" v-bind:href="loadNoteDetail(site.id)" title="" style="margin-top: 0px" class="active">
+														<a v-if="site.liked" v-bind:href="loadNoteDetail(site.id)" title="" style="margin-top: 0px;color: #e44d3a">
 															<i class="fa fa-thumbs-up" style="font-size:17px"></i>&nbsp&nbsp{{site.like}}
 														</a>
 														<a v-else v-bind:href="loadNoteDetail(site.id)" title="" style="margin-top: 0px">
@@ -435,7 +442,7 @@
 									</div><!--sd-title end-->
 									<div class="suggestions-list">
 										<div v-for="site,index in users" class="suggestion-usd">
-											<img src="/static/images/resources/s3.png" alt="">
+											<img style="width: 35px;height: 35px" src="/static/images/resources/us-pic.png" alt="">
 											<div class="sgt-text">
 												<h4><a href="user-homepage.html" style="color: black;">{{site.nickName}}</a></h4>
 												<span>{{site.like}}获赞 &nbsp {{site.followee}}粉丝</span>
@@ -488,6 +495,7 @@
 <script type="text/javascript" src="/static/lib/slick/slick.min.js"></script>
 <script type="text/javascript" src="/static/js/scrollbar.js"></script>
 <script type="text/javascript" src="/static/js/script.js"></script>
+<script type="text/javascript" src="/static/js/pagination.js"></script>
 
 <script src="https://cdn.staticfile.org/vue/2.4.2/vue.min.js"></script>
 <script src="https://cdn.staticfile.org/axios/0.18.0/axios.min.js"></script>

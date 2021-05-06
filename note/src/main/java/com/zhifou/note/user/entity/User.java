@@ -30,7 +30,6 @@ public class User extends org.springframework.security.core.userdetails.User {
     private Integer id;
     @Email(message = "邮箱格式错误",groups = RegisterValid.class)
     private String username;
-    @JsonIgnore
     @Length(min = 8,message = "密码必须大于8位",groups = RegisterValid.class)
     private String password;
     private String introduction="还没有任何介绍哦！";

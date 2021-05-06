@@ -3,6 +3,7 @@ package com.zhifou.note.note.entity;
 import com.zhifou.note.user.entity.User;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.validator.constraints.Length;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
@@ -22,6 +23,7 @@ public class Comment {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     @NotBlank(message = "评论内容不能为空")
+    @Length(max = 225,message = "评论长度不能超过255个字符")
     private String content;
     @Transient
     private int likeNum;

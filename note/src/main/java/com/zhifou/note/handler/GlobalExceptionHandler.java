@@ -26,14 +26,35 @@ import javax.validation.ConstraintViolationException;
 @RestControllerAdvice
 public class GlobalExceptionHandler{
 
-    @ExceptionHandler({TokenException.class,UserException.class, NoteException.class,CustomException.class})
-    public ResponseBean CustomException(CustomException e){
+
+    @ExceptionHandler(TokenException.class)
+    public ResponseBean exception(TokenException e){
         ResponseBean responseBean = new ResponseBean();
         responseBean.setStatus(e.getStatus());
         responseBean.setMessage(e.getMessage());
         return responseBean;
     }
-
+    @ExceptionHandler(UserException.class)
+    public ResponseBean exception(UserException e){
+        ResponseBean responseBean = new ResponseBean();
+        responseBean.setStatus(e.getStatus());
+        responseBean.setMessage(e.getMessage());
+        return responseBean;
+    }
+    @ExceptionHandler(NoteException.class)
+    public ResponseBean exception(NoteException e){
+        ResponseBean responseBean = new ResponseBean();
+        responseBean.setStatus(e.getStatus());
+        responseBean.setMessage(e.getMessage());
+        return responseBean;
+    }
+    @ExceptionHandler(CustomException.class)
+    public ResponseBean exception(CustomException e){
+        ResponseBean responseBean = new ResponseBean();
+        responseBean.setStatus(e.getStatus());
+        responseBean.setMessage(e.getMessage());
+        return responseBean;
+    }
     @ExceptionHandler(ConstraintViolationException.class)
     @ResponseBody
     public String exception(ConstraintViolationException e) {

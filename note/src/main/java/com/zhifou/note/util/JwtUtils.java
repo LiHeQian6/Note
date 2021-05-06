@@ -274,7 +274,8 @@ public class JwtUtils implements Serializable {
      * @date 2019/10/24
      */
     public String validateToken(String token) {
-        if (redisTemplate.opsForValue().get(RedisKeyUtil.getTokenKey(getUserNameFromToken(token)))!=null && !isTokenExpired(token)) {
+        String t = (String) redisTemplate.opsForValue().get(RedisKeyUtil.getTokenKey(getUserNameFromToken(token)));
+        if (token.equals(t) && !isTokenExpired(token)) {
             //如果验证成功，说明此用户进行了一次有效操作，延长token的过期时间
             if (canTokenBeRefreshed(token)){
                 String refreshToken = refreshToken(token);

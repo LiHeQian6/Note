@@ -22,6 +22,9 @@
     var localStorage;
     var header1;
     var header2;
+    var user_recommend;
+    var currentUserPage = 0;
+    var user_recommendSize = 8;
 
 	window.onload = function(){
 		localStorage = window.localStorage;
@@ -61,9 +64,63 @@
                     console.log(data);
                 }
             });
-        }else{
-            window.location.href = "sign-in.html";
         }
+
+        //作者
+		user_recommend = new Vue({
+			el: '#user_recommend',
+			data:{
+				users:[]
+			},
+			methods:{
+				//跳转到用户主页
+            	loadUserHome: function(writerId){
+            		return "user-homepage.html?writerId="+writerId;
+            	},
+				//加载更多推荐作者
+				loadMore: function(){
+					var that  = this;
+					currentUserPage++;
+					$.ajax({
+				        type: "GET",
+				        url: "/users/popular",
+				        data: {page:currentUserPage, size:user_recommendSize},
+				        dataType: "json",
+				        success: function(data){
+							if(data.status == "SUCCESS"){
+								var result = data.data.content;
+								if(result.length == 0){
+									alert("已经到底了！");
+									return;
+								}
+
+								for (var i = result.length - 1; i >= 0; i--) {
+									that.users.push(result[i]);
+								}
+
+				                return;
+				            }
+				            console.log(data.status);
+				        }
+				    });
+				}
+			}
+		});
+
+		//加载推荐作者（未登录）
+		$.ajax({
+	        type: "GET",
+	        url: "/users/popular",
+	        data: {page:currentUserPage, size:user_recommendSize},
+	        dataType: "json",
+	        success: function(data){
+				if(data.status == "SUCCESS"){
+					user_recommend.users = data.data.content;
+	                return;
+	            }
+	            console.log(data.status);
+	        }
+	    });
 	}
 </script>
 </head>
@@ -135,13 +192,13 @@
 							<a id="nickName" href="#" title="">John</a>
 							<i class="la la-sort-down"></i>
 						</div>
-						<div class="user-account-settingss">
+						<div id="navUserInfoDropdown" class="user-account-settingss">
 							<a href="person-homepage.html" title=""><div class="custom-user-account-dropdown">个人主页</div></a>
 							<a href="collect.html" title=""><div class="custom-user-account-dropdown">收藏笔记</div></a>
 							<a href="like.html" title=""><div class="custom-user-account-dropdown">点赞笔记</div></a>
 							<a href="management.html" title=""><div class="custom-user-account-dropdown">管理笔记</div></a>
 							<a href="setting.html" title=""><div class="custom-user-account-dropdown">设置</div></a>
-							<a href="javascript:logout()" title=""><div class="custom-user-account-logout">退出登陆</div></a>
+							<a href="javascript:logout1()" title=""><div class="custom-user-account-logout">退出登陆</div></a>
 						</div><!--user-account-settingss end-->
 					</div>
 				</div><!--header-data end-->
@@ -172,172 +229,26 @@
 		
 
 		<section class="companies-info">
-			<div class="container">
+			<div id="user_recommend" class="container">
 				<div class="company-title">
 					<h3>推荐作者</h3>
 				</div><!--company-title end-->
 				<div class="companies-list">
 					<div class="row">
-						<div class="col-lg-3 col-md-4 col-sm-6 col-12">
+						<div v-for="site in users" class="col-lg-3 col-md-4 col-sm-6 col-12">
 							<div class="company_profile_info">
-								<div class="company-up-info">
-									<img src="/static/images/resources/pf-icon8.png" alt="">
-									<h3>张小明</h3>
-									<h4>C & C++ Developer</h4>
-									<ul>
-										<li><a href="#" title="" class="hre">关注</a></li>
-									</ul>
+								<div class="company-up-info" style="padding: 30px 0 15px 0px">
+									<img style="width: 90px;height:90px" src="/static/images/resources/user-pro-img.png" alt="">
+									<h3 style="margin-bottom: 20px">{{site.nickName}}</h3>
+									<h4>{{site.like}}获赞 &nbsp {{site.followee}}粉丝</h4>
 								</div>
-								<a href="user-homepage.html" title="" class="view-more-pro">View Profile</a>
-							</div><!--company_profile_info end-->
-						</div>
-						<div class="col-lg-3 col-md-4 col-sm-6 col-12">
-							<div class="company_profile_info">
-								<div class="company-up-info">
-									<img src="/static/images/resources/pf-icon8.png" alt="">
-									<h3>张小明</h3>
-									<h4>C & C++ Developer</h4>
-									<ul>
-										<li><a href="#" title="" class="hre">关注</a></li>
-									</ul>
-								</div>
-								<a href="user-homepage.html" title="" class="view-more-pro">View Profile</a>
-							</div><!--company_profile_info end-->
-						</div>
-						<div class="col-lg-3 col-md-4 col-sm-6 col-12">
-							<div class="company_profile_info">
-								<div class="company-up-info">
-									<img src="/static/images/resources/pf-icon8.png" alt="">
-									<h3>张小明</h3>
-									<h4>C & C++ Developer</h4>
-									<ul>
-										<li><a href="#" title="" class="hre">关注</a></li>
-									</ul>
-								</div>
-								<a href="user-homepage.html" title="" class="view-more-pro">View Profile</a>
-							</div><!--company_profile_info end-->
-						</div>
-						<div class="col-lg-3 col-md-4 col-sm-6 col-12">
-							<div class="company_profile_info">
-								<div class="company-up-info">
-									<img src="/static/images/resources/pf-icon8.png" alt="">
-									<h3>张小明</h3>
-									<h4>C & C++ Developer</h4>
-									<ul>
-										<li><a href="#" title="" class="hre">关注</a></li>
-									</ul>
-								</div>
-								<a href="user-homepage.html" title="" class="view-more-pro">View Profile</a>
-							</div><!--company_profile_info end-->
-						</div>
-						<div class="col-lg-3 col-md-4 col-sm-6 col-12">
-							<div class="company_profile_info">
-								<div class="company-up-info">
-									<img src="/static/images/resources/pf-icon8.png" alt="">
-									<h3>张小明</h3>
-									<h4>C & C++ Developer</h4>
-									<ul>
-										<li><a href="#" title="" class="hre">关注</a></li>
-									</ul>
-								</div>
-								<a href="user-homepage.html" title="" class="view-more-pro">View Profile</a>
-							</div><!--company_profile_info end-->
-						</div>
-						<div class="col-lg-3 col-md-4 col-sm-6 col-12">
-							<div class="company_profile_info">
-								<div class="company-up-info">
-									<img src="/static/images/resources/pf-icon8.png" alt="">
-									<h3>张小明</h3>
-									<h4>C & C++ Developer</h4>
-									<ul>
-										<li><a href="#" title="" class="hre">关注</a></li>
-									</ul>
-								</div>
-								<a href="user-homepage.html" title="" class="view-more-pro">View Profile</a>
-							</div><!--company_profile_info end-->
-						</div>
-						<div class="col-lg-3 col-md-4 col-sm-6 col-12">
-							<div class="company_profile_info">
-								<div class="company-up-info">
-									<img src="/static/images/resources/pf-icon8.png" alt="">
-									<h3>张小明</h3>
-									<h4>C & C++ Developer</h4>
-									<ul>
-										<li><a href="#" title="" class="hre">关注</a></li>
-									</ul>
-								</div>
-								<a href="user-homepage.html" title="" class="view-more-pro">View Profile</a>
-							</div><!--company_profile_info end-->
-						</div>
-						<div class="col-lg-3 col-md-4 col-sm-6 col-12">
-							<div class="company_profile_info">
-								<div class="company-up-info">
-									<img src="/static/images/resources/pf-icon8.png" alt="">
-									<h3>张小明</h3>
-									<h4>C & C++ Developer</h4>
-									<ul>
-										<li><a href="#" title="" class="hre">关注</a></li>
-									</ul>
-								</div>
-								<a href="user-homepage.html" title="" class="view-more-pro">View Profile</a>
-							</div><!--company_profile_info end-->
-						</div>
-						<div class="col-lg-3 col-md-4 col-sm-6 col-12">
-							<div class="company_profile_info">
-								<div class="company-up-info">
-									<img src="/static/images/resources/pf-icon8.png" alt="">
-									<h3>张小明</h3>
-									<h4>C & C++ Developer</h4>
-									<ul>
-										<li><a href="#" title="" class="hre">关注</a></li>
-									</ul>
-								</div>
-								<a href="user-homepage.html" title="" class="view-more-pro">View Profile</a>
-							</div><!--company_profile_info end-->
-						</div>
-						<div class="col-lg-3 col-md-4 col-sm-6 col-12">
-							<div class="company_profile_info">
-								<div class="company-up-info">
-									<img src="/static/images/resources/pf-icon8.png" alt="">
-									<h3>张小明</h3>
-									<h4>C & C++ Developer</h4>
-									<ul>
-										<li><a href="#" title="" class="hre">关注</a></li>
-									</ul>
-								</div>
-								<a href="user-homepage.html" title="" class="view-more-pro">View Profile</a>
-							</div><!--company_profile_info end-->
-						</div>
-						<div class="col-lg-3 col-md-4 col-sm-6 col-12">
-							<div class="company_profile_info">
-								<div class="company-up-info">
-									<img src="/static/images/resources/pf-icon8.png" alt="">
-									<h3>张小明</h3>
-									<h4>C & C++ Developer</h4>
-									<ul>
-										<li><a href="#" title="" class="hre">关注</a></li>
-									</ul>
-								</div>
-								<a href="user-homepage.html" title="" class="view-more-pro">View Profile</a>
-							</div><!--company_profile_info end-->
-						</div>
-						<div class="col-lg-3 col-md-4 col-sm-6 col-12">
-							<div class="company_profile_info">
-								<div class="company-up-info">
-									<img src="/static/images/resources/pf-icon8.png" alt="">
-									<h3>张小明</h3>
-									<h4>C & C++ Developer</h4>
-									<ul>
-										<li><a href="#" title="" class="hre">关注</a></li>
-									</ul>
-								</div>
-								<a href="user-homepage.html" title="" class="view-more-pro">View Profile</a>
+								<a v-bind:href="loadUserHome(site.id)" title="" class="view-more-pro" style="color: #e44d3a">View Profile</a>
 							</div><!--company_profile_info end-->
 						</div>
 					</div>
 				</div><!--companies-list end-->
 				<div class="process-comm">
-					<a href="#" title=""><img src="/static/images/process-icon.png" alt=""></a>
+					<img id="loadMore" v-on:click="loadMore" src="/static/images/process-icon.png" alt="">
 				</div>
 			</div>
 		</section><!--companies-info end-->
@@ -380,6 +291,12 @@
     function logout(){
         localStorage.clear();
         window.location.href = "sign-in.html";
+    }
+    function logout1(){
+        localStorage.clear();
+        $("#navUserInfo").hide();
+        $("#navUserInfoDropdown").hide();
+        $("#navUserLogin").show();
     }
 	//更新本地token
     function updateLocalToken(param){

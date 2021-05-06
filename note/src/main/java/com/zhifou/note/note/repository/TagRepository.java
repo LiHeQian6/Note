@@ -24,5 +24,4 @@ public interface TagRepository extends JpaRepository<Tag,Integer>, DataTablesRep
     Tag findTagById(int id);
 
     List<Tag> findAllByNameIgnoreCaseIsContaining(String name);
-
 }

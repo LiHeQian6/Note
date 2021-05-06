@@ -22,6 +22,9 @@
     var localStorage;
     var header1;
     var header2;
+    var follow_users;
+    var currentUserPage = 0;
+    var userPageSize = 8;
 
 	window.onload = function(){
 		localStorage = window.localStorage;
@@ -64,6 +67,153 @@
         }else{
             window.location.href = "sign-in.html";
         }
+
+        //粉丝
+		follow_users = new Vue({
+			el: '#follow_users',
+			data:{
+				users:[]
+			},
+			methods:{
+				//跳转到用户主页
+            	loadUserHome: function(writerId){
+            		return "user-homepage.html?writerId="+writerId;
+            	},
+				//加载更多粉丝
+				loadMore: function(){
+					var that  = this;
+					var resultData;
+					currentUserPage++;
+					$.ajax({
+			            type: "GET",
+			            url: "/followee",
+			            headers: {
+			               "Access-control-expose-headers": header1,
+			               "Authorization": header2
+			            },
+			            data: {page:currentUserPage, size:userPageSize},
+			            dataType: "json",
+			            success: function(data){
+			            	resultData = data.status;
+							if(resultData == "SUCCESS"){
+								var result = data.data;
+								if(result.length == 0){
+									alert("已经到底了！");
+									return;
+								}
+
+								for (var i = result.length - 1; i >= 0; i--) {
+									that.users.push(result[i]);
+								}
+
+			                    return;
+			                }
+			                console.log(resultData);
+				        },
+				        complete: function(xhr,data){
+			                if(resultData == "SUCCESS" && data == "success"){
+			                    updateLocalToken(xhr);
+			                    return;
+			                } 
+			                console.log(data);
+			            }
+				    });
+				},
+				//关注作者
+            	followWriter: function(writerId,index){
+					var resultData;
+					var that = this;
+					$.ajax({
+			            type: "POST",
+			            url: "/follow",
+			            headers: {
+			               "Access-control-expose-headers": header1,
+			               "Authorization": header2
+			            },
+			            data: {targetId:writerId},
+			            dataType: "json",
+			            success: function(data){
+			            	resultData = data.status;
+							if(resultData == "SUCCESS"){
+								alert("关注成功！");
+
+								that.users[index].user.follow = true;
+								that.users[index].user.followee++;
+								return;
+			                }
+			                console.log(resultData);
+				        },
+				        complete: function(xhr,data){
+			                if(resultData == "SUCCESS" && data == "success"){
+			                    updateLocalToken(xhr);
+			                    return;
+			                } 
+			                console.log(data);
+			            }
+				    });					
+            	},
+				closeFollowWriter: function(writerId,index){
+					var resultData;
+					var that = this;
+					$.ajax({
+			            type: "DELETE",
+			            url: "/follow",
+			            headers: {
+			               "Access-control-expose-headers": header1,
+			               "Authorization": header2
+			            },
+			            data: {targetId:writerId},
+			            dataType: "json",
+			            success: function(data){
+			            	resultData = data.status;
+							if(resultData == "SUCCESS"){
+								alert("取消关注成功！");
+
+								that.users[index].user.follow = false;
+								that.users[index].user.followee--;
+								return;
+			                }
+			                console.log(resultData);	
+				        },
+				        complete: function(xhr,data){
+			                if(resultData == "SUCCESS" && data == "success"){
+			                    updateLocalToken(xhr);
+			                    return;
+			                } 
+			                console.log(data);
+			            }
+				    });
+				}
+			}
+		});
+
+		//加载粉丝
+	    var followUsersResultStatus;
+		$.ajax({
+            type: "GET",
+            url: "/followee",
+            headers: {
+               "Access-control-expose-headers": header1,
+               "Authorization": header2
+            },
+            data: {page:currentUserPage, size:userPageSize},
+            dataType: "json",
+            success: function(data){
+            	followUsersResultStatus = data.status;
+				if(followUsersResultStatus == "SUCCESS"){
+					follow_users.users = data.data;
+                    return;
+                }
+                console.log(followUsersResultStatus);
+	        },
+	        complete: function(xhr,data){
+                if(followUsersResultStatus == "SUCCESS" && data == "success"){
+                    updateLocalToken(xhr);
+                    return;
+                } 
+                console.log(data);
+            }
+	    });
 	}
 </script>
 </head>
@@ -173,172 +323,34 @@
 
 
 		<section class="companies-info">
-			<div class="container">
+			<div id="follow_users" class="container">
 				<div class="company-title">
 					<h3>我的粉丝</h3>
 				</div><!--company-title end-->
 				<div class="companies-list">
 					<div class="row">
-						<div class="col-lg-3 col-md-4 col-sm-6 col-12">
+						<div v-for="site,index in users" class="col-lg-3 col-md-4 col-sm-6 col-12">
 							<div class="company_profile_info">
 								<div class="company-up-info">
-									<img src="/static/images/resources/pf-icon8.png" alt="">
-									<h3>张小明</h3>
-									<h4>500获赞 &nbsp 500粉丝</h4>
+									<img style="width: 90px;height:90px" src="/static/images/resources/user-pro-img.png" alt="">
+									<h3>{{site.user.nickName}}</h3>
+									<h4>{{site.user.like}}获赞 &nbsp {{site.user.followee}}粉丝</h4>
 									<ul>
-										<li><a href="#" title="" class="hre">关注</a></li>
+										<li v-if="site.user.follow">
+											<a v-on:click="closeFollowWriter(site.user.id,index)" title="" class="custome-close-follow" style="color: #fff">取消关注</a>
+										</li>
+										<li v-else>
+											<a v-on:click="followWriter(site.user.id,index)" title="" class="hre" style="color: #fff">回关</a>
+										</li>
 									</ul>
 								</div>
-								<a href="user-homepage.html" title="" class="view-more-pro">View Profile</a>
-							</div><!--company_profile_info end-->
-						</div>
-						<div class="col-lg-3 col-md-4 col-sm-6 col-12">
-							<div class="company_profile_info">
-								<div class="company-up-info">
-									<img src="/static/images/resources/pf-icon8.png" alt="">
-									<h3>张小明</h3>
-									<h4>500获赞 &nbsp 500粉丝</h4>
-									<ul>
-										<li><a href="#" title="" class="custome-close-follow">取消关注</a></li>
-									</ul>
-								</div>
-								<a href="user-homepage.html" title="" class="view-more-pro">View Profile</a>
-							</div><!--company_profile_info end-->
-						</div>
-						<div class="col-lg-3 col-md-4 col-sm-6 col-12">
-							<div class="company_profile_info">
-								<div class="company-up-info">
-									<img src="/static/images/resources/pf-icon8.png" alt="">
-									<h3>张小明</h3>
-									<h4>500获赞 &nbsp 500粉丝</h4>
-									<ul>
-										<li><a href="#" title="" class="hre">关注</a></li>
-									</ul>
-								</div>
-								<a href="user-homepage.html" title="" class="view-more-pro">View Profile</a>
-							</div><!--company_profile_info end-->
-						</div>
-						<div class="col-lg-3 col-md-4 col-sm-6 col-12">
-							<div class="company_profile_info">
-								<div class="company-up-info">
-									<img src="/static/images/resources/pf-icon8.png" alt="">
-									<h3>张小明</h3>
-									<h4>500获赞 &nbsp 500粉丝</h4>
-									<ul>
-										<li><a href="#" title="" class="custome-close-follow">取消关注</a></li>
-									</ul>
-								</div>
-								<a href="user-homepage.html" title="" class="view-more-pro">View Profile</a>
-							</div><!--company_profile_info end-->
-						</div>
-						<div class="col-lg-3 col-md-4 col-sm-6 col-12">
-							<div class="company_profile_info">
-								<div class="company-up-info">
-									<img src="/static/images/resources/pf-icon8.png" alt="">
-									<h3>张小明</h3>
-									<h4>500获赞 &nbsp 500粉丝</h4>
-									<ul>
-										<li><a href="#" title="" class="hre">关注</a></li>
-									</ul>
-								</div>
-								<a href="user-homepage.html" title="" class="view-more-pro">View Profile</a>
-							</div><!--company_profile_info end-->
-						</div>
-						<div class="col-lg-3 col-md-4 col-sm-6 col-12">
-							<div class="company_profile_info">
-								<div class="company-up-info">
-									<img src="/static/images/resources/pf-icon8.png" alt="">
-									<h3>张小明</h3>
-									<h4>500获赞 &nbsp 500粉丝</h4>
-									<ul>
-										<li><a href="#" title="" class="hre">关注</a></li>
-									</ul>
-								</div>
-								<a href="user-homepage.html" title="" class="view-more-pro">View Profile</a>
-							</div><!--company_profile_info end-->
-						</div>
-						<div class="col-lg-3 col-md-4 col-sm-6 col-12">
-							<div class="company_profile_info">
-								<div class="company-up-info">
-									<img src="/static/images/resources/pf-icon8.png" alt="">
-									<h3>张小明</h3>
-									<h4>500获赞 &nbsp 500粉丝</h4>
-									<ul>
-										<li><a href="#" title="" class="hre">关注</a></li>
-									</ul>
-								</div>
-								<a href="user-homepage.html" title="" class="view-more-pro">View Profile</a>
-							</div><!--company_profile_info end-->
-						</div>
-						<div class="col-lg-3 col-md-4 col-sm-6 col-12">
-							<div class="company_profile_info">
-								<div class="company-up-info">
-									<img src="/static/images/resources/pf-icon8.png" alt="">
-									<h3>张小明</h3>
-									<h4>500获赞 &nbsp 500粉丝</h4>
-									<ul>
-										<li><a href="#" title="" class="hre">关注</a></li>
-									</ul>
-								</div>
-								<a href="user-homepage.html" title="" class="view-more-pro">View Profile</a>
-							</div><!--company_profile_info end-->
-						</div>
-						<div class="col-lg-3 col-md-4 col-sm-6 col-12">
-							<div class="company_profile_info">
-								<div class="company-up-info">
-									<img src="/static/images/resources/pf-icon8.png" alt="">
-									<h3>张小明</h3>
-									<h4>500获赞 &nbsp 500粉丝</h4>
-									<ul>
-										<li><a href="#" title="" class="hre">关注</a></li>
-									</ul>
-								</div>
-								<a href="user-homepage.html" title="" class="view-more-pro">View Profile</a>
-							</div><!--company_profile_info end-->
-						</div>
-						<div class="col-lg-3 col-md-4 col-sm-6 col-12">
-							<div class="company_profile_info">
-								<div class="company-up-info">
-									<img src="/static/images/resources/pf-icon8.png" alt="">
-									<h3>张小明</h3>
-									<h4>500获赞 &nbsp 500粉丝</h4>
-									<ul>
-										<li><a href="#" title="" class="hre">关注</a></li>
-									</ul>
-								</div>
-								<a href="user-homepage.html" title="" class="view-more-pro">View Profile</a>
-							</div><!--company_profile_info end-->
-						</div>
-						<div class="col-lg-3 col-md-4 col-sm-6 col-12">
-							<div class="company_profile_info">
-								<div class="company-up-info">
-									<img src="/static/images/resources/pf-icon8.png" alt="">
-									<h3>张小明</h3>
-									<h4>500获赞 &nbsp 500粉丝</h4>
-									<ul>
-										<li><a href="#" title="" class="hre">关注</a></li>
-									</ul>
-								</div>
-								<a href="user-homepage.html" title="" class="view-more-pro">View Profile</a>
-							</div><!--company_profile_info end-->
-						</div>
-						<div class="col-lg-3 col-md-4 col-sm-6 col-12">
-							<div class="company_profile_info">
-								<div class="company-up-info">
-									<img src="/static/images/resources/pf-icon8.png" alt="">
-									<h3>张小明</h3>
-									<h4>500获赞 &nbsp 500粉丝</h4>
-									<ul>
-										<li><a href="#" title="" class="hre">关注</a></li>
-									</ul>
-								</div>
-								<a href="user-homepage.html" title="" class="view-more-pro">View Profile</a>
+								<a v-bind:href="loadUserHome(site.user.id)" title="" class="view-more-pro">View Profile</a>
 							</div><!--company_profile_info end-->
 						</div>
 					</div>
 				</div><!--companies-list end-->
 				<div class="process-comm">
-					<a href="#" title=""><img src="/static/images/process-icon.png" alt=""></a>
+					<img id="loadMore" v-on:click="loadMore"  src="/static/images/process-icon.png" alt="">
 				</div>
 			</div>
 		</section><!--companies-info end-->

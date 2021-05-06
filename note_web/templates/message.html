@@ -22,6 +22,21 @@
     var localStorage;
     var header1;
     var header2;
+    var message_comment;
+    var message_like;
+    var message_collect;
+    var message_follow;
+    var message_system;
+    var currentMessageCommentPage = 0;
+    var messageCommentPageSize = 3;
+    var currentMessageLikePage = 0;
+    var messageLikePageSize = 3;
+    var currentMessageCollectPage = 0;
+    var messageCollectPageSize = 3;
+    var currentMessageFollowPage = 0;
+    var messageFollowPageSize = 3;
+    var currentMessageSystemPage = 0;
+    var messageSystemPageSize = 3;
 
 	window.onload = function(){
 		localStorage = window.localStorage;
@@ -64,6 +79,456 @@
         }else{
             window.location.href = "sign-in.html";
         }
+
+        //笔记
+		message = new Vue({
+			el: '#message',
+			data:{
+				message_comment:[],
+				message_like:[],
+				message_collect:[],
+				message_follow:[],
+				message_system:[]
+			},
+			methods:{
+				//跳转到详情页
+				loadNoteDetail: function(noteId){
+					return "note-detail.html?noteId="+noteId;
+				},
+				//跳转到用户主页
+				loadUserHome: function(writerId){
+					return "user-homepage.html?writerId="+writerId;
+				},
+				//加载更多评论
+				loadMoreComment: function(){
+					currentMessageCommentPage++;
+
+					var resultData;
+					var that = this;
+					$.ajax({
+			            type: "GET",
+			            url: "/message/comment",
+			            headers: {
+			               "Access-control-expose-headers": header1,
+			               "Authorization": header2
+			            },
+			            data: {page:currentMessageCommentPage, size:messageCommentPageSize},
+			            dataType: "json",
+			            success: function(data){
+			            	resultData = data.status;
+							if(resultData == "SUCCESS"){
+								var result0 = data.data.content;
+								if(result0.length == 0){
+									alert("已经到底了！");
+									return;
+								}
+
+								var result = [];
+								var content,createTime;
+								for (var i = result0.length - 1; i >= 0; i--) {
+									content = JSON.parse(result0[i].content);
+									createTime = result0[i].createTime;
+									content.createTime = dateFormat("YYYY-mm-dd HH:MM", new Date(createTime));
+									result.push(content);
+								}
+
+								for (var i = result.length - 1; i >= 0; i--) {
+									that.message_comment.push(result[i]);
+								}
+								
+			                    return;
+			                }
+			                console.log(data.status);
+				        },
+				        complete: function(xhr,data){
+			                if(resultData == "SUCCESS" && data == "success"){
+			                    updateLocalToken(xhr);
+			                    return;
+			                } 
+			                console.log(data);
+			            }
+				    });
+				},
+				//加载更多点赞
+				loadMoreLike: function(){
+					currentMessageLikePage++;
+
+					var resultData;
+					var that = this;
+					$.ajax({
+			            type: "GET",
+			            url: "/message/like",
+			            headers: {
+			               "Access-control-expose-headers": header1,
+			               "Authorization": header2
+			            },
+			            data: {page:currentMessageLikePage, size:messageLikePageSize},
+			            dataType: "json",
+			            success: function(data){
+			            	resultData = data.status;
+							if(resultData == "SUCCESS"){
+								var result0 = data.data.content;
+								if(result0.length == 0){
+									alert("已经到底了！");
+									return;
+								}
+
+								var result = [];
+								var content,createTime;
+								for (var i = result0.length - 1; i >= 0; i--) {
+									content = JSON.parse(result0[i].content);
+									createTime = result0[i].createTime;
+									content.createTime = dateFormat("YYYY-mm-dd HH:MM", new Date(createTime));
+									result.push(content);
+								}
+
+								for (var i = result.length - 1; i >= 0; i--) {
+									that.message_like.push(result[i]);
+								}
+								
+			                    return;
+			                }
+			                console.log(data.status);
+				        },
+				        complete: function(xhr,data){
+			                if(resultData == "SUCCESS" && data == "success"){
+			                    updateLocalToken(xhr);
+			                    return;
+			                } 
+			                console.log(data);
+			            }
+				    });
+				},
+				//加载更多收藏
+				loadMoreCollect: function(){
+					currentMessageCollectPage++;
+
+					var resultData;
+					var that = this;
+					$.ajax({
+			            type: "GET",
+			            url: "/message/collect",
+			            headers: {
+			               "Access-control-expose-headers": header1,
+			               "Authorization": header2
+			            },
+			            data: {page:currentMessageCollectPage, size:messageCollectPageSize},
+			            dataType: "json",
+			            success: function(data){
+			            	resultData = data.status;
+							if(resultData == "SUCCESS"){
+								var result0 = data.data.content;
+								if(result0.length == 0){
+									alert("已经到底了！");
+									return;
+								}
+
+								var result = [];
+								var content,createTime;
+								for (var i = result0.length - 1; i >= 0; i--) {
+									content = JSON.parse(result0[i].content);
+									createTime = result0[i].createTime;
+									content.createTime = dateFormat("YYYY-mm-dd HH:MM", new Date(createTime));
+									result.push(content);
+								}
+
+								for (var i = result.length - 1; i >= 0; i--) {
+									that.message_collect.push(result[i]);
+								}
+								
+			                    return;
+			                }
+			                console.log(data.status);
+				        },
+				        complete: function(xhr,data){
+			                if(resultData == "SUCCESS" && data == "success"){
+			                    updateLocalToken(xhr);
+			                    return;
+			                } 
+			                console.log(data);
+			            }
+				    });
+				},
+				//加载更多关注
+				loadMoreFollow: function(){
+					currentMessageFollowPage++;
+
+					var resultData;
+					var that = this;
+					$.ajax({
+			            type: "GET",
+			            url: "/message/follow",
+			            headers: {
+			               "Access-control-expose-headers": header1,
+			               "Authorization": header2
+			            },
+			            data: {page:currentMessageFollowPage, size:messageFollowPageSize},
+			            dataType: "json",
+			            success: function(data){
+			            	resultData = data.status;
+							if(resultData == "SUCCESS"){
+								var result0 = data.data.content;
+								if(result0.length == 0){
+									alert("已经到底了！");
+									return;
+								}
+
+								var result = [];
+								var content,createTime;
+								for (var i = result0.length - 1; i >= 0; i--) {
+									content = JSON.parse(result0[i].content);
+									createTime = result0[i].createTime;
+									content.createTime = dateFormat("YYYY-mm-dd HH:MM", new Date(createTime));
+									result.push(content);
+								}
+
+								for (var i = result.length - 1; i >= 0; i--) {
+									that.message_follow.push(result[i]);
+								}
+								
+			                    return;
+			                }
+			                console.log(data.status);
+				        },
+				        complete: function(xhr,data){
+			                if(resultData == "SUCCESS" && data == "success"){
+			                    updateLocalToken(xhr);
+			                    return;
+			                } 
+			                console.log(data);
+			            }
+				    });
+				},
+				//加载更多系统通知
+				loadMoreSystem: function(){
+					currentMessageSystemPage++;
+
+					var resultData;
+					var that = this;
+					$.ajax({
+			            type: "GET",
+			            url: "/message/system",
+			            headers: {
+			               "Access-control-expose-headers": header1,
+			               "Authorization": header2
+			            },
+			            data: {page:currentMessageSystemPage, size:messageSystemPageSize},
+			            dataType: "json",
+			            success: function(data){
+			            	resultData = data.status;
+							if(resultData == "SUCCESS"){
+								var result0 = data.data.content;
+								if(result0.length == 0){
+									alert("已经到底了！");
+									return;
+								}
+
+								var result = [];
+								var content,createTime;
+								for (var i = result0.length - 1; i >= 0; i--) {
+									content = JSON.parse(result0[i].content);
+									createTime = result0[i].createTime;
+									content.createTime = dateFormat("YYYY-mm-dd HH:MM", new Date(createTime));
+									result.push(content);
+								}
+
+								for (var i = result.length - 1; i >= 0; i--) {
+									that.message_system.push(result[i]);
+								}
+								
+			                    return;
+			                }
+			                console.log(data.status);
+				        },
+				        complete: function(xhr,data){
+			                if(resultData == "SUCCESS" && data == "success"){
+			                    updateLocalToken(xhr);
+			                    return;
+			                } 
+			                console.log(data);
+			            }
+				    });
+				},
+			}
+		});
+
+		//评论消息加载
+	    var messageCommentResultStatus;
+		$.ajax({
+            type: "GET",
+            url: "/message/comment",
+            headers: {
+               "Access-control-expose-headers": header1,
+               "Authorization": header2
+            },
+            data: {page:currentMessageCommentPage, size:messageCommentPageSize},
+            dataType: "json",
+            success: function(data){
+            	messageCommentResultStatus = data.status;
+				if(messageCommentResultStatus == "SUCCESS"){
+					var result = data.data.content;
+
+					var content,createTime;
+					for (var i = result.length - 1; i >= 0; i--) {
+						content = JSON.parse(result[i].content);
+						createTime = result[i].createTime;
+						content.createTime = dateFormat("YYYY-mm-dd HH:MM", new Date(createTime));
+						message.message_comment.push(content);
+					}
+
+                    return;
+                }
+                console.log(messageCommentResultStatus);
+	        },
+	        complete: function(xhr,data){
+                if(messageCommentResultStatus == "SUCCESS" && data == "success"){
+                    updateLocalToken(xhr);
+                    return;
+                } 
+                console.log(data);
+            }
+	    });
+	    //点赞消息加载
+		var messageLikeResultStatus;
+		$.ajax({
+            type: "GET",
+            url: "/message/like",
+            headers: {
+               "Access-control-expose-headers": header1,
+               "Authorization": header2
+            },
+            data: {page:currentMessageLikePage, size:messageLikePageSize},
+            dataType: "json",
+            success: function(data){
+            	messageLikeResultStatus = data.status;
+				if(messageLikeResultStatus == "SUCCESS"){
+					var result = data.data.content;
+
+					var content,createTime;
+					for (var i = result.length - 1; i >= 0; i--) {
+						content = JSON.parse(result[i].content);
+						createTime = result[i].createTime;
+						content.createTime = dateFormat("YYYY-mm-dd HH:MM", new Date(createTime));
+						message.message_like.push(content);
+					}
+					
+                    return;
+                }
+                console.log(messageLikeResultStatus);
+	        },
+	        complete: function(xhr,data){
+                if(messageLikeResultStatus == "SUCCESS" && data == "success"){
+                    updateLocalToken(xhr);
+                    return;
+                } 
+                console.log(data);
+            }
+	    });
+	    //收藏消息加载
+		var messageCollectResultStatus;
+		$.ajax({
+            type: "GET",
+            url: "/message/collect",
+            headers: {
+               "Access-control-expose-headers": header1,
+               "Authorization": header2
+            },
+            data: {page:currentMessageCollectPage, size:messageCollectPageSize},
+            dataType: "json",
+            success: function(data){
+            	messageCollectResultStatus = data.status;
+				if(messageCollectResultStatus == "SUCCESS"){
+					var result = data.data.content;
+
+					var content,createTime;
+					for (var i = result.length - 1; i >= 0; i--) {
+						content = JSON.parse(result[i].content);
+						createTime = result[i].createTime;
+						content.createTime = dateFormat("YYYY-mm-dd HH:MM", new Date(createTime));
+						message.message_collect.push(content);
+					}
+                    return;
+                }
+                console.log(messageCollectResultStatus);
+	        },
+	        complete: function(xhr,data){
+                if(messageCollectResultStatus == "SUCCESS" && data == "success"){
+                    updateLocalToken(xhr);
+                    return;
+                } 
+                console.log(data);
+            }
+	    });
+	    //关注消息加载
+	    var messageFollowResultStatus;
+		$.ajax({
+            type: "GET",
+            url: "/message/follow",
+            headers: {
+               "Access-control-expose-headers": header1,
+               "Authorization": header2
+            },
+            data: {page:currentMessageFollowPage, size:messageFollowPageSize},
+            dataType: "json",
+            success: function(data){
+            	messageFollowResultStatus = data.status;
+				if(messageFollowResultStatus == "SUCCESS"){
+					var result = data.data.content;
+
+					var content,createTime;
+					for (var i = result.length - 1; i >= 0; i--) {
+						content = JSON.parse(result[i].content);
+						createTime = result[i].createTime;
+						content.createTime = dateFormat("YYYY-mm-dd HH:MM", new Date(createTime));
+						message.message_follow.push(content);
+					}
+                    return;
+                }
+                console.log(messageFollowResultStatus);
+	        },
+	        complete: function(xhr,data){
+                if(messageFollowResultStatus == "SUCCESS" && data == "success"){
+                    updateLocalToken(xhr);
+                    return;
+                } 
+                console.log(data);
+            }
+	    });
+	    //系统消息加载
+	    var messageSystemResultStatus;
+		$.ajax({
+            type: "GET",
+            url: "/message/system",
+            headers: {
+               "Access-control-expose-headers": header1,
+               "Authorization": header2
+            },
+            data: {page:currentMessageSystemPage, size:messageSystemPageSize},
+            dataType: "json",
+            success: function(data){
+            	messageSystemResultStatus = data.status;
+				if(messageSystemResultStatus == "SUCCESS"){
+					var result = data.data.content;
+
+					var content,createTime;
+					for (var i = result.length - 1; i >= 0; i--) {
+						content = JSON.parse(result[i].content);
+						createTime = result[i].createTime;
+						content.createTime = dateFormat("YYYY-mm-dd HH:MM", new Date(createTime));
+						message.message_system.push(content);
+					}
+                    return;
+                }
+                console.log(messageSystemResultStatus);
+	        },
+	        complete: function(xhr,data){
+                if(messageSystemResultStatus == "SUCCESS" && data == "success"){
+                    updateLocalToken(xhr);
+                    return;
+                } 
+                console.log(data);
+            }
+	    });
 	}
 </script>
 </head>
@@ -169,315 +634,145 @@
 								<div class="nav nav-tabs" id="nav-tab" role="tablist">
 								    <a class="nav-item nav-link active" id="nav-commit-tab" data-toggle="tab" href="#nav-commit" role="tab" aria-controls="nav-commit" aria-selected="true" style="width: 100%"><i class="la la-cogs"></i>评论</a>
 								    <a class="nav-item nav-link" id="nav-like-tab" data-toggle="tab" href="#nav-like" role="tab" aria-controls="nav-like" aria-selected="false" style="width: 100%"><i class="fa fa-line-chart"></i>点赞</a>
+								    <a class="nav-item nav-link" id="nav-collect-tab" data-toggle="tab" href="#nav-collect" role="tab" aria-controls="nav-collect" aria-selected="false" style="width: 100%"><i class="fa fa-random"></i>收藏</a>
 								    <a class="nav-item nav-link" id="nav-follow-tab" data-toggle="tab" href="#nav-follow" role="tab" aria-controls="nav-follow" aria-selected="false" style="width: 100%"><i class="fa fa-lock"></i>关注</a>
-								    <a class="nav-item nav-link" id="nav-letter-tab" data-toggle="tab" href="#nav-letter" role="tab" aria-controls="nav-letter" aria-selected="false" style="width: 100%"><i class="fa fa-random"></i>私信</a>
-								    <a class="nav-item nav-link" id="nav-notification-tab" data-toggle="tab" href="#nav-notification" role="tab" aria-controls="nav-notification" aria-selected="false" style="width: 100%"><i class="fa fa-flash"></i>其他通知</a>
+								    <!-- <a class="nav-item nav-link" id="nav-letter-tab" data-toggle="tab" href="#nav-letter" role="tab" aria-controls="nav-letter" aria-selected="false" style="width: 100%"><i class="fa fa-random"></i>私信</a> -->
+								    <a class="nav-item nav-link" id="nav-notification-tab" data-toggle="tab" href="#nav-notification" role="tab" aria-controls="nav-notification" aria-selected="false" style="width: 100%"><i class="fa fa-flash"></i>系统通知</a>
 								 </div>
 							</div><!--acc-leftbar end-->
 						</div>
 						<div class="col-lg-9"> 
-							<div class="tab-content" id="nav-tabContent">
+							<div id="message" class="tab-content" id="nav-tabContent">
 								<div class="tab-pane fade show active" id="nav-commit" role="tabpanel" aria-labelledby="nav-commit-tab">
 							  		<div class="acc-setting">
 							  			<h3>收到的评论</h3>
 							  			<div class="notifications-list">
-							  				<div class="notfication-details">
+							  				<div v-for="site in message_comment" class="notfication-details">
 								  				<div class="noty-user-img">
-								  					<a href="user-homepage.html"><img src="/static/images/resources/ny-img3.png" alt=""></a>
+								  					<a v-bind:href="loadUserHome(site.entityUserId)"><img src="/static/images/resources/ny-img3.png" alt=""></a>
 								  				</div>
 								  				<div class="notification-info">
-								  					<h3><a href="user-homepage.html" title="">张小明</a><span>&nbsp&nbsp&nbsp&nbsp评论了你</span></h3>
-								  					<p><a href="note-detail.html" title="" class="customer-notification-title">我是文章标题我是文章标题我是文章标题我是文章标题我是文章标题我是文章标题我是文章标题我是文章标题我是文章标题</a></p>
-								  					<p>学习C语言就是要这样，才能前后融会贯通，积累所应该掌握的知识</p>
-								  					<span>2 min ago</span>
+								  					<h3>“{{site.entityUserNickname}}”<span>&nbsp&nbsp&nbsp&nbsp评论了你</span></h3>
+								  					<p><a v-bind:href="loadNoteDetail(site.entityId)" title="" class="customer-notification-title">{{site.entityInfo}}</a></p>
+								  					<p>{{site.commentContent}}</p>
+								  					<span>{{site.createTime}}</span>
 								  				</div><!--notification-info -->
 								  				<div class="custom-notification-delete">
 							  						<ul>
-							  							<li><button type="button" class="close-req"><i class="la la-close"></i></button></li>
-							  						</ul>
-							  					</div><!--accept-feat end-->
-							  				</div><!--notfication-details end-->
-							  				<div class="notfication-details">
-								  				<div class="noty-user-img">
-								  					<a href="user-homepage.html"><img src="/static/images/resources/ny-img3.png" alt=""></a>
-								  				</div>
-								  				<div class="notification-info">
-								  					<h3><a href="user-homepage.html" title="">张小明</a><span>&nbsp&nbsp&nbsp&nbsp评论了你</span></h3>
-								  					<p><a href="note-detail.html" title="" class="customer-notification-title">我是文章标题我是文章标题我是文章标题我是文章标题我是文章标题我是文章标题我是文章标题我是文章标题我是文章标题</a></p>
-								  					<p>学习C语言就是要这样，才能前后融会贯通，积累所应该掌握的知识</p>
-								  					<span>2 min ago</span>
-								  				</div><!--notification-info -->
-								  				<div class="custom-notification-delete">
-							  						<ul>
-							  							<li><button type="button" class="close-req"><i class="la la-close"></i></button></li>
-							  						</ul>
-							  					</div><!--accept-feat end-->
-							  				</div><!--notfication-details end-->
-							  				<div class="notfication-details">
-								  				<div class="noty-user-img">
-								  					<a href="user-homepage.html"><img src="/static/images/resources/ny-img3.png" alt=""></a>
-								  				</div>
-								  				<div class="notification-info">
-								  					<h3><a href="user-homepage.html" title="">张小明</a><span>&nbsp&nbsp&nbsp&nbsp评论了你</span></h3>
-								  					<p><a href="note-detail.html" title="" class="customer-notification-title">我是文章标题我是文章标题我是文章标题我是文章标题我是文章标题我是文章标题我是文章标题我是文章标题我是文章标题</a></p>
-								  					<p>学习C语言就是要这样，才能前后融会贯通，积累所应该掌握的知识</p>
-								  					<span>2 min ago</span>
-								  				</div><!--notification-info -->
-								  				<div class="custom-notification-delete">
-							  						<ul>
-							  							<li><button type="button" class="close-req"><i class="la la-close"></i></button></li>
-							  						</ul>
-							  					</div><!--accept-feat end-->
-							  				</div><!--notfication-details end-->
-							  				<div class="notfication-details">
-								  				<div class="noty-user-img">
-								  					<a href="user-homepage.html"><img src="/static/images/resources/ny-img3.png" alt=""></a>
-								  				</div>
-								  				<div class="notification-info">
-								  					<h3><a href="user-homepage.html" title="">张小明</a><span>&nbsp&nbsp&nbsp&nbsp评论了你</span></h3>
-								  					<p><a href="note-detail.html" title="" class="customer-notification-title">我是文章标题我是文章标题我是文章标题我是文章标题我是文章标题我是文章标题我是文章标题我是文章标题我是文章标题</a></p>
-								  					<p>学习C语言就是要这样，才能前后融会贯通，积累所应该掌握的知识</p>
-								  					<span>2 min ago</span>
-								  				</div><!--notification-info -->
-								  				<div class="custom-notification-delete">
-							  						<ul>
-							  							<li><button type="button" class="close-req"><i class="la la-close"></i></button></li>
+							  							<!-- <li><button type="button" class="close-req"><i class="la la-close"></i></button></li> -->
 							  						</ul>
 							  					</div><!--accept-feat end-->
 							  				</div><!--notfication-details end-->
 							  			</div><!--notifications-list end-->
 							  		</div><!--acc-setting end-->
+							  		<div class="process-comm">
+										<img id="loadMore" v-on:click="loadMoreComment" src="/static/images/process-icon.png" alt="">
+									</div><!--process-comm end-->
 							  	</div>
 							  	<div class="tab-pane fade" id="nav-like" role="tabpanel" aria-labelledby="nav-like-tab">
 							  		<div class="acc-setting">
 										<h3>收到的赞</h3>
 										<div class="notifications-list">
-							  				<div class="notfication-details">
+							  				<div v-for="site in message.message_like" class="notfication-details">
 								  				<div class="noty-user-img">
-								  					<a href="user-homepage.html"><img src="/static/images/resources/ny-img3.png" alt=""></a>
+								  					<a v-bind:href="loadUserHome(site.entityUserId)"><img src="/static/images/resources/ny-img3.png" alt=""></a>
 								  				</div>
 								  				<div class="notification-info">
-								  					<h3><a href="user-homepage.html" title="">张小明</a><span>&nbsp&nbsp&nbsp&nbsp赞了你的作品</span></h3>
-								  					<p><a href="note-detail.html" title="" class="customer-notification-title">我是文章标题我是文章标题我是文章标题我是文章标题我是文章标题我是文章标题我是文章标题我是文章标题我是文章标题</a></p>
-								  					<span>2 min ago</span>
+								  					<h3>“{{site.entityUserNickname}}”<span>&nbsp&nbsp&nbsp&nbsp赞了你的作品</span></h3>
+								  					<p><a v-bind:href="loadNoteDetail(site.entityId)" title="" class="customer-notification-title">{{site.entityInfo}}</a></p>
+								  					<span>{{site.createTime}}</span>
 								  				</div><!--notification-info -->
 								  				<div class="custom-notification-delete">
 							  						<ul>
-							  							<li><button type="button" class="close-req"><i class="la la-close"></i></button></li>
-							  						</ul>
-							  					</div><!--accept-feat end-->
-							  				</div><!--notfication-details end-->
-							  				<div class="notfication-details">
-								  				<div class="noty-user-img">
-								  					<a href="user-homepage.html"><img src="/static/images/resources/ny-img3.png" alt=""></a>
-								  				</div>
-								  				<div class="notification-info">
-								  					<h3><a href="user-homepage.html" title="">张小明</a><span>&nbsp&nbsp&nbsp&nbsp赞了你的作品</span></h3>
-								  					<p><a href="note-detail.html" title="" class="customer-notification-title">我是文章标题我是文章标题我是文章标题我是文章标题我是文章标题我是文章标题我是文章标题我是文章标题我是文章标题</a></p>
-								  					<span>2 min ago</span>
-								  				</div><!--notification-info -->
-								  				<div class="custom-notification-delete">
-							  						<ul>
-							  							<li><button type="button" class="close-req"><i class="la la-close"></i></button></li>
-							  						</ul>
-							  					</div><!--accept-feat end-->
-							  				</div><!--notfication-details end-->
-							  				<div class="notfication-details">
-								  				<div class="noty-user-img">
-								  					<a href="user-homepage.html"><img src="/static/images/resources/ny-img3.png" alt=""></a>
-								  				</div>
-								  				<div class="notification-info">
-								  					<h3><a href="user-homepage.html" title="">张小明</a><span>&nbsp&nbsp&nbsp&nbsp赞了你的作品</span></h3>
-								  					<p><a href="note-detail.html" title="" class="customer-notification-title">我是文章标题我是文章标题我是文章标题我是文章标题我是文章标题我是文章标题我是文章标题我是文章标题我是文章标题</a></p>
-								  					<span>2 min ago</span>
-								  				</div><!--notification-info -->
-								  				<div class="custom-notification-delete">
-							  						<ul>
-							  							<li><button type="button" class="close-req"><i class="la la-close"></i></button></li>
-							  						</ul>
-							  					</div><!--accept-feat end-->
-							  				</div><!--notfication-details end-->
-							  				<div class="notfication-details">
-								  				<div class="noty-user-img">
-								  					<a href="user-homepage.html"><img src="/static/images/resources/ny-img3.png" alt=""></a>
-								  				</div>
-								  				<div class="notification-info">
-								  					<h3><a href="user-homepage.html" title="">张小明</a><span>&nbsp&nbsp&nbsp&nbsp赞了你的作品</span></h3>
-								  					<p><a href="note-detail.html" title="" class="customer-notification-title">我是文章标题我是文章标题我是文章标题我是文章标题我是文章标题我是文章标题我是文章标题我是文章标题我是文章标题</a></p>
-								  					<span>2 min ago</span>
-								  				</div><!--notification-info -->
-								  				<div class="custom-notification-delete">
-							  						<ul>
-							  							<li><button type="button" class="close-req"><i class="la la-close"></i></button></li>
+							  							<!-- <li><button type="button" class="close-req"><i class="la la-close"></i></button></li> -->
 							  						</ul>
 							  					</div><!--accept-feat end-->
 							  				</div><!--notfication-details end-->
 							  			</div><!--notifications-list end-->
-										
 							  			<!--notifications-list end-->
 									</div><!--acc-setting end-->
+									<div class="process-comm">
+										<img id="loadMore" v-on:click="loadMoreLike" src="/static/images/process-icon.png" alt="">
+									</div><!--process-comm end-->
+							  	</div>
+							  	<div class="tab-pane fade" id="nav-collect" role="tabpanel" aria-labelledby="nav-collect-tab">
+							  		<div class="acc-setting">
+										<h3>收藏</h3>
+										<div class="notifications-list">
+							  				<div v-for="site in message_collect" class="notfication-details">
+								  				<div class="noty-user-img">
+								  					<a v-bind:href="loadUserHome(site.entityUserId)"><img src="/static/images/resources/ny-img3.png" alt=""></a>
+								  				</div>
+								  				<div class="notification-info">
+								  					<h3>“{{site.entityUserNickname}}”<span>&nbsp&nbsp&nbsp&nbsp收藏了你的作品</span></h3>
+								  					<p><a href="note-detail.html" title="" class="customer-notification-title">{{site.entityInfo}}</a></p>
+								  					<span>{{site.createTime}}</span>
+								  				</div><!--notification-info -->
+								  				<div class="custom-notification-delete">
+							  						<ul>
+							  							<!-- <li><button type="button" class="close-req"><i class="la la-close"></i></button></li> -->
+							  						</ul>
+							  					</div><!--accept-feat end-->
+							  				</div><!--notfication-details end-->
+							  			</div><!--notifications-list end-->
+							  			<!--notifications-list end-->
+									</div><!--acc-setting end-->
+									<div class="process-comm">
+										<img id="loadMore" v-on:click="loadMoreCollect" src="/static/images/process-icon.png" alt="">
+									</div><!--process-comm end-->
 							  	</div>
 							  	<div class="tab-pane fade" id="nav-follow" role="tabpanel" aria-labelledby="nav-follow-tab">
 							  		<div class="acc-setting">
 										<h3>收到的关注</h3>
 							  			<div class="requests-list">
-							  				<div class="request-details">
+							  				<div v-for="site in message_follow" class="request-details">
 							  					<div class="noty-user-img">
-							  						<a href="user-homepage.html"><img src="/static/images/resources/ny-img3.png" alt=""></a>
+							  						<a v-bind:href="loadUserHome(site.entityUserId)"><img src="/static/images/resources/ny-img3.png" alt=""></a>
 							  					</div>
 							  					<div class="request-info">
-							  						<h3><a href="user-homepage.html" style="color: black">张小明</a></h3>
-							  						<span>2 min ago</span>
+							  						<h3>“{{site.entityUserNickname}}”<span>&nbsp&nbsp&nbsp&nbsp关注了你</span></h3>
+							  						<span>{{site.createTime}}</span>
 							  					</div>
 							  					<div class="accept-feat">
 							  						<ul>
-							  							<li><button type="button" class="btn btn-primary accept-req">关注</button></li>
-							  							<li><button type="button" class="close-req"><i class="la la-close"></i></button></li>
-							  						</ul>
-							  					</div><!--accept-feat end-->
-							  				</div><!--request-detailse end-->
-							  				<div class="request-details">
-							  					<div class="noty-user-img">
-							  						<a href="user-homepage.html"><img src="/static/images/resources/ny-img3.png" alt=""></a>
-							  					</div>
-							  					<div class="request-info">
-							  						<h3><a href="user-homepage.html" style="color: black">张小明</a></h3>
-							  						<span>2 min ago</span>
-							  					</div>
-							  					<div class="accept-feat">
-							  						<ul>
-							  							<li><button type="button" class="btn btn-primary accept-req">关注</button></li>
-							  							<li><button type="button" class="close-req"><i class="la la-close"></i></button></li>
-							  						</ul>
-							  					</div><!--accept-feat end-->
-							  				</div><!--request-detailse end-->
-							  				<div class="request-details">
-							  					<div class="noty-user-img">
-							  						<a href="user-homepage.html"><img src="/static/images/resources/ny-img3.png" alt=""></a>
-							  					</div>
-							  					<div class="request-info">
-							  						<h3><a href="user-homepage.html" style="color: black">张小明</a></h3>
-							  						<span>2 min ago</span>
-							  					</div>
-							  					<div class="accept-feat">
-							  						<ul>
-							  							<li><button type="button" class="btn btn-primary accept-req">关注</button></li>
-							  							<li><button type="button" class="close-req"><i class="la la-close"></i></button></li>
-							  						</ul>
-							  					</div><!--accept-feat end-->
-							  				</div><!--request-detailse end-->
-							  				<div class="request-details">
-							  					<div class="noty-user-img">
-							  						<a href="user-homepage.html"><img src="/static/images/resources/ny-img3.png" alt=""></a>
-							  					</div>
-							  					<div class="request-info">
-							  						<h3><a href="user-homepage.html" style="color: black">张小明</a></h3>
-							  						<span>2 min ago</span>
-							  					</div>
-							  					<div class="accept-feat">
-							  						<ul>
-							  							<li><button type="button" class="btn btn-primary accept-req">关注</button></li>
-							  							<li><button type="button" class="close-req"><i class="la la-close"></i></button></li>
+							  							<!-- <li><button type="button" class="btn btn-primary accept-req">关注</button></li> -->
+							  							<!-- <li><button type="button" class="close-req"><i class="la la-close"></i></button></li> -->
 							  						</ul>
 							  					</div><!--accept-feat end-->
 							  				</div><!--request-detailse end-->
 							  			</div>
 									</div><!--acc-setting end-->
-							  	</div>
-							  	<div class="tab-pane fade" id="nav-letter" role="tabpanel" aria-labelledby="nav-letter-tab">
-							  		<div class="acc-setting">
-							  			<h3>收到的私信</h3>
-							  			<div class="notifications-list">
-							  				<div class="notfication-details">
-								  				<div class="noty-user-img">
-								  					<a href="user-homepage.html"><img src="/static/images/resources/ny-img3.png" alt=""></a>
-								  				</div>
-								  				<div class="notification-info">
-								  					<h3><a href="user-homepage.html" title="">张小明</a></h3>
-								  					<p>你好，可以继续更新吗</p>
-								  					<span>2 min ago</span>
-								  				</div><!--notification-info -->
-								  				<div class="custom-notification-delete">
-							  						<ul>
-							  							<li><button type="button" class="close-req"><i class="la la-close"></i></button></li>
-							  						</ul>
-							  					</div><!--accept-feat end-->
-							  				</div><!--notfication-details end-->
-							  				<div class="notfication-details">
-								  				<div class="noty-user-img">
-								  					<a href="user-homepage.html"><img src="/static/images/resources/ny-img3.png" alt=""></a>
-								  				</div>
-								  				<div class="notification-info">
-								  					<h3><a href="user-homepage.html" title="">张小明</a></h3>
-								  					<p>你好，可以继续更新吗</p>
-								  					<span>2 min ago</span>
-								  				</div><!--notification-info -->
-								  				<div class="custom-notification-delete">
-							  						<ul>
-							  							<li><button type="button" class="close-req"><i class="la la-close"></i></button></li>
-							  						</ul>
-							  					</div><!--accept-feat end-->
-							  				</div><!--notfication-details end-->
-							  				<div class="notfication-details">
-								  				<div class="noty-user-img">
-								  					<a href="user-homepage.html"><img src="/static/images/resources/ny-img3.png" alt=""></a>
-								  				</div>
-								  				<div class="notification-info">
-								  					<h3><a href="user-homepage.html" title="">张小明</a></h3>
-								  					<p>你好，可以继续更新吗</p>
-								  					<span>2 min ago</span>
-								  				</div><!--notification-info -->
-								  				<div class="custom-notification-delete">
-							  						<ul>
-							  							<li><button type="button" class="close-req"><i class="la la-close"></i></button></li>
-							  						</ul>
-							  					</div><!--accept-feat end-->
-							  				</div><!--notfication-details end-->
-							  				<div class="notfication-details">
-								  				<div class="noty-user-img">
-								  					<a href="user-homepage.html"><img src="/static/images/resources/ny-img3.png" alt=""></a>
-								  				</div>
-								  				<div class="notification-info">
-								  					<h3><a href="user-homepage.html" title="">张小明</a></h3>
-								  					<p>你好，可以继续更新吗</p>
-								  					<span>2 min ago</span>
-								  				</div><!--notification-info -->
-								  				<div class="custom-notification-delete">
-							  						<ul>
-							  							<li><button type="button" class="close-req"><i class="la la-close"></i></button></li>
-							  						</ul>
-							  					</div><!--accept-feat end-->
-							  				</div><!--notfication-details end-->
-							  			</div><!--notifications-list end-->
-							  		</div><!--acc-setting end-->
+									<div class="process-comm">
+										<img id="loadMore" v-on:click="loadMoreFollow" src="/static/images/process-icon.png" alt="">
+									</div><!--process-comm end-->
 							  	</div>
 							  	<div class="tab-pane fade" id="nav-notification" role="tabpanel" aria-labelledby="nav-notification-tab">
 							  		<div class="acc-setting">
-							  			<h3>其他通知</h3>
+							  			<h3>系统通知</h3>
 							  			<div class="notifications-list">
-							  				<div class="notfication-details">
+							  				<div v-for="site in message_system" class="notfication-details">
 								  				<div class="noty-user-img">
 								  					<img src="/static/images/resources/ny-img3.png" alt="">
 								  				</div>
 								  				<div class="notification-info">
-								  					<h3><a href="#" title="">系统通知</a></h3>
-								  					<p>欢迎您使用知否笔记系统平台</p>
-								  					<span>2 min ago</span>
+								  					<h3>{{site.userNickName}}</h3>
+								  					<p>{{site.content}}</p>
+								  					<span>{{site.createTime}}</span>
 								  				</div><!--notification-info -->
 								  				<div class="custom-notification-delete">
 							  						<ul>
-							  							<li><button type="button" class="close-req"><i class="la la-close"></i></button></li>
+							  							<!-- <li><button type="button" class="close-req"><i class="la la-close"></i></button></li> -->
 							  						</ul>
 							  					</div><!--accept-feat end-->
 							  				</div><!--notfication-details end-->
 							  				
 							  			</div><!--notifications-list end-->
 							  		</div><!--acc-setting end-->
+							  		<div class="process-comm">
+										<img id="loadMore" v-on:click="loadMoreSystem" src="/static/images/process-icon.png" alt="">
+									</div><!--process-comm end-->
 							  	</div>
 							</div>
-							<div class="process-comm">
-								<a href="#" title=""><img src="/static/images/process-icon.png" alt=""></a>
-							</div><!--process-comm end-->
 						</div>
 					</div>
 				</div><!--account-tabs-setting end-->
@@ -519,6 +814,25 @@
 <script src="https://cdn.staticfile.org/axios/0.18.0/axios.min.js"></script>
 <script src="https://cdn.staticfile.org/vue-resource/1.5.1/vue-resource.min.js"></script>
 <script type="text/javascript">
+	function dateFormat(fmt, date) {
+	    let ret;
+	    const opt = {
+	        "Y+": date.getFullYear().toString(),        // 年
+	        "m+": (date.getMonth() + 1).toString(),     // 月
+	        "d+": date.getDate().toString(),            // 日
+	        "H+": date.getHours().toString(),           // 时
+	        "M+": date.getMinutes().toString(),         // 分
+	        "S+": date.getSeconds().toString()          // 秒
+	        // 有其他格式化字符需求可以继续添加，必须转化成字符串
+	    };
+	    for (let k in opt) {
+	        ret = new RegExp("(" + k + ")").exec(fmt);
+	        if (ret) {
+	            fmt = fmt.replace(ret[1], (ret[1].length == 1) ? (opt[k]) : (opt[k].padStart(ret[1].length, "0")))
+	        };
+	    };
+	    return fmt;
+	}
 	//退出登录
     function logout(){
         localStorage.clear();

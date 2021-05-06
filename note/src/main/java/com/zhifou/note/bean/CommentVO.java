@@ -43,6 +43,20 @@ public class CommentVO implements Constant {
         this.user =new UserVO(comment.getUser());
     }
 
+
+    public CommentVO cloneComment(){
+        CommentVO commentVO = new CommentVO();
+        commentVO.setChild(child);
+        commentVO.setContent(content);
+        commentVO.setId(id);
+        commentVO.setCreateTime(createTime);
+        commentVO.setLike(isLike);
+        commentVO.setLikeNum(likeNum);
+        commentVO.setTo(to);
+        commentVO.setUser(user);
+        return commentVO;
+    }
+
     private Set<CommentVO> getChildVO(Set<Comment> child, int userId, LikeService likeService) {
         if (child==null){
             return null;
