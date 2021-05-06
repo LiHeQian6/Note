@@ -47,7 +47,7 @@ class MyClickUpAdapter(private var list: MutableList<NoteInfo>,
         holder.noteLittleContent.text = content
         holder.viewNum.text = list[position].look.toString()
         holder.dianzanNum.text = list[position].like.toString()
-        holder.commonNum.text = "0"
+        holder.commonNum.text = list[position].commentNum.toString()
     }
 
     override fun onClick(v: View?) {

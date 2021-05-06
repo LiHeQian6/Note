@@ -51,7 +51,7 @@ class MyLikeRVAdapter(private var list: MutableList<Map<String,Object>>,
         holder.noteLittleContent.text = content
         holder.viewNum.text = noteInfo.look.toString()
         holder.dianzanNum.text = noteInfo.like.toString()
-        holder.commonNum.text = "0"
+        holder.commonNum.text = noteInfo.commentNum.toString()
     }
 
     override fun onClick(v: View?) {

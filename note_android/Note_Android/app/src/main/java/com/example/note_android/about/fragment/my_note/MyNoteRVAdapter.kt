@@ -47,7 +47,7 @@ class MyNoteRVAdapter(var list: MutableList<NoteInfo>, var recyclerView: Recycle
         holder.noteLittleContent.text = content
         holder.viewNum.text = list[position].look.toString()
         holder.dianzanNum.text = list[position].like.toString()
-        holder.commonNum.text = "0"
+        holder.commonNum.text = list[position].commentNum.toString()
     }
 
     override fun onLongClick(v: View?): Boolean {

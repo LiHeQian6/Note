@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.note_android.R
 import com.example.note_android.bean.Notice
 import com.example.note_android.bean.NoticeInfo
+import com.example.note_android.bean.SystemNotice
 import com.example.note_android.listener.OnItemClickListener
 import com.google.gson.Gson
 import com.xuexiang.xui.widget.imageview.RadiusImageView
@@ -40,9 +41,9 @@ class SystemNoticeAdapter(var list: List<Notice>,
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.image.isCircle = true
-        var noticeInfo = gson.fromJson(list[position].content,NoticeInfo::class.java)
+        var noticeInfo = gson.fromJson(list[position].content,SystemNotice::class.java)
         holder.messageTitle.text = noticeInfo.userNickName
-        holder.messageCont.text = noticeInfo.entityInfo
+        holder.messageCont.text = noticeInfo.content
         var data = SimpleDateFormat("YYYY-MM-dd")
         holder.messageTime.text = data.format(list[position].createTime)
     }

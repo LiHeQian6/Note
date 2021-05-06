@@ -114,6 +114,8 @@ class PersonFragment : Fragment(),View.OnClickListener {
         root.my_favourite.setOnClickListener(this)
         root.my_click_up.setOnClickListener(this)
         root.logout_button.setOnClickListener(this)
+        root.my_follow.setOnClickListener(this)
+        root.like_me.setOnClickListener(this)
     }
 
     private fun checkLogin() {
@@ -189,6 +191,12 @@ class PersonFragment : Fragment(),View.OnClickListener {
             }
             R.id.my_click_up -> {
                 ActivityUtil.get().goActivity(requireContext(),AboutMeActivity::class.java,MessageBean("Success","MyClickUp",null))
+            }
+            R.id.my_follow -> {
+                ActivityUtil.get().goActivity(requireContext(),AboutMeActivity::class.java,MessageBean("Success","MyFollow",null))
+            }
+            R.id.like_me -> {
+                ActivityUtil.get().goActivity(requireContext(),AboutMeActivity::class.java,MessageBean("Success","LikeMe",null))
             }
         }
     }

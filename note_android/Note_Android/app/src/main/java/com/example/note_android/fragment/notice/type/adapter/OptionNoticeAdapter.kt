@@ -54,7 +54,7 @@ class OptionNoticeAdapter(
                 holder.content.text = "我关注了你哦！"
             }
         }
-        holder.name.text = noticeInfo.userNickName + option
+        holder.name.text = noticeInfo.entityUserNickname + option
         var data = SimpleDateFormat("YYYY-MM-dd")
         holder.time.text = data.format(noticeList[position].createTime)
     }

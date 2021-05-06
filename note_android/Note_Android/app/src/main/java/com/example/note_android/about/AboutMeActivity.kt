@@ -3,7 +3,9 @@ package com.example.note_android.about
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import com.example.note_android.R
+import com.example.note_android.about.fragment.like_me.LikeMeFragment
 import com.example.note_android.about.fragment.my_favourite.MyLikeFragment
+import com.example.note_android.about.fragment.my_like.MyFollowFragment
 import com.example.note_android.about.fragment.my_like_up.MyClickUpFragment
 import com.example.note_android.about.fragment.my_note.MyNoteFragment
 import com.example.note_android.util.MessageBean
@@ -30,6 +32,16 @@ class AboutMeActivity : AppCompatActivity() {
                 supportFragmentManager.beginTransaction()
                     .replace(R.id.fragment_about_me,MyClickUpFragment.newInstance())
                     .commit()
+            }
+            "MyFollow" -> {
+                supportFragmentManager.beginTransaction()
+                        .replace(R.id.fragment_about_me,MyFollowFragment.newInstance())
+                        .commit()
+            }
+            "LikeMe" -> {
+                supportFragmentManager.beginTransaction()
+                        .replace(R.id.fragment_about_me,LikeMeFragment.newInstance())
+                        .commit()
             }
         }
     }
